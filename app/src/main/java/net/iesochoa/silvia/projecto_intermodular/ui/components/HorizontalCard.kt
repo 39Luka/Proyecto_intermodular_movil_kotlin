@@ -40,7 +40,7 @@ fun HorizontalCard(
         if (imageRes != null) {
             Image(
                 painter = painterResource(id = imageRes),
-                contentDescription = null,
+                contentDescription = title,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .size(64.dp)
@@ -78,12 +78,12 @@ fun HorizontalCard(
                         Column {
                             Text(
                                 text = leftLabel,
-                                style = AppTypography.labelMedium, // label más pequeño
-                                color = Secondary500.copy(alpha = 0.6f)
+                                style = AppTypography.labelMedium,
+                                color = Secondary500.copy(alpha = 0.6f) // más transparente que la descripción
                             )
                             Text(
                                 text = leftValue,
-                                style = AppTypography.bodyMedium, // valor destacado
+                                style = AppTypography.bodyMedium,
                                 color = Secondary500
                             )
                         }
