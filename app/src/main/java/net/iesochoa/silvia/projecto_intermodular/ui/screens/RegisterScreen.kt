@@ -14,19 +14,21 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import net.iesochoa.silvia.projecto_intermodular.R
 import net.iesochoa.silvia.projecto_intermodular.ui.components.PrimaryButton
-import net.iesochoa.silvia.projecto_intermodular.ui.theme.Secondary500
-import net.iesochoa.silvia.projecto_intermodular.ui.theme.Primary600
-import net.iesochoa.silvia.projecto_intermodular.ui.theme.AppTypography
-import net.iesochoa.silvia.projecto_intermodular.ui.theme.Secondary600
+import net.iesochoa.silvia.projecto_intermodular.ui.theme.*
+
 @Composable
-fun LoginScreen(
-    onLoginClick: (email: String, password: String) -> Unit = { _, _ -> },
-    onRegisterClick: () -> Unit = {}
+fun RegisterScreen(
+    onRegisterClick: (username: String, email: String, password: String) -> Unit = { _, _, _ -> },
+    onLoginClick: () -> Unit = {}
 ) {
+    var username by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+    var confirmPassword by remember { mutableStateOf("") }
     var errorMessage by remember { mutableStateOf("") }
 
     Column(
@@ -47,7 +49,7 @@ fun LoginScreen(
 
         // 🔹 Título
         Text(
-            text = "Inicio de sesión",
+            text = "Registrarse",
             style = AppTypography.headlineMedium,
             color = Secondary600,
             textAlign = TextAlign.Center,
@@ -55,6 +57,15 @@ fun LoginScreen(
         )
 
         // 🔹 Inputs
+        SimpleInput(
+            label = "Nombre Usuario",
+            value = username,
+            onValueChange = { username = it },
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
         SimpleInput(
             label = "Email",
             value = email,
@@ -68,7 +79,18 @@ fun LoginScreen(
             label = "Contraseña",
             value = password,
             onValueChange = { password = it },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            visualTransformation = PasswordVisualTransformation()
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        SimpleInput(
+            label = "Repetir contraseña",
+            value = confirmPassword,
+            onValueChange = { confirmPassword = it },
+            modifier = Modifier.fillMaxWidth(),
+            visualTransformation = PasswordVisualTransformation()
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -83,16 +105,19 @@ fun LoginScreen(
             )
         }
 
-        // 🔹 Botón de login
+        // 🔹 Botón de registro
         PrimaryButton(
-            text = "Iniciar sesión",
+            text = "Registrar",
             onClick = {
                 when {
+                    username.isBlank() -> errorMessage = "El nombre de usuario es obligatorio"
                     email.isBlank() -> errorMessage = "El email es obligatorio"
                     password.isBlank() -> errorMessage = "La contraseña es obligatoria"
+                    confirmPassword.isBlank() -> errorMessage = "Debes repetir la contraseña"
+                    password != confirmPassword -> errorMessage = "Las contraseñas no coinciden"
                     else -> {
                         errorMessage = ""
-                        onLoginClick(email, password)
+                        onRegisterClick(username, email, password)
                     }
                 }
             },
@@ -101,19 +126,19 @@ fun LoginScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // 🔹 Link de registro
+        // 🔹 Link a login
         Row(
             horizontalArrangement = Arrangement.Center,
             modifier = Modifier.fillMaxWidth()
         ) {
             Text(
-                text = "¿No tienes cuenta? ",
+                text = "¿Ya tienes cuenta? ",
                 style = AppTypography.bodySmall,
                 color = Secondary500
             )
             ClickableText(
-                text = AnnotatedString("Regístrate"),
-                onClick = { onRegisterClick() },
+                text = AnnotatedString("Iniciar sesión"),
+                onClick = { onLoginClick() },
                 style = AppTypography.bodySmall.copy(color = Primary600)
             )
         }
@@ -122,6 +147,6 @@ fun LoginScreen(
 
 @Preview(showBackground = true)
 @Composable
-fun LoginScreenPreview() {
-    LoginScreen()
+fun RegisterScreenPreview() {
+    RegisterScreen()
 }

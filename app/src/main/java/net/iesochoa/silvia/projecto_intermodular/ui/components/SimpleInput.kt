@@ -1,13 +1,15 @@
-package net.iesochoa.silvia.projecto_intermodular.ui.components
-
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import net.iesochoa.silvia.projecto_intermodular.ui.theme.*
@@ -17,7 +19,9 @@ fun SimpleInput(
     label: String,
     value: String,
     onValueChange: (String) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    visualTransformation: VisualTransformation = VisualTransformation.None,
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default
 ) {
     Column(modifier = modifier) {
 
@@ -37,7 +41,9 @@ fun SimpleInput(
                 .padding(top = 8.dp),
             singleLine = true,
             textStyle = AppTypography.bodyMedium.copy(color = Secondary500),
-            colors = OutlinedTextFieldDefaults.colors( // Cambio clave
+            visualTransformation = visualTransformation,
+            keyboardOptions = keyboardOptions,
+            colors = OutlinedTextFieldDefaults.colors(
                 focusedTextColor = Secondary500,
                 unfocusedTextColor = Secondary500,
                 cursorColor = Secondary500,
@@ -58,11 +64,12 @@ fun SimpleInputPreview() {
     var text by remember { mutableStateOf("") }
 
     SimpleInput(
-        label = "Mariano",
+        label = "Contraseña",
         value = text,
         onValueChange = { text = it },
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp)
+            .padding(16.dp),
+        visualTransformation = androidx.compose.ui.text.input.PasswordVisualTransformation()
     )
 }
