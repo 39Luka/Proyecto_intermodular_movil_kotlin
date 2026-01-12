@@ -19,6 +19,7 @@ import net.iesochoa.silvia.projecto_intermodular.ui.components.SimpleInput
 import net.iesochoa.silvia.projecto_intermodular.ui.theme.Secondary500
 import net.iesochoa.silvia.projecto_intermodular.ui.theme.Primary600
 import net.iesochoa.silvia.projecto_intermodular.ui.theme.AppTypography
+import net.iesochoa.silvia.projecto_intermodular.ui.theme.Secondary600
 
 @Composable
 fun LoginScreen(
@@ -31,24 +32,24 @@ fun LoginScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = 24.dp),
+            .padding(horizontal = 45.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
         // 🔹 Logo
         Image(
-            painter = painterResource(id = R.drawable.ic_launcher_foreground), // reemplaza con tu logo
+            painter = painterResource(id = R.drawable.croissant), // reemplaza con tu logo
             contentDescription = "Logo",
             modifier = Modifier
-                .size(64.dp)
+                .size(80.dp)
                 .padding(bottom = 16.dp)
         )
 
         // 🔹 Título
         Text(
             text = "Inicio sesión",
-            style = AppTypography.headlineSmall,
-            color = Secondary500,
+            style = AppTypography.headlineMedium,
+            color = Secondary600,
             textAlign = TextAlign.Center,
             modifier = Modifier.padding(bottom = 24.dp)
         )
@@ -75,7 +76,8 @@ fun LoginScreen(
         // 🔹 Botón de login
         PrimaryButton(
             text = "Iniciar sesión",
-            onClick = { onLoginClick(email, password) }
+            onClick = { onLoginClick(email, password) },
+            modifier = Modifier.padding(horizontal = 40.dp)
         )
 
         Spacer(modifier = Modifier.height(16.dp))
