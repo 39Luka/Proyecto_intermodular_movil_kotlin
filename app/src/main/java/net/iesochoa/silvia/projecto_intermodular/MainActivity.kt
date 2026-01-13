@@ -11,7 +11,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
+import net.iesochoa.silvia.projecto_intermodular.ui.components.BottomBar
 import net.iesochoa.silvia.projecto_intermodular.ui.navigation.AppNavigation
+import net.iesochoa.silvia.projecto_intermodular.ui.navigation.Screen
 import net.iesochoa.silvia.projecto_intermodular.ui.theme.Projecto_IntermodularTheme
 
 class MainActivity : ComponentActivity() {
@@ -20,8 +24,21 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             Projecto_IntermodularTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    AppNavigation(modifier = Modifier.padding(innerPadding))
+                val navController = rememberNavController()
+                val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
+
+                Scaffold(
+                    modifier = Modifier.fillMaxSize(),
+                    bottomBar = {
+                        if (currentRoute != Screen.Login.route && currentRoute != Screen.Register.route) {
+                        BottomBar(navController)
+                        }
+                    }
+
+                ) { innerPadding ->
+
+                    AppNavigation(navController = navController,
+                        modifier = Modifier.padding(innerPadding))
                 }
             }
         }

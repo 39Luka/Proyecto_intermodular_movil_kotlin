@@ -20,13 +20,14 @@ import net.iesochoa.silvia.projecto_intermodular.ui.theme.*
 fun CustomCard(
     imageRes: Int,
     title: String,
-    bottomText1: String?, // 🔹 opcional
+    bottomText1: String?,
     bottomText2: String,
     modifier: Modifier = Modifier
 ) {
     Column(
         modifier = modifier
             .fillMaxWidth()
+            .height(280.dp) // 🔒 TODAS MISMO TAMAÑO
             .background(BackgroundColor, RoundedCornerShape(12.dp))
             .border(1.dp, BorderColor, RoundedCornerShape(12.dp))
             .padding(16.dp)
@@ -38,50 +39,47 @@ fun CustomCard(
             contentScale = ContentScale.Crop,
             modifier = Modifier
                 .fillMaxWidth()
-                .height(180.dp)
+                .height(140.dp) // altura fija de imagen
                 .clip(RoundedCornerShape(12.dp))
-        )
-
-        Spacer(modifier = Modifier.height(12.dp))
-
-        // 🔹 Título izquierda
-        Text(
-            text = title,
-            style = AppTypography.bodyMedium,
-            color = Secondary500,
-            modifier = Modifier.fillMaxWidth(),
-            textAlign = TextAlign.Start
         )
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        // 🔹 Textos derecha
+        // 🔹 Título
+        Text(
+            text = title,
+            style = AppTypography.bodyMedium,
+            color = Secondary500,
+            maxLines = 1
+        )
+
+        // 👇 EMPUJA LOS PRECIOS HACIA ABAJO
+        Spacer(modifier = Modifier.weight(1f))
+
         Column(
             modifier = Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
 
-            // 🔹 Texto opcional y tachado
             if (!bottomText1.isNullOrBlank()) {
                 Text(
                     text = bottomText1,
-                    style = AppTypography.bodySmall, // más pequeño
-                    color = Secondary500.copy(alpha = 0.7f), // opcional pero recomendado
+                    style = AppTypography.bodySmall,
+                    color = Secondary500.copy(alpha = 0.7f),
                     textDecoration = TextDecoration.LineThrough,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(end = 20.dp),
-                    textAlign = TextAlign.End
+                    textAlign = TextAlign.End,
+                    maxLines = 1,
+                    modifier = Modifier.fillMaxWidth()
                 )
             }
 
-            // 🔹 Texto principal
             Text(
                 text = bottomText2,
                 style = AppTypography.bodyMedium,
                 color = Secondary500,
-                modifier = Modifier.fillMaxWidth(),
-                textAlign = TextAlign.End
+                textAlign = TextAlign.End,
+                maxLines = 1,
+                modifier = Modifier.fillMaxWidth()
             )
         }
     }

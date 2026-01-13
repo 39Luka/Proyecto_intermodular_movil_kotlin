@@ -9,7 +9,7 @@ sealed class Screen(val route: String){
     object Offers : Screen("offers")
     object Product : Screen("product")
     object Purchases : Screen("purchases")
-    object Card : Screen("card")
+    object Cart : Screen("cart")
     object Purchase : Screen("purchase")
     object EditImage : Screen("edit_image")
     object EditPassword : Screen("edit_password")

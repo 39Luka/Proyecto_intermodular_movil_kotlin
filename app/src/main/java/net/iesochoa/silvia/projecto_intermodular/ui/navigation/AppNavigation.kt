@@ -1,8 +1,11 @@
 package net.iesochoa.silvia.projecto_intermodular.ui.navigation
 
+import HomeScreen
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import androidx.navigation.NavHost
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -11,8 +14,8 @@ import net.iesochoa.silvia.projecto_intermodular.ui.screens.RegisterScreen
 import net.iesochoa.silvia.projecto_intermodular.viewmodel.LoginViewModel
 
 @Composable
-fun AppNavigation(modifier: Modifier = Modifier){
-    val navController = rememberNavController()
+fun AppNavigation(navController: NavHostController,
+                  modifier: Modifier = Modifier){
 
     NavHost(
         navController = navController,
@@ -33,6 +36,12 @@ fun AppNavigation(modifier: Modifier = Modifier){
                 onLoginClick = {navController.navigate(Screen.Login.route)}
 
             )
+
+        }
+
+        composable(Screen.Home.route){
+            HomeScreen()
+
 
         }
     }
