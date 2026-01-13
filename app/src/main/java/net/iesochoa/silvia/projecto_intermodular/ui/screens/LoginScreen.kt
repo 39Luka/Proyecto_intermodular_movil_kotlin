@@ -40,7 +40,7 @@ fun LoginScreen(
     ) {
         // 🔹 Logo
         Image(
-            painter = painterResource(id = R.drawable.ic_launcher_foreground),
+            painter = painterResource(id = R.drawable.croissant),
             contentDescription = "Logo",
             modifier = Modifier
                 .size(64.dp)
