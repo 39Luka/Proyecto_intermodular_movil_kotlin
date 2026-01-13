@@ -8,11 +8,15 @@ espressoCore = "3.7.0"
 lifecycleRuntimeKtx = "2.9.4"
 activityCompose = "1.11.0"
 composeBom = "2024.09.00"
+lifecycleRuntimeKtxVersion = "2.6.3"
+lifecycleViewmodelCompose = "2.10.0"
 navigationCompose = "2.9.6"
 foundation = "1.10.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-lifecycle-runtime-ktx-v263 = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtxVersion" }
+androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycleViewmodelCompose" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
