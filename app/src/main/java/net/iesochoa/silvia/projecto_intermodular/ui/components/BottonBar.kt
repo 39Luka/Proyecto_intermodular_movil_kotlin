@@ -7,6 +7,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -14,6 +15,7 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import androidx.navigation.compose.currentBackStackEntryAsState
 import net.iesochoa.silvia.projecto_intermodular.R
 import net.iesochoa.silvia.projecto_intermodular.ui.navigation.Screen
 import net.iesochoa.silvia.projecto_intermodular.ui.theme.BackgroundColor
@@ -49,7 +51,9 @@ fun BottomBar(
         verticalAlignment = Alignment.CenterVertically
     ) {
         items.forEach { (screen, drawableId) ->
-            val isSelected = navController.currentDestination?.route == screen.route
+            val navBackStackEntry by navController.currentBackStackEntryAsState()
+            val currentRoute = navBackStackEntry?.destination?.route
+            val isSelected = currentRoute == screen.route
 
             Image(
                 painter = painterResource(id = drawableId),
