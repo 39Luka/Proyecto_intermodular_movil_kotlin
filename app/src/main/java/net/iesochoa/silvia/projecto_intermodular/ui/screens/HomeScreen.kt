@@ -9,13 +9,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import net.iesochoa.silvia.projecto_intermodular.R
 import net.iesochoa.silvia.projecto_intermodular.ui.components.*
 import net.iesochoa.silvia.projecto_intermodular.ui.theme.*
-@Composable
-fun HomeScreen() {
+import net.iesochoa.silvia.projecto_intermodular.viewmodel.HomeViewModel
 
-    var search by remember { mutableStateOf("") }
+@Composable
+fun HomeScreen(viewModel: HomeViewModel = viewModel()) {
+
+    val uiState by viewModel.uiState.collectAsState()
 
     val promociones = listOf(
         CardItem(R.drawable.ic_launcher_foreground, "Pan", "0,75 €", "0,65 €"),
@@ -61,8 +64,8 @@ fun HomeScreen() {
         // 🔹 BUSCADOR
         item {
             SearchBar(
-                query = search,
-                onQueryChange = { search = it }
+                query = uiState.searchBarValue,
+                onQueryChange = { viewModel.onSearchBarValueChange(it) }
             )
         }
 
