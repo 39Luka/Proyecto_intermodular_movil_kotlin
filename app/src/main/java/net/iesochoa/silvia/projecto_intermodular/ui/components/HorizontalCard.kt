@@ -2,10 +2,13 @@ package net.iesochoa.silvia.projecto_intermodular.ui.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -14,8 +17,8 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import net.iesochoa.silvia.projecto_intermodular.ui.theme.AppTypography
 import net.iesochoa.silvia.projecto_intermodular.ui.theme.BackgroundColor
+import net.iesochoa.silvia.projecto_intermodular.ui.theme.BorderColor
 import net.iesochoa.silvia.projecto_intermodular.ui.theme.Secondary500
-
 @Composable
 fun HorizontalCard(
     title: String,
@@ -27,12 +30,14 @@ fun HorizontalCard(
     imageRes: Int? = null,
     modifier: Modifier = Modifier,
     backgroundColor: Color = BackgroundColor,
-    cornerRadius: Dp = 0.dp
+    cornerRadius: Dp = 12.dp // mismo que CustomCard
 ) {
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .background(backgroundColor, shape = androidx.compose.foundation.shape.RoundedCornerShape(cornerRadius))
+            .height(140.dp) // altura horizontal más reducida que vertical
+            .background(backgroundColor, RoundedCornerShape(cornerRadius))
+            .border(1.dp, BorderColor, RoundedCornerShape(cornerRadius))
             .padding(16.dp),
         horizontalArrangement = Arrangement.Start
     ) {
@@ -44,6 +49,7 @@ fun HorizontalCard(
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .size(64.dp)
+                    .clip(RoundedCornerShape(cornerRadius))
                     .padding(end = 16.dp)
             )
         }
@@ -66,20 +72,20 @@ fun HorizontalCard(
                 )
             }
 
-            // Info inferior opcional (Left/Right)
+            Spacer(modifier = Modifier.weight(1f))
+
+            // Info inferior opcional
             if ((leftLabel != null && leftValue != null) || (rightLabel != null && rightValue != null)) {
-                Spacer(modifier = Modifier.height(8.dp))
                 Row(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    // Left info
                     if (leftLabel != null && leftValue != null) {
                         Column {
                             Text(
                                 text = leftLabel,
                                 style = AppTypography.labelMedium,
-                                color = Secondary500.copy(alpha = 0.6f) // más transparente que la descripción
+                                color = Secondary500.copy(alpha = 0.6f)
                             )
                             Text(
                                 text = leftValue,
@@ -89,7 +95,6 @@ fun HorizontalCard(
                         }
                     }
 
-                    // Right info
                     if (rightLabel != null && rightValue != null) {
                         Column {
                             Text(
@@ -120,6 +125,6 @@ fun HorizontalCardPreview() {
         leftValue = "8",
         rightLabel = "Precio",
         rightValue = "0,75€",
-        imageRes = null
+        imageRes = android.R.drawable.ic_menu_camera
     )
 }

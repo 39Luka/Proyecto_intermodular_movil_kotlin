@@ -83,6 +83,22 @@ fun HomeScreen() {
             )
         }
 
+        item {
+            Text(
+                text = "Top Ventas",
+                style = AppTypography.bodyMedium,
+                color = Secondary600
+            )
+        }
+
+        // 🔹 GRID PRODUCTOS
+        item {
+            CardList(
+                items = products, // 👈 todos los productos juntos
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
+
     }
 }
 
