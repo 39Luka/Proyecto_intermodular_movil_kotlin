@@ -15,6 +15,7 @@ import androidx.compose.ui.unit.dp
 import net.iesochoa.silvia.projecto_intermodular.R
 import net.iesochoa.silvia.projecto_intermodular.ui.components.CardItem
 import net.iesochoa.silvia.projecto_intermodular.ui.components.CardList
+import net.iesochoa.silvia.projecto_intermodular.ui.components.ScreenHeader
 import net.iesochoa.silvia.projecto_intermodular.ui.components.SearchBar
 import net.iesochoa.silvia.projecto_intermodular.ui.theme.AppTypography
 import net.iesochoa.silvia.projecto_intermodular.ui.theme.Secondary600
@@ -37,34 +38,16 @@ fun HomeScreen() {
         verticalArrangement = Arrangement.spacedBy(16.dp),
         contentPadding = PaddingValues(bottom = 80.dp)
     ) {
-        // 🔹 HEADER
         item {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(
-                    text = "Bienvenido Usuario",
-                    style = AppTypography.headlineSmall,
-                    color = Secondary600
-                )
-
-                Image(
-                    painter = painterResource(id = R.drawable.ic_launcher_foreground),
-                    contentDescription = "Perfil",
-                    modifier = Modifier.size(32.dp)
-                )
-            }
-        }
-
-        // 🔹 SEARCH
-        item {
-            SearchBar(
-                query = searchQuery,
-                onQueryChange = { searchQuery = it } // solo UI
+            ScreenHeader(
+                title = "Bienvenido Usuario",
+                showBack = false,
+                showSearch = true,
+                searchQuery = searchQuery,
+                onSearchChange = { searchQuery = it }
             )
         }
+
 
         // 🔹 TÍTULO SECCIÓN
         item {

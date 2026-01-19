@@ -25,6 +25,7 @@ import net.iesochoa.silvia.projecto_intermodular.ui.components.HorizontalCardIte
 import net.iesochoa.silvia.projecto_intermodular.ui.components.HorizontalCardList
 import net.iesochoa.silvia.projecto_intermodular.ui.components.Oferta
 import net.iesochoa.silvia.projecto_intermodular.ui.components.PedidoItem
+import net.iesochoa.silvia.projecto_intermodular.ui.components.ScreenHeader
 import net.iesochoa.silvia.projecto_intermodular.ui.components.SearchBar
 import net.iesochoa.silvia.projecto_intermodular.ui.components.SelectorOfertas
 import net.iesochoa.silvia.projecto_intermodular.ui.theme.AppTypography
@@ -56,34 +57,12 @@ fun CartScreen() {
         contentPadding = PaddingValues(bottom = 80.dp)
     ) {
 
-        // 🔹 HEADER
         item {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.ic_launcher_foreground),
-                    contentDescription = "Back",
-                    modifier = Modifier.size(32.dp)
-                )
-
-                Image(
-                    painter = painterResource(id = R.drawable.ic_launcher_foreground),
-                    contentDescription = "Perfil",
-                    modifier = Modifier.size(32.dp)
-                )
-            }
-        }
-
-        // 🔹 PRODUCTOS
-        item {
-            HorizontalCardList(
-                items = products,
-                modifier = Modifier.fillMaxWidth()
+            ScreenHeader(
+                showBack = true
             )
         }
+
 
         // 🔹 TÍTULO PROMOCIONES
         item {

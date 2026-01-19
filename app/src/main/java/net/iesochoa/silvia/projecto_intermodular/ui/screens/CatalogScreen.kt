@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import net.iesochoa.silvia.projecto_intermodular.R
 import net.iesochoa.silvia.projecto_intermodular.ui.components.CardItem
 import net.iesochoa.silvia.projecto_intermodular.ui.components.CardList
+import net.iesochoa.silvia.projecto_intermodular.ui.components.ScreenHeader
 import net.iesochoa.silvia.projecto_intermodular.ui.components.SearchBar
 import net.iesochoa.silvia.projecto_intermodular.ui.navigation.Screen
 import net.iesochoa.silvia.projecto_intermodular.ui.theme.AppTypography
@@ -53,48 +54,16 @@ fun CatalogScreen() {
         verticalArrangement = Arrangement.spacedBy(16.dp),
         contentPadding = PaddingValues(bottom = 80.dp)
     ) {
-        // 🔹 HEADER
         item {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-
-                Image(
-                    painter = painterResource(id = R.drawable.ic_launcher_foreground),
-                    contentDescription = "Back",
-                    modifier = Modifier.size(32.dp)
-                )
-
-                Image(
-                    painter = painterResource(id = R.drawable.ic_launcher_foreground),
-                    contentDescription = "Perfil",
-                    modifier = Modifier.size(32.dp)
-                )
-            }
+            ScreenHeader(
+                showBack = true,
+                showSearch = true,
+                showFilter = true,
+                searchQuery = searchQuery,
+                onSearchChange = { searchQuery = it }
+            )
         }
 
-        // 🔹 SEARCH
-        item {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                SearchBar(
-                    query = searchQuery,
-                    onQueryChange = { searchQuery = it },
-                    modifier = Modifier.weight(1f) // 👈 ocupa todo el espacio disponible
-                )
-
-                Image(
-                    painter = painterResource(id = R.drawable.ic_launcher_foreground),
-                    contentDescription = "Back",
-                    modifier = Modifier.size(32.dp)
-                )
-            }
-        }
 
         // 🔹 GRID PRODUCTOS
         item {
