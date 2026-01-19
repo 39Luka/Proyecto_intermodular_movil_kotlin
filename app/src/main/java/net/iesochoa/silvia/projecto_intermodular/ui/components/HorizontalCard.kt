@@ -19,6 +19,17 @@ import net.iesochoa.silvia.projecto_intermodular.ui.theme.AppTypography
 import net.iesochoa.silvia.projecto_intermodular.ui.theme.BackgroundColor
 import net.iesochoa.silvia.projecto_intermodular.ui.theme.BorderColor
 import net.iesochoa.silvia.projecto_intermodular.ui.theme.Secondary500
+data class HorizontalCardItem(
+    val title: String,
+    val description: String = "",
+    val leftLabel: String? = null,
+    val leftValue: String? = null,
+    val rightLabel: String? = null,
+    val rightValue: String? = null,
+    val imageRes: Int? = null
+)
+
+
 @Composable
 fun HorizontalCard(
     title: String,
@@ -111,6 +122,30 @@ fun HorizontalCard(
                     }
                 }
             }
+        }
+    }
+}
+
+@Composable
+fun HorizontalCardList(
+    items: List<HorizontalCardItem>,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(16.dp) // separación vertical entre tarjetas
+    ) {
+        items.forEach { item ->
+            HorizontalCard(
+                title = item.title,
+                description = item.description.takeIf { it.isNotEmpty() },
+                leftLabel = item.leftLabel,
+                leftValue = item.leftValue,
+                rightLabel = item.rightLabel,
+                rightValue = item.rightValue,
+                imageRes = item.imageRes,
+                modifier = Modifier.fillMaxWidth() // ocupa todo el ancho de la pantalla
+            )
         }
     }
 }

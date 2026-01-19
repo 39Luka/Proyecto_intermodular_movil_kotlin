@@ -14,41 +14,56 @@ import net.iesochoa.silvia.projecto_intermodular.ui.theme.BorderColor
 import net.iesochoa.silvia.projecto_intermodular.ui.theme.AppTypography
 import net.iesochoa.silvia.projecto_intermodular.ui.theme.Secondary500
 
-
+data class PedidoItem(
+    val fecha: String,
+    val estado: String,
+    val total: String
+)
 @Composable
 fun PedidoCard(
     pedido: PedidoItem,
     modifier: Modifier = Modifier
 ) {
-    Row(
+    Box(
         modifier = modifier
             .fillMaxWidth()
-            .height(80.dp)
+            .height(80.dp) // altura fija opcional
             .background(BackgroundColor, RoundedCornerShape(12.dp))
             .border(1.dp, BorderColor, RoundedCornerShape(12.dp))
-            .padding(horizontal = 16.dp, vertical = 12.dp),
-        horizontalArrangement = Arrangement.SpaceBetween
+            .padding(16.dp)
     ) {
-        Text(
-            text = pedido.fecha,
-            style = AppTypography.bodyMedium,
-            color = Secondary500,
-            modifier = Modifier.weight(1f)
-        )
-        Text(
-            text = pedido.estado,
-            style = AppTypography.bodyMedium,
-            color = Secondary500,
-            textAlign = TextAlign.Center,
-            modifier = Modifier.weight(1f)
-        )
-        Text(
-            text = pedido.total,
-            style = AppTypography.bodyMedium,
-            color = Secondary500,
-            textAlign = TextAlign.End,
-            modifier = Modifier.weight(1f)
-        )
+        Column(
+            modifier = Modifier.fillMaxSize()
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = pedido.estado,
+                    style = AppTypography.bodyMedium,
+                    color = Secondary500
+                )
+                Text(
+                    text = pedido.fecha,
+                    style = AppTypography.bodyMedium,
+                    color = Secondary500
+                )
+            }
+
+            Spacer(modifier = Modifier.weight(1f))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.End
+            ) {
+                Text(
+                    text = pedido.total,
+                    style = AppTypography.bodyMedium,
+                    color = Secondary500
+                )
+            }
+        }
     }
 }
 

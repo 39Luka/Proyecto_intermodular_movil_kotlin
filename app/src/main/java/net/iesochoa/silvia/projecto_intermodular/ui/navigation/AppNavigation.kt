@@ -7,10 +7,12 @@ import androidx.navigation.NavHost
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import net.iesochoa.silvia.projecto_intermodular.ui.screens.CartScreen
 import net.iesochoa.silvia.projecto_intermodular.ui.screens.CatalogScreen
 import net.iesochoa.silvia.projecto_intermodular.ui.screens.HomeScreen
 import net.iesochoa.silvia.projecto_intermodular.ui.screens.LoginScreen
 import net.iesochoa.silvia.projecto_intermodular.ui.screens.OffersScreen
+import net.iesochoa.silvia.projecto_intermodular.ui.screens.PurchasesScreen
 import net.iesochoa.silvia.projecto_intermodular.ui.screens.RegisterScreen
 
 @Composable
@@ -50,6 +52,14 @@ fun AppNavigation(navController: NavHostController,
         composable(Screen.Offers.route){
             OffersScreen()
 
+        }
+
+        composable(Screen.Purchases.route) {
+            PurchasesScreen()
+        }
+
+        composable(Screen.Cart.route) {
+            CartScreen()
         }
     }
 

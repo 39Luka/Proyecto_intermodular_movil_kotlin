@@ -16,6 +16,14 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import net.iesochoa.silvia.projecto_intermodular.ui.theme.*
+
+data class CardItem(
+    val imageRes: Int,
+    val title: String,
+    val bottomText1: String?= null,
+    val bottomText2: String
+)
+
 @Composable
 fun CustomCard(
     imageRes: Int,
@@ -81,6 +89,37 @@ fun CustomCard(
                 maxLines = 1,
                 modifier = Modifier.fillMaxWidth()
             )
+        }
+    }
+}
+@Composable
+fun CardList(
+    items: List<CardItem>,
+    modifier: Modifier = Modifier
+) {
+    Column(modifier = modifier) {
+        val chunkedItems = items.chunked(2)
+        chunkedItems.forEach { rowItems ->
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                rowItems.forEach { item ->
+                    CustomCard(
+                        imageRes = item.imageRes,
+                        title = item.title,
+                        bottomText1 = item.bottomText1,
+                        bottomText2 = item.bottomText2,
+                        modifier = Modifier.weight(1f) // 👈 igual tamaño
+                    )
+                }
+
+                // Si solo hay 1 tarjeta, rellenamos el hueco con un Spacer
+                if (rowItems.size == 1) {
+                    Spacer(modifier = Modifier.weight(1f))
+                }
+            }
+            Spacer(modifier = Modifier.height(16.dp))
         }
     }
 }
