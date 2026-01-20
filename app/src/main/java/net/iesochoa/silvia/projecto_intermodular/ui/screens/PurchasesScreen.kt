@@ -1,22 +1,18 @@
 package net.iesochoa.silvia.projecto_intermodular.ui.screens
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import net.iesochoa.silvia.projecto_intermodular.model.CatalogUiState
-import net.iesochoa.silvia.projecto_intermodular.ui.components.CardList
+import net.iesochoa.silvia.projecto_intermodular.model.PurchasesUiState
+import net.iesochoa.silvia.projecto_intermodular.ui.components.PedidoList
 import net.iesochoa.silvia.projecto_intermodular.ui.components.ScreenHeader
 
 @Composable
-fun CatalogScreen(
-    uiState: CatalogUiState,
-    onSearchQueryChange: (String) -> Unit,
+fun PurchasesScreen(
+    uiState: PurchasesUiState,
+    onSearchChange: (String) -> Unit,
     onBackClick: (() -> Unit)?,
     onProfileClick: () -> Unit
 ) {
@@ -25,22 +21,20 @@ fun CatalogScreen(
         verticalArrangement = Arrangement.spacedBy(16.dp),
         contentPadding = PaddingValues(bottom = 80.dp)
     ) {
+
         item {
             ScreenHeader(
                 showSearch = true,
                 showFilter = true,
                 searchQuery = uiState.searchQuery,
-                onSearchChange = onSearchQueryChange,
+                onSearchChange = onSearchChange,
                 onBackClick = onBackClick,
                 onProfileClick = onProfileClick
             )
         }
 
         item {
-            CardList(
-                items = uiState.filteredProducts,
-                modifier = Modifier.fillMaxWidth()
-            )
+            PedidoList(pedidos = uiState.pedidos)
         }
     }
 }

@@ -1,4 +1,5 @@
 package net.iesochoa.silvia.projecto_intermodular.viewmodel
+
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -7,10 +8,8 @@ import net.iesochoa.silvia.projecto_intermodular.model.RegisterUiState
 
 class RegisterViewModel : ViewModel() {
 
-
     private val _uiState = MutableStateFlow(RegisterUiState())
     val uiState: StateFlow<RegisterUiState> = _uiState
-
 
     fun onUsernameChange(newValue: String) {
         _uiState.update { it.copy(username = newValue) }
@@ -28,7 +27,6 @@ class RegisterViewModel : ViewModel() {
         _uiState.update { it.copy(confirmPassword = newValue) }
     }
 
-
     fun register(onSuccess: () -> Unit) {
         val state = _uiState.value
         when {
@@ -39,10 +37,8 @@ class RegisterViewModel : ViewModel() {
             state.password != state.confirmPassword -> _uiState.update { it.copy(errorMessage = "Las contraseñas no coinciden") }
             else -> {
                 _uiState.update { it.copy(errorMessage = "") }
-                onSuccess()  // <--- llama la lambda pasada desde la pantalla
+                onSuccess()
             }
         }
     }
-
-
 }

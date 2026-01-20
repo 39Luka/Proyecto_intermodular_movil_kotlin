@@ -21,33 +21,29 @@ import net.iesochoa.silvia.projecto_intermodular.ui.theme.Secondary600
 @Composable
 fun ScreenHeader(
     title: String? = null,
-    showBack: Boolean = false,
-    showProfile: Boolean = true,
+    onBackClick: (() -> Unit)? = null,
+    onProfileClick: (() -> Unit)? = null,  // 🔹 Muestra icono solo si existe lambda
     showSearch: Boolean = false,
     showFilter: Boolean = false,
     searchQuery: String = "",
     onSearchChange: (String) -> Unit = {},
-    onBackClick: () -> Unit = {},
     onFilterClick: () -> Unit = {},
 ) {
     Column(
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-
-        // 🔹 TOP ROW (Back / Title / Profile)
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-
-            if (showBack) {
+            if (onBackClick != null) {
                 Image(
                     painter = painterResource(id = R.drawable.back),
                     contentDescription = "Back",
                     modifier = Modifier
-                        .size(32.dp)
+                        .size(45.dp)
                         .clickable { onBackClick() }
                 )
             } else {
@@ -64,16 +60,17 @@ fun ScreenHeader(
                 Spacer(modifier = Modifier.weight(1f))
             }
 
-            if (showProfile) {
+            if (onProfileClick != null) {  // 🔹 Solo se muestra si hay lambda
                 Image(
                     painter = painterResource(id = R.drawable.profile),
                     contentDescription = "Perfil",
-                    modifier = Modifier.size(32.dp)
+                    modifier = Modifier
+                        .size(45.dp)
+                        .clickable { onProfileClick() }
                 )
             }
         }
 
-        // 🔹 SEARCH + FILTER
         if (showSearch) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -88,10 +85,10 @@ fun ScreenHeader(
 
                 if (showFilter) {
                     Image(
-                        painter = painterResource(id = R.drawable.ic_launcher_foreground),
+                        painter = painterResource(id = R.drawable.filter),
                         contentDescription = "Filtro",
                         modifier = Modifier
-                            .size(32.dp)
+                            .size(45.dp)
                             .clickable { onFilterClick() }
                     )
                 }

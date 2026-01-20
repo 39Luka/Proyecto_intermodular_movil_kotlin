@@ -20,36 +20,33 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import net.iesochoa.silvia.projecto_intermodular.R
+import net.iesochoa.silvia.projecto_intermodular.model.RegisterUiState
 import net.iesochoa.silvia.projecto_intermodular.ui.components.PrimaryButton
 import net.iesochoa.silvia.projecto_intermodular.ui.theme.*
 import net.iesochoa.silvia.projecto_intermodular.viewmodel.RegisterViewModel
 
 @Composable
 fun RegisterScreen(
-   viewModel: RegisterViewModel = viewModel(),
-   onRegisterSuccess: () -> Unit,
-   onLoginClick: () -> Unit
-
+    uiState: RegisterUiState,
+    onUsernameChange: (String) -> Unit,
+    onEmailChange: (String) -> Unit,
+    onPasswordChange: (String) -> Unit,
+    onConfirmPasswordChange: (String) -> Unit,
+    onRegisterClick: () -> Unit,
+    onLoginClick: () -> Unit
 ) {
-    val uiState by viewModel.uiState.collectAsState()
-
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 32.dp),
+        modifier = Modifier.fillMaxSize().padding(horizontal = 32.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        // 🔹 Logo
+
         Image(
             painter = painterResource(id = R.drawable.croissant),
             contentDescription = "Logo",
-            modifier = Modifier
-                .size(64.dp)
-                .padding(bottom = 16.dp)
+            modifier = Modifier.size(64.dp).padding(bottom = 16.dp)
         )
 
-        // 🔹 Título
         Text(
             text = "Registrarse",
             style = AppTypography.headlineMedium,
@@ -58,11 +55,10 @@ fun RegisterScreen(
             modifier = Modifier.padding(bottom = 24.dp)
         )
 
-        // 🔹 Inputs
         SimpleInput(
             label = "Nombre Usuario",
             value = uiState.username,
-            onValueChange = { viewModel.onUsernameChange(it) },
+            onValueChange = onUsernameChange,
             modifier = Modifier.fillMaxWidth()
         )
 
@@ -71,7 +67,7 @@ fun RegisterScreen(
         SimpleInput(
             label = "Email",
             value = uiState.email,
-            onValueChange = { viewModel.onEmailChange(it) },
+            onValueChange = onEmailChange,
             modifier = Modifier.fillMaxWidth()
         )
 
@@ -80,7 +76,7 @@ fun RegisterScreen(
         SimpleInput(
             label = "Contraseña",
             value = uiState.password,
-            onValueChange = { viewModel.onPasswordChange(it) },
+            onValueChange = onPasswordChange,
             modifier = Modifier.fillMaxWidth(),
             visualTransformation = PasswordVisualTransformation()
         )
@@ -90,14 +86,13 @@ fun RegisterScreen(
         SimpleInput(
             label = "Repetir contraseña",
             value = uiState.confirmPassword,
-            onValueChange = { viewModel.onConfirmPasswordChange(it) },
+            onValueChange = onConfirmPasswordChange,
             modifier = Modifier.fillMaxWidth(),
             visualTransformation = PasswordVisualTransformation()
         )
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        // 🔹 Mensaje de error
         if (uiState.errorMessage.isNotEmpty()) {
             Text(
                 text = uiState.errorMessage,
@@ -107,18 +102,14 @@ fun RegisterScreen(
             )
         }
 
-        // 🔹 Botón de registro
         PrimaryButton(
             text = "Registrar",
-            onClick = {
-                viewModel.register { onRegisterSuccess() }
-            },
+            onClick = onRegisterClick,
             modifier = Modifier.fillMaxWidth()
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // 🔹 Link a login
         Row(
             horizontalArrangement = Arrangement.Center,
             modifier = Modifier.fillMaxWidth()
@@ -136,4 +127,5 @@ fun RegisterScreen(
         }
     }
 }
+
 

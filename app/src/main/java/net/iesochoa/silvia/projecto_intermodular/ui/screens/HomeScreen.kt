@@ -1,55 +1,43 @@
 package net.iesochoa.silvia.projecto_intermodular.ui.screens
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import net.iesochoa.silvia.projecto_intermodular.R
-import net.iesochoa.silvia.projecto_intermodular.ui.components.CardItem
+import net.iesochoa.silvia.projecto_intermodular.model.HomeUiState
 import net.iesochoa.silvia.projecto_intermodular.ui.components.CardList
 import net.iesochoa.silvia.projecto_intermodular.ui.components.ScreenHeader
-import net.iesochoa.silvia.projecto_intermodular.ui.components.SearchBar
 import net.iesochoa.silvia.projecto_intermodular.ui.theme.AppTypography
 import net.iesochoa.silvia.projecto_intermodular.ui.theme.Secondary600
+
 @Composable
-fun HomeScreen() {
-
-    var searchQuery by remember { mutableStateOf("") }
-
-    val products = listOf(
-        CardItem(R.drawable.croissant, "Pan", "", "0,65€"),
-        CardItem(R.drawable.croissant, "Pan integral", "0,80€", "0,65€"),
-        CardItem(R.drawable.croissant, "Bollería", "", "Desde 1,20€"),
-        CardItem(R.drawable.croissant, "Croissant", "1,20€", "0,95€")
-    )
+fun HomeScreen(
+    uiState: HomeUiState,
+    onSearchChange: (String) -> Unit,
+    onBackClick: (() -> Unit)?,
+    onProfileClick: () -> Unit
+) {
 
     LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 16.dp),
+        modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
         contentPadding = PaddingValues(bottom = 80.dp)
     ) {
+
         item {
             ScreenHeader(
                 title = "Bienvenido Usuario",
-                showBack = false,
                 showSearch = true,
-                searchQuery = searchQuery,
-                onSearchChange = { searchQuery = it }
+                searchQuery = uiState.searchQuery,
+                onSearchChange = onSearchChange,
+                onBackClick = onBackClick,
+                onProfileClick = onProfileClick
             )
         }
 
-
-        // 🔹 TÍTULO SECCIÓN
+        // 🔹 Últimas promociones
         item {
             Text(
                 text = "Últimas promociones",
@@ -58,10 +46,10 @@ fun HomeScreen() {
             )
         }
 
-        // 🔹 GRID PRODUCTOS
+        // 🔹 GRID PRODUCTOS filtrados
         item {
             CardList(
-                items = products, // 👈 todos los productos juntos
+                items = uiState.filteredPromociones,
                 modifier = Modifier.fillMaxWidth()
             )
         }
@@ -74,15 +62,12 @@ fun HomeScreen() {
             )
         }
 
-        // 🔹 GRID PRODUCTOS
         item {
             CardList(
-                items = products, // 👈 todos los productos juntos
+                items = uiState.filteredTopVentas,
                 modifier = Modifier.fillMaxWidth()
             )
         }
 
     }
 }
-
-

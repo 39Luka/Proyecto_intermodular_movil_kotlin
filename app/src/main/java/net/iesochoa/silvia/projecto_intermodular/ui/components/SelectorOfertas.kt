@@ -37,10 +37,10 @@ data class Oferta(
 @Composable
 fun SelectorOfertas(
     ofertas: List<Oferta>,
-    onSeleccionCambio: (Set<String>) -> Unit
+    seleccionadas: Set<Oferta> = emptySet(),
+    onSeleccionCambio: (Oferta) -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
-    var seleccionadas by remember { mutableStateOf(setOf<String>()) }
 
     Column(modifier = Modifier.fillMaxWidth()) {
 
@@ -53,17 +53,11 @@ fun SelectorOfertas(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                seleccionadas.forEach { id ->
-                    val oferta = ofertas.firstOrNull { it.id == id }
-                    oferta?.let {
-                        OfertaChip(
-                            text = it.nombre,
-                            onRemove = {
-                                seleccionadas -= id
-                                onSeleccionCambio(seleccionadas)
-                            }
-                        )
-                    }
+                seleccionadas.forEach { oferta ->
+                    OfertaChip(
+                        text = oferta.nombre,
+                        onRemove = { onSeleccionCambio(oferta) }
+                    )
                 }
             }
         }
@@ -84,30 +78,22 @@ fun SelectorOfertas(
             modifier = Modifier.fillMaxWidth()
         ) {
             ofertas.forEach { oferta ->
+                val estaSeleccionada = seleccionadas.contains(oferta)
                 DropdownMenuItem(
-                    text = {
-                        Text("${oferta.nombre} (${oferta.descuento * 100}%)")
-                    },
+                    text = { Text("${oferta.nombre} (${oferta.descuento * 100}%)") },
                     onClick = {
-                        seleccionadas =
-                            if (seleccionadas.contains(oferta.id))
-                                seleccionadas - oferta.id
-                            else
-                                seleccionadas + oferta.id
-
-                        onSeleccionCambio(seleccionadas)
-                        expanded = false // 👈 mejora aplicada
+                        onSeleccionCambio(oferta)
+                        expanded = false
                     },
                     trailingIcon = {
-                        if (seleccionadas.contains(oferta.id)) {
-                            Text("✓")
-                        }
+                        if (estaSeleccionada) Text("✓") // Marca si está seleccionada
                     }
                 )
             }
         }
     }
 }
+
 
 @Composable
 fun OfertaChip(
