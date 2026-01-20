@@ -29,7 +29,7 @@ fun SearchBar(
     borderColor: Color = BorderColor,
     cornerRadius: Dp = 12.dp,
     textColor: Color = Secondary500,
-    placeholderText: String = "Buscar productos..."
+    placeholderText: String = "Buscar"
 ) {
     OutlinedTextField(
         value = query,

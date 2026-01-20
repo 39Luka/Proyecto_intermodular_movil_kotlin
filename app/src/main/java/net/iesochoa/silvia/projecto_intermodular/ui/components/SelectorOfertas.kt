@@ -33,30 +33,33 @@ data class Oferta(
 )
 
 
-
 @Composable
 fun SelectorOfertas(
     ofertas: List<Oferta>,
     seleccionadas: Set<Oferta> = emptySet(),
-    onSeleccionCambio: (Oferta) -> Unit
+    onSeleccionCambio: (Set<Oferta>) -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
+    var selectedSet by remember { mutableStateOf(seleccionadas) }
 
     Column(modifier = Modifier.fillMaxWidth()) {
 
         // 🔹 Chips de ofertas seleccionadas
-        if (seleccionadas.isNotEmpty()) {
+        if (selectedSet.isNotEmpty()) {
             FlowRow(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                    .padding(16.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                seleccionadas.forEach { oferta ->
+                selectedSet.forEach { oferta ->
                     OfertaChip(
                         text = oferta.nombre,
-                        onRemove = { onSeleccionCambio(oferta) }
+                        onRemove = {
+                            selectedSet = selectedSet - oferta
+                            onSeleccionCambio(selectedSet)
+                        }
                     )
                 }
             }
@@ -64,10 +67,7 @@ fun SelectorOfertas(
 
         // 🔹 Botón principal
         PrimaryButton(
-            text = if (seleccionadas.isEmpty())
-                "Seleccionar ofertas"
-            else
-                "Editar ofertas",
+            text = if (selectedSet.isEmpty()) "Seleccionar ofertas" else "Editar ofertas",
             onClick = { expanded = true }
         )
 
@@ -78,15 +78,28 @@ fun SelectorOfertas(
             modifier = Modifier.fillMaxWidth()
         ) {
             ofertas.forEach { oferta ->
-                val estaSeleccionada = seleccionadas.contains(oferta)
+                val estaSeleccionada = selectedSet.contains(oferta)
                 DropdownMenuItem(
                     text = { Text("${oferta.nombre} (${oferta.descuento * 100}%)") },
                     onClick = {
-                        onSeleccionCambio(oferta)
-                        expanded = false
+                        selectedSet = if (estaSeleccionada) selectedSet - oferta else selectedSet + oferta
+                        onSeleccionCambio(selectedSet)
                     },
                     trailingIcon = {
-                        if (estaSeleccionada) Text("✓") // Marca si está seleccionada
+                        // 🔹 Chip pequeño como check visual
+                        if (estaSeleccionada) {
+                            Surface(
+                                shape = RoundedCornerShape(50),
+                                color = Primary600
+                            ) {
+                                Text(
+                                    text = "✓",
+                                    color = MaterialTheme.colorScheme.onPrimary,
+                                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                                    style = AppTypography.bodySmall
+                                )
+                            }
+                        }
                     }
                 )
             }

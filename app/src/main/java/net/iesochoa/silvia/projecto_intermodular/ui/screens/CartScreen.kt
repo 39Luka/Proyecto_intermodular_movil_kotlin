@@ -21,7 +21,7 @@ import net.iesochoa.silvia.projecto_intermodular.ui.theme.Secondary600
 @Composable
 fun CartScreen(
     uiState: CartUiState,
-    onOfertaSeleccionada: (Oferta) -> Unit,
+    onOfertasSeleccionadas: (Set<Oferta>) -> Unit,
     onBackClick: (() -> Unit)?,
     onProfileClick: () -> Unit
 ) {
@@ -50,13 +50,17 @@ fun CartScreen(
                 color = Secondary600
             )
         }
-
         item {
             SelectorOfertas(
                 ofertas = uiState.ofertasDisponibles,
-                onSeleccionCambio = { onOfertaSeleccionada(it) }
+                seleccionadas = uiState.ofertasSeleccionadas,
+                onSeleccionCambio = { nuevasOfertas ->
+                    onOfertasSeleccionadas(nuevasOfertas) // envía el Set completo al ViewModel
+                }
             )
         }
+
+
 
         item {
             Text(

@@ -115,10 +115,11 @@ fun AppNavigation(
             val uiState = cartViewModel.uiState.collectAsState().value
             CartScreen(
                 uiState = uiState,
-                onOfertaSeleccionada = cartViewModel::onOfertaSeleccionada,
+                onOfertasSeleccionadas = cartViewModel::onOfertasSeleccionadas,
                 onBackClick = navController.getBackAction(),
-                onProfileClick = { navController.navigate(Screen.Profile.route) } // 🔹 lambda perfil
+                onProfileClick = { navController.navigate(Screen.Profile.route) }
             )
+
         }
 
 

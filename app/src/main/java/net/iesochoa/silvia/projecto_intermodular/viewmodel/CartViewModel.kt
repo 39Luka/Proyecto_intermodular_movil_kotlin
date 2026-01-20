@@ -22,14 +22,12 @@ class CartViewModel : ViewModel() {
     val uiState: StateFlow<CartUiState> = _uiState
 
     // 🔹 Seleccionar / deseleccionar oferta
-    fun onOfertaSeleccionada(oferta: Oferta) {
+    fun onOfertasSeleccionadas(ofertas: Set<Oferta>) {
         _uiState.update { state ->
-            val nuevas = state.ofertasSeleccionadas.toMutableSet()
-            if (nuevas.contains(oferta)) nuevas.remove(oferta)
-            else nuevas.add(oferta)
-            state.copy(ofertasSeleccionadas = nuevas)
+            state.copy(ofertasSeleccionadas = ofertas)
         }
     }
+
 
     fun onProductoAgregado(producto: HorizontalCardItem) {
         _uiState.update { state ->
