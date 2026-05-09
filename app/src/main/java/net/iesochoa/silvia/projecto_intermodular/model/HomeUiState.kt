@@ -8,5 +8,7 @@ data class HomeUiState(
     val topVentas: List<CardItem> = emptyList(),
     val searchQuery: String = "",
     val filteredPromociones: List<CardItem> = emptyList(),
-    val filteredTopVentas: List<CardItem> = emptyList()
+    val filteredTopVentas: List<CardItem> = emptyList(),
+    val isLoading: Boolean = false,
+    val error: String? = null
 )

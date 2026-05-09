@@ -2,136 +2,163 @@ package net.iesochoa.silvia.projecto_intermodular.ui.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
+import net.iesochoa.silvia.projecto_intermodular.R
 import net.iesochoa.silvia.projecto_intermodular.ui.theme.*
 
 data class CardItem(
-    val imageRes: Int,
+    val id: Int = 0,
+    val imageRes: Int = 0,
+    val imageUrl: String? = null,
     val title: String,
-    val bottomText1: String?= null,
-    val bottomText2: String
+    val bottomText1: String? = null,
+    val bottomText2: String,
+    val categoryName: String = "Obrador diario"
 )
 
 @Composable
 fun CustomCard(
-    imageRes: Int,
-    title: String,
-    bottomText1: String?,
-    bottomText2: String,
-    modifier: Modifier = Modifier
+    item: CardItem,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit = {}
 ) {
-    Column(
+    Card(
         modifier = modifier
             .fillMaxWidth()
-            .height(280.dp) // 🔒 TODAS MISMO TAMAÑO
-            .background(BackgroundColor, RoundedCornerShape(12.dp))
-            .border(1.dp, BorderColor, RoundedCornerShape(12.dp))
-            .padding(16.dp)
+            .clickable { onClick() }
+            .shadow(
+                elevation = 8.dp,
+                shape = RoundedCornerShape(24.dp),
+                spotColor = Color(0x14000000)
+            ),
+        shape = RoundedCornerShape(24.dp),
+        colors = CardDefaults.cardColors(containerColor = Neutral100),
+        border = androidx.compose.foundation.BorderStroke(1.dp, Neutral200)
     ) {
-
-        Image(
-            painter = painterResource(id = imageRes),
-            contentDescription = title,
-            contentScale = ContentScale.Crop,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(140.dp) // altura fija de imagen
-                .clip(RoundedCornerShape(12.dp))
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        // 🔹 Título
-        Text(
-            text = title,
-            style = AppTypography.bodyMedium,
-            color = Secondary500,
-            maxLines = 1
-        )
-
-        // 👇 EMPUJA LOS PRECIOS HACIA ABAJO
-        Spacer(modifier = Modifier.weight(1f))
-
-        Column(
-            modifier = Modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(4.dp)
-        ) {
-
-            if (!bottomText1.isNullOrBlank()) {
-                Text(
-                    text = bottomText1,
-                    style = AppTypography.bodySmall,
-                    color = Secondary500.copy(alpha = 0.7f),
-                    textDecoration = TextDecoration.LineThrough,
-                    textAlign = TextAlign.End,
-                    maxLines = 1,
-                    modifier = Modifier.fillMaxWidth()
+        Column(modifier = Modifier.padding(12.dp)) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .aspectRatio(0.9f)
+                    .clip(RoundedCornerShape(18.dp))
+                    .background(Primary100)
+            ) {
+                AsyncImage(
+                    model = item.imageUrl ?: if (item.imageRes != 0) item.imageRes else R.drawable.croissant,
+                    contentDescription = item.title,
+                    placeholder = painterResource(id = R.drawable.croissant),
+                    error = painterResource(id = R.drawable.croissant),
+                    modifier = Modifier.fillMaxSize(),
+                    contentScale = ContentScale.Crop
                 )
             }
 
+            Spacer(modifier = Modifier.height(12.dp))
+
             Text(
-                text = bottomText2,
-                style = AppTypography.bodyMedium,
-                color = Secondary500,
-                textAlign = TextAlign.End,
-                maxLines = 1,
-                modifier = Modifier.fillMaxWidth()
+                text = item.categoryName.uppercase(),
+                style = AppTypography.labelMedium,
+                color = Primary500
             )
+
+            Text(
+                text = item.title,
+                style = AppTypography.headlineSmall.copy(fontWeight = FontWeight.Normal),
+                color = TextPrimary,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+
+            if (!item.bottomText1.isNullOrEmpty()) {
+                Text(
+                    text = item.bottomText1,
+                    style = AppTypography.bodySmall,
+                    color = TextPrimary.copy(alpha = 0.6f),
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.weight(1f) // Esto empuja el precio hacia abajo
+                )
+            } else {
+                Spacer(modifier = Modifier.weight(1f))
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+            
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(1.dp)
+                    .background(Primary200.copy(alpha = 0.5f))
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = androidx.compose.ui.Alignment.CenterVertically
+            ) {
+                Text(
+                    text = item.bottomText2,
+                    style = AppTypography.titleLarge,
+                    color = Secondary500
+                )
+                
+                Text(
+                    text = "Ver detalle",
+                    style = AppTypography.labelLarge,
+                    color = Primary500
+                )
+            }
         }
     }
 }
+
 @Composable
 fun CardList(
     items: List<CardItem>,
+    onItemClick: (CardItem) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
-    Column(modifier = modifier) {
+    Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(16.dp)) {
         val chunkedItems = items.chunked(2)
         chunkedItems.forEach { rowItems ->
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(IntrinsicSize.Max),
                 horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 rowItems.forEach { item ->
                     CustomCard(
-                        imageRes = item.imageRes,
-                        title = item.title,
-                        bottomText1 = item.bottomText1,
-                        bottomText2 = item.bottomText2,
-                        modifier = Modifier.weight(1f) // 👈 igual tamaño
+                        item = item,
+                        onClick = { onItemClick(item) },
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxHeight()
                     )
                 }
 
-                // Si solo hay 1 tarjeta, rellenamos el hueco con un Spacer
                 if (rowItems.size == 1) {
                     Spacer(modifier = Modifier.weight(1f))
                 }
             }
-            Spacer(modifier = Modifier.height(16.dp))
         }
     }
-}
-
-
-@Preview(showBackground = true)
-@Composable
-fun CustomCardPreview() {
-    CustomCard(
-        imageRes = android.R.drawable.ic_menu_camera,
-        title = "Título de la tarjeta",
-        bottomText1 = "Texto inferior 1",
-        bottomText2 = "Texto inferior 2"
-    )
 }

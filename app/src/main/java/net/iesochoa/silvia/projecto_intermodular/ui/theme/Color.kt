@@ -3,32 +3,32 @@ package net.iesochoa.silvia.projecto_intermodular.ui.theme
 import androidx.compose.ui.graphics.Color
 
 // Primary
-val Primary100 = Color(0xFFFFDDC5)
-val Primary200 = Color(0xFFFFBA8B)
-val Primary300 = Color(0xFFFF9851)
-val Primary400 = Color(0xFFFF7313)
-val Primary500 = Color(0xFFD45600)
-val Primary600 = Color(0xFF963D00)
+val Primary100 = Color(0xFFF5F1F8)
+val Primary200 = Color(0xFFE5DCEF)
+val Primary300 = Color(0xFFCFBDDF)
+val Primary400 = Color(0xFFAA8FC0)
+val Primary500 = Color(0xFF7F618F)
+val Primary600 = Color(0xFF5E476D)
 
 // Secondary
-val Secondary100 = Color(0xFFD485FF)
-val Secondary200 = Color(0xFFBE48FF)
-val Secondary300 = Color(0xFFA80CFF)
-val Secondary400 = Color(0xFF8400CE)
-val Secondary500 = Color(0xFF5D0091)
-val Secondary600 = Color(0xFF360054)
+val Secondary100 = Color(0xFFFFF2E8)
+val Secondary200 = Color(0xFFFFD9C3)
+val Secondary300 = Color(0xFFEFB48A)
+val Secondary400 = Color(0xFFD98B5B)
+val Secondary500 = Color(0xFFB9683C)
+val Secondary600 = Color(0xFF8F4C2C)
 
 // Neutral
 val Neutral100 = Color(0xFFFFFFFF)
-val Neutral200 = Color(0xFFE8E8E8)
-val Neutral300 = Color(0xFFD2D2D2)
-val Neutral400 = Color(0xFFBBBBBB)
-val Neutral500 = Color(0xFFA4A4A4)
-val Neutral600 = Color(0xFF8E8E8E)
-val Neutral700 = Color(0xFF777777)
-val Neutral800 = Color(0xFF606060)
-val Neutral900 = Color(0xFF4A4A4A)
-val Neutral1000 = Color(0xFF333333)
+val Neutral200 = Color(0xFFF3EEE9)
+val Neutral300 = Color(0xFFE3D9D3)
+val Neutral400 = Color(0xFFC8BAB1)
+val Neutral500 = Color(0xFFAB9A90)
+val Neutral600 = Color(0xFF89786F)
+val Neutral700 = Color(0xFF6C5D56)
+val Neutral800 = Color(0xFF524641)
+val Neutral900 = Color(0xFF3B322F)
+val Neutral1000 = Color(0xFF2B2328)
 
 // Feedback - Error
 val Error100 = Color(0xFFFFC5CA)
@@ -55,11 +55,11 @@ val Success500 = Color(0xFF31AC80)
 val Success600 = Color(0xFF22795A)
 
 // Design colors
-val BackgroundColor = Color(0xFFEBE6EE)
-val BorderColor = Color(0xFF9A80A9)
+val BackgroundColor = Neutral100
+val BorderColor = Neutral300
 
 // Text
-val TextPrimary = Color(0xFF3B2353)
+val TextPrimary = Color(0xFF2F2633)
 val TextOnPrimary = Color(0xFFFFFFFF)
-val AddToCartBg = Color(0xFF994D00)
+val AddToCartBg = Secondary500
 val AddToCartText = Color(0xFFFFFFFF)

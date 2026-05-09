@@ -41,7 +41,7 @@ private val LightColorScheme = lightColorScheme(
 @Composable
 fun Projecto_IntermodularTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    dynamicColor: Boolean = true, // Android 12+
+    dynamicColor: Boolean = false, // fixed palette to match web branding
     content: @Composable () -> Unit
 ) {
     val colorScheme = when {

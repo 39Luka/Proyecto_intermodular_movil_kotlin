@@ -5,5 +5,7 @@ import net.iesochoa.silvia.projecto_intermodular.ui.components.CardItem
 data class CatalogUiState(
     val searchQuery: String = "",
     val products: List<CardItem> = emptyList(),
-    val filteredProducts: List<CardItem> = emptyList()
+    val filteredProducts: List<CardItem> = emptyList(),
+    val isLoading: Boolean = false,
+    val error: String? = null
 )

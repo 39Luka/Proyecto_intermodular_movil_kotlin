@@ -6,5 +6,7 @@ import net.iesochoa.silvia.projecto_intermodular.ui.components.HorizontalCardIte
 data class OffersUiState(
     val searchQuery: String = "",
     val allProducts: List<HorizontalCardItem> = emptyList(),
-    val filteredProducts: List<HorizontalCardItem> = emptyList()
+    val filteredProducts: List<HorizontalCardItem> = emptyList(),
+    val isLoading: Boolean = false,
+    val error: String? = null
 )

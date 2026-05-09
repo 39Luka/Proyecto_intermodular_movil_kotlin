@@ -1,3 +1,5 @@
+package net.iesochoa.silvia.projecto_intermodular.ui.components
+
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -8,8 +10,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import net.iesochoa.silvia.projecto_intermodular.ui.theme.*
@@ -20,6 +20,7 @@ fun SimpleInput(
     value: String,
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier,
+    enabled: Boolean = true,
     visualTransformation: VisualTransformation = VisualTransformation.None,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default
 ) {
@@ -28,14 +29,15 @@ fun SimpleInput(
         // Label encima con tipografía de heading y color lila
         Text(
             text = label,
-            style = AppTypography.headlineSmall,
-            color = Secondary500
+            style = AppTypography.bodySmall,
+            color = Primary600
         )
 
         // Campo de texto
         OutlinedTextField(
             value = value,
             onValueChange = onValueChange,
+            enabled = enabled,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 8.dp),
@@ -44,15 +46,16 @@ fun SimpleInput(
             visualTransformation = visualTransformation,
             keyboardOptions = keyboardOptions,
             colors = OutlinedTextFieldDefaults.colors(
-                focusedTextColor = Secondary500,
-                unfocusedTextColor = Secondary500,
-                cursorColor = Secondary500,
-                focusedBorderColor = BorderColor,
+                focusedTextColor = TextPrimary,
+                unfocusedTextColor = TextPrimary,
+                cursorColor = Primary600,
+                focusedBorderColor = Primary400,
                 unfocusedBorderColor = BorderColor,
-                focusedContainerColor = BackgroundColor,
-                unfocusedContainerColor = BackgroundColor,
-                focusedLabelColor = Secondary500,
-                unfocusedLabelColor = Secondary500
+                focusedContainerColor = Neutral100,
+                unfocusedContainerColor = Neutral100,
+                disabledContainerColor = Neutral100,
+                disabledBorderColor = Neutral200,
+                disabledTextColor = TextPrimary.copy(alpha = 0.5f)
             )
         )
     }

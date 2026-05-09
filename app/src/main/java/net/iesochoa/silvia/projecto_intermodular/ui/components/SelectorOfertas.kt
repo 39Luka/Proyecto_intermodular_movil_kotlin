@@ -80,7 +80,7 @@ fun SelectorOfertas(
             ofertas.forEach { oferta ->
                 val estaSeleccionada = selectedSet.contains(oferta)
                 DropdownMenuItem(
-                    text = { Text("${oferta.nombre} (${oferta.descuento * 100}%)") },
+                    text = { Text("${oferta.nombre} (${(oferta.descuento * 100).toInt()}%)") },
                     onClick = {
                         selectedSet = if (estaSeleccionada) selectedSet - oferta else selectedSet + oferta
                         onSeleccionCambio(selectedSet)
