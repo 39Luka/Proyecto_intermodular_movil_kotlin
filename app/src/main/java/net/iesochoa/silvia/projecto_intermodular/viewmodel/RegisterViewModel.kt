@@ -37,12 +37,23 @@ class RegisterViewModel @Inject constructor(
 
     fun register(onSuccess: () -> Unit) {
         val state = _uiState.value
+        val emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$".toRegex()
+
         when {
-            state.username.isBlank() -> _uiState.update { it.copy(errorMessage = "El nombre de usuario es obligatorio") }
-            state.email.isBlank() -> _uiState.update { it.copy(errorMessage = "El email es obligatorio") }
-            state.password.isBlank() -> _uiState.update { it.copy(errorMessage = "La contraseña es obligatoria") }
-            state.confirmPassword.isBlank() -> _uiState.update { it.copy(errorMessage = "Debes repetir la contraseña") }
-            state.password != state.confirmPassword -> _uiState.update { it.copy(errorMessage = "Las contraseñas no coinciden") }
+            state.email.isBlank() -> 
+                _uiState.update { it.copy(errorMessage = "El email es obligatorio") }
+            !state.email.matches(emailRegex) -> 
+                _uiState.update { it.copy(errorMessage = "El formato del email no es válido") }
+            state.password.isBlank() -> 
+                _uiState.update { it.copy(errorMessage = "La contraseña es obligatoria") }
+            state.password.length < 8 -> 
+                _uiState.update { it.copy(errorMessage = "La contraseña debe tener al menos 8 caracteres") }
+            state.password.length > 72 -> 
+                _uiState.update { it.copy(errorMessage = "La contraseña no puede superar los 72 caracteres") }
+            state.confirmPassword.isBlank() -> 
+                _uiState.update { it.copy(errorMessage = "Debes repetir la contraseña") }
+            state.password != state.confirmPassword -> 
+                _uiState.update { it.copy(errorMessage = "Las contraseñas no coinciden") }
             else -> {
                 _uiState.update { it.copy(isLoading = true, errorMessage = "") }
                 viewModelScope.launch {
