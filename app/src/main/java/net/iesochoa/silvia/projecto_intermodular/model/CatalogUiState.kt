@@ -6,6 +6,7 @@ data class CatalogUiState(
     val searchQuery: String = "",
     val products: List<CardItem> = emptyList(),
     val filteredProducts: List<CardItem> = emptyList(),
+    val userProfileImage: String? = null,
     val isLoading: Boolean = false,
     val error: String? = null
 )

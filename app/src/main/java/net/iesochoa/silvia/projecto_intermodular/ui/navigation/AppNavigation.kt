@@ -168,11 +168,12 @@ fun AppNavigation(
         composable(Screen.EditImage.route) {
             val viewModel: ProfileViewModel = hiltViewModel()
             val uiState by viewModel.uiState.collectAsState()
+            val context = androidx.compose.ui.platform.LocalContext.current
             ChangeImageScreen(
                 uiState = uiState,
-                onImagePathChange = { viewModel.onImagePathChange(it) },
+                onImageSelected = { viewModel.onImageSelected(it) },
                 onSaveClick = { 
-                    viewModel.updateImage {
+                    viewModel.updateImage(context.contentResolver) {
                         navController.popBackStack()
                     }
                 },
@@ -185,6 +186,7 @@ fun AppNavigation(
             val uiState by viewModel.uiState.collectAsState()
             ChangePasswordScreen(
                 uiState = uiState,
+                onCurrentPasswordChange = { viewModel.onCurrentPasswordChange(it) },
                 onNewPasswordChange = { viewModel.onNewPasswordChange(it) },
                 onRepeatPasswordChange = { viewModel.onRepeatPasswordChange(it) },
                 onSaveClick = { 

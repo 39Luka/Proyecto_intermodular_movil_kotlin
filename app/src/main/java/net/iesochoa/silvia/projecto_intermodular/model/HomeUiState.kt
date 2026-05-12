@@ -9,6 +9,7 @@ data class HomeUiState(
     val searchQuery: String = "",
     val filteredPromociones: List<CardItem> = emptyList(),
     val filteredTopVentas: List<CardItem> = emptyList(),
+    val userProfileImage: String? = null,
     val isLoading: Boolean = false,
     val error: String? = null
 )

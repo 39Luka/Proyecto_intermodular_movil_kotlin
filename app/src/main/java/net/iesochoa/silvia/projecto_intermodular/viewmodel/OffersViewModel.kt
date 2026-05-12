@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import net.iesochoa.silvia.projecto_intermodular.data.AuthRepository
 import net.iesochoa.silvia.projecto_intermodular.data.ProductRepository
 import net.iesochoa.silvia.projecto_intermodular.data.PromotionRepository
 import net.iesochoa.silvia.projecto_intermodular.model.OffersUiState
@@ -17,7 +18,8 @@ import javax.inject.Inject
 @HiltViewModel
 class OffersViewModel @Inject constructor(
     private val promotionRepository: PromotionRepository,
-    private val productRepository: ProductRepository
+    private val productRepository: ProductRepository,
+    private val authRepository: AuthRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(OffersUiState())
@@ -27,6 +29,15 @@ class OffersViewModel @Inject constructor(
 
     init {
         loadPromotions()
+        observeUser()
+    }
+
+    private fun observeUser() {
+        viewModelScope.launch {
+            authRepository.getUser().collect { user ->
+                _uiState.update { it.copy(userProfileImage = user?.profileImageBase64) }
+            }
+        }
     }
 
     fun loadPromotions() {

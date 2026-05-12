@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import net.iesochoa.silvia.projecto_intermodular.data.AuthRepository
 import net.iesochoa.silvia.projecto_intermodular.model.LoginUiState
+import net.iesochoa.silvia.projecto_intermodular.ui.utils.ErrorMapper
 import javax.inject.Inject
 
 @HiltViewModel
@@ -43,7 +44,7 @@ class LoginViewModel @Inject constructor(
             } catch (e: Exception) {
                 _uiState.update { it.copy(
                     isLoading = false,
-                    errorMessage = e.message ?: "Error al iniciar sesión"
+                    errorMessage = ErrorMapper.map(e, "Error al iniciar sesión")
                 ) }
             }
         }

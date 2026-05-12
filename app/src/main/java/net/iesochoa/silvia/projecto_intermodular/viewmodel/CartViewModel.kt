@@ -13,6 +13,7 @@ import kotlinx.coroutines.launch
 import net.iesochoa.silvia.projecto_intermodular.data.*
 import net.iesochoa.silvia.projecto_intermodular.model.CartUiState
 import net.iesochoa.silvia.projecto_intermodular.model.CartItemState
+import net.iesochoa.silvia.projecto_intermodular.ui.utils.ErrorMapper
 import org.json.JSONObject
 import retrofit2.HttpException
 import javax.inject.Inject
@@ -29,6 +30,7 @@ class CartViewModel @Inject constructor(
     val uiState: StateFlow<CartUiState> = _uiState.asStateFlow()
 
     init {
+        observeUser()
         viewModelScope.launch {
             cartRepository.items.collect { repoItems ->
                 val currentItems = _uiState.value.items
@@ -45,11 +47,17 @@ class CartViewModel @Inject constructor(
                 _uiState.update { it.copy(items = updatedItems) }
                 
                 updatedItems.forEach { item ->
-                    if (item.applicablePromotions.isEmpty()) {
-                        fetchPromotionsForItem(item.product.id)
-                    }
+                    fetchPromotionsForItem(item.product.id)
                 }
                 calculateTotal()
+            }
+        }
+    }
+
+    private fun observeUser() {
+        viewModelScope.launch {
+            authRepository.getUser().collect { user ->
+                _uiState.update { it.copy(userProfileImage = user?.profileImageBase64) }
             }
         }
     }
@@ -57,7 +65,9 @@ class CartViewModel @Inject constructor(
     private fun fetchPromotionsForItem(productId: Int) {
         viewModelScope.launch {
             try {
-                val promos = promotionRepository.getActivePromotions(productId)
+                val user = authRepository.getUser().first()
+                val promos = promotionRepository.getActivePromotions(productId, user?.id)
+                Log.d("CartViewModel", "Fetched ${promos.size} promotions for product $productId (user: ${user?.id})")
                 _uiState.update { state ->
                     val newItems = state.items.map { item ->
                         if (item.product.id == productId) {
@@ -132,18 +142,10 @@ class CartViewModel @Inject constructor(
                 }
             } catch (e: Exception) {
                 Log.e("CartViewModel", "Checkout failed", e)
-                val message = if (e is HttpException) {
-                    try {
-                        val errorBody = e.response()?.errorBody()?.string()
-                        JSONObject(errorBody ?: "").optString("message", "Error en el servidor")
-                    } catch (jsonEx: Exception) {
-                        "Error del servidor (${e.code()})"
-                    }
-                } else {
-                    e.message ?: "Error al procesar la compra"
-                }
-                
-                _uiState.update { it.copy(isProcessing = false, error = message) }
+                _uiState.update { it.copy(
+                    isProcessing = false, 
+                    error = ErrorMapper.map(e, "Error al procesar la compra")
+                ) }
             }
         }
     }

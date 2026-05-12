@@ -7,6 +7,7 @@ data class OffersUiState(
     val searchQuery: String = "",
     val allProducts: List<HorizontalCardItem> = emptyList(),
     val filteredProducts: List<HorizontalCardItem> = emptyList(),
+    val userProfileImage: String? = null,
     val isLoading: Boolean = false,
     val error: String? = null
 )

@@ -13,15 +13,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
 import net.iesochoa.silvia.projecto_intermodular.R
 import net.iesochoa.silvia.projecto_intermodular.model.ProfileUiState
 import net.iesochoa.silvia.projecto_intermodular.ui.components.PrimaryButton
 import net.iesochoa.silvia.projecto_intermodular.ui.components.ScreenHeader
 import net.iesochoa.silvia.projecto_intermodular.ui.theme.*
+import net.iesochoa.silvia.projecto_intermodular.ui.utils.decodeBase64ToBitmap
 
 @Composable
 fun ProfileScreen(
@@ -39,7 +43,11 @@ fun ProfileScreen(
         contentPadding = PaddingValues(bottom = 80.dp, top = 16.dp)
     ) {
         item {
-            ScreenHeader(title = "Mi Perfil", onBackClick = onBackClick)
+            ScreenHeader(
+                title = "Mi Perfil",
+                onBackClick = onBackClick,
+                profileImage = uiState.profileImage
+            )
         }
 
         item {
@@ -56,13 +64,37 @@ fun ProfileScreen(
                         .background(Primary100, CircleShape)
                         .padding(4.dp)
                 ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.profile),
-                        contentDescription = "Avatar",
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .clip(CircleShape)
-                    )
+                    if (!uiState.profileImage.isNullOrEmpty()) {
+                        val bitmap = uiState.profileImage!!.decodeBase64ToBitmap()
+                        if (bitmap != null) {
+                            Image(
+                                bitmap = bitmap.asImageBitmap(),
+                                contentDescription = "Avatar",
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .clip(CircleShape),
+                                contentScale = ContentScale.Crop
+                            )
+                        } else {
+                            Image(
+                                painter = painterResource(id = R.drawable.profile),
+                                contentDescription = "Avatar",
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .clip(CircleShape),
+                                contentScale = ContentScale.Crop
+                            )
+                        }
+                    } else {
+                        Image(
+                            painter = painterResource(id = R.drawable.profile),
+                            contentDescription = "Avatar",
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .clip(CircleShape),
+                            contentScale = ContentScale.Crop
+                        )
+                    }
                 }
 
                 Text(

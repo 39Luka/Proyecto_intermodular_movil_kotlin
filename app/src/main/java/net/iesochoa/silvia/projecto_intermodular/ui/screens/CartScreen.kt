@@ -44,7 +44,8 @@ fun CartScreen(
             ScreenHeader(
                 title = "Mi carrito",
                 onBackClick = onBackClick,
-                onProfileClick = onProfileClick
+                onProfileClick = onProfileClick,
+                profileImage = uiState.userProfileImage
             )
         }
 

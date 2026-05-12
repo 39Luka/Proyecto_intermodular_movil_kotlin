@@ -32,7 +32,8 @@ fun CatalogScreen(
                 searchQuery = uiState.searchQuery,
                 onSearchChange = onSearchQueryChange,
                 onBackClick = onBackClick,
-                onProfileClick = onProfileClick
+                onProfileClick = onProfileClick,
+                profileImage = uiState.userProfileImage
             )
         }
 

@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import net.iesochoa.silvia.projecto_intermodular.data.AuthRepository
 import net.iesochoa.silvia.projecto_intermodular.model.RegisterUiState
+import net.iesochoa.silvia.projecto_intermodular.ui.utils.ErrorMapper
 import javax.inject.Inject
 
 @HiltViewModel
@@ -64,7 +65,7 @@ class RegisterViewModel @Inject constructor(
                     } catch (e: Exception) {
                         _uiState.update { it.copy(
                             isLoading = false,
-                            errorMessage = e.message ?: "Error al registrarse"
+                            errorMessage = ErrorMapper.map(e, "Error al registrarse")
                         ) }
                     }
                 }

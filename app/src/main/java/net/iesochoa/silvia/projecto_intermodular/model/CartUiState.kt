@@ -7,6 +7,7 @@ import net.iesochoa.silvia.projecto_intermodular.ui.components.Oferta
 data class CartUiState(
     val items: List<CartItemState> = emptyList(),
     val total: Double = 0.0,
+    val userProfileImage: String? = null,
     val isProcessing: Boolean = false,
     val error: String? = null
 )

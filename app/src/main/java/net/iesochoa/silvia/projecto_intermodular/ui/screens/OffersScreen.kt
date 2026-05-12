@@ -33,7 +33,8 @@ fun OffersScreen(
                 searchQuery = uiState.searchQuery,
                 onSearchChange = onSearchChange,
                 onBackClick = onBackClick,
-                onProfileClick = onProfileClick
+                onProfileClick = onProfileClick,
+                profileImage = uiState.userProfileImage
             )
         }
 

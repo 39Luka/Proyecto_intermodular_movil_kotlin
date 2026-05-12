@@ -64,8 +64,8 @@ fun CustomCard(
                     contentDescription = item.title,
                     placeholder = painterResource(id = R.drawable.croissant),
                     error = painterResource(id = R.drawable.croissant),
-                    modifier = Modifier.fillMaxSize(),
-                    contentScale = ContentScale.Crop
+                    modifier = Modifier.fillMaxSize().padding(8.dp),
+                    contentScale = ContentScale.Fit
                 )
             }
 

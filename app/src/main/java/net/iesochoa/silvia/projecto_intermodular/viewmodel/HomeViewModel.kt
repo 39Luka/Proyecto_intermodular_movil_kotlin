@@ -6,8 +6,10 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import net.iesochoa.silvia.projecto_intermodular.data.AuthRepository
 import net.iesochoa.silvia.projecto_intermodular.data.ProductRepository
 import net.iesochoa.silvia.projecto_intermodular.model.HomeUiState
 import net.iesochoa.silvia.projecto_intermodular.ui.components.CardItem
@@ -16,14 +18,24 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val productRepository: ProductRepository
+    private val productRepository: ProductRepository,
+    private val authRepository: AuthRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(HomeUiState())
-    val uiState: StateFlow<HomeUiState> = _uiState
+    val uiState: StateFlow<HomeUiState> = _uiState.asStateFlow()
 
     init {
         loadHomeData()
+        observeUser()
+    }
+
+    private fun observeUser() {
+        viewModelScope.launch {
+            authRepository.getUser().collect { user ->
+                _uiState.update { it.copy(userProfileImage = user?.profileImageBase64) }
+            }
+        }
     }
 
     fun loadHomeData() {

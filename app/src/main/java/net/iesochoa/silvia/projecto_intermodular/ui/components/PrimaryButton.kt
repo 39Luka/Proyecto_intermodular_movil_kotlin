@@ -23,12 +23,11 @@ fun PrimaryButton(
     text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    enabled: Boolean = true
-) {
-    val gradient = Brush.linearGradient(
-        colors = listOf(Primary500, Primary600)
+    enabled: Boolean = true,
+    gradient: Brush = Brush.linearGradient(
+        colors = listOf(Secondary400, Secondary600)
     )
-
+) {
     Box(
         modifier = modifier
             .fillMaxWidth()
