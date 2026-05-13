@@ -168,8 +168,8 @@ class PromotionRepository(private val apiService: ApiService) {
 }
 
 class PurchaseRepository(private val apiService: ApiService) {
-    suspend fun getPurchases(userId: Int? = null): List<Purchase> {
-        return apiService.getPurchases(userId = userId).content
+    suspend fun getPurchases(userId: Int? = null, page: Int = 0, pageSize: Int = 10): PagedResponse<Purchase> {
+        return apiService.getPurchases(page = page, size = pageSize, userId = userId)
     }
 
     suspend fun getPurchaseById(id: Int): Purchase {

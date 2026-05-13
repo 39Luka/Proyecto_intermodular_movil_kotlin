@@ -9,5 +9,8 @@ data class OffersUiState(
     val filteredProducts: List<HorizontalCardItem> = emptyList(),
     val userProfileImage: String? = null,
     val isLoading: Boolean = false,
-    val error: String? = null
+    val error: String? = null,
+    val currentPage: Int = 0,
+    val totalPages: Int = 1,
+    val pageSize: Int = 12
 )

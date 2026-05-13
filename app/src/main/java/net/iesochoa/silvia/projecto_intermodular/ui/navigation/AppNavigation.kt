@@ -93,7 +93,12 @@ fun AppNavigation(
                     navController.navigate("${Screen.ProductDetail.route}/$productId")
                 },
                 onBackClick = { navController.popBackStack() },
-                onProfileClick = { navController.navigate(Screen.Profile.route) }
+                onProfileClick = { navController.navigate(Screen.Profile.route) },
+                onNextPage = { viewModel.goToNextPage() },
+                onPreviousPage = { viewModel.goToPreviousPage() },
+                onFilterClick = { viewModel.showFilterDialog() },
+                onCategorySelect = { categoryId -> viewModel.selectCategory(categoryId) },
+                onDismissFilter = { viewModel.hideFilterDialog() }
             )
         }
 
@@ -107,7 +112,9 @@ fun AppNavigation(
                     navController.navigate("${Screen.ProductDetail.route}/$productId")
                 },
                 onBackClick = { navController.popBackStack() },
-                onProfileClick = { navController.navigate(Screen.Profile.route) }
+                onProfileClick = { navController.navigate(Screen.Profile.route) },
+                onNextPage = { viewModel.goToNextPage() },
+                onPreviousPage = { viewModel.goToPreviousPage() }
             )
         }
 
@@ -121,7 +128,9 @@ fun AppNavigation(
                     navController.navigate("${Screen.PurchaseDetail.route}/$purchaseId")
                 },
                 onBackClick = { navController.popBackStack() },
-                onProfileClick = { navController.navigate(Screen.Profile.route) }
+                onProfileClick = { navController.navigate(Screen.Profile.route) },
+                onNextPage = { viewModel.goToNextPage() },
+                onPreviousPage = { viewModel.goToPreviousPage() }
             )
         }
 

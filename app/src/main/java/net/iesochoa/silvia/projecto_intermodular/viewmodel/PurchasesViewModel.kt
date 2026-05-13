@@ -37,14 +37,20 @@ class PurchasesViewModel @Inject constructor(
         }
     }
 
-    fun loadPurchases() {
+    private fun loadPurchases() {
+        val pageSize = _uiState.value.pageSize
+        val currentPage = _uiState.value.currentPage
+        
         _uiState.update { it.copy(isLoading = true, error = null) }
         viewModelScope.launch {
             try {
                 authRepository.getUser().collect { user ->
                     if (user != null) {
                         try {
-                            val purchases = purchaseRepository.getPurchases(userId = user.id)
+                            val purchasesResponse = purchaseRepository.getPurchases(userId = user.id, page = currentPage, pageSize = pageSize)
+                            val purchases = purchasesResponse.content
+                            val totalPages = purchasesResponse.totalPages ?: 1
+                            
                             val items = purchases.map { purchase ->
                                 PedidoItem(
                                     id = purchase.id,
@@ -53,7 +59,7 @@ class PurchasesViewModel @Inject constructor(
                                     total = "€${String.format(Locale.US, "%.2f", purchase.total ?: 0.0)}"
                                 )
                             }
-                            _uiState.update { it.copy(pedidos = items, isLoading = false) }
+                            _uiState.update { it.copy(pedidos = items, isLoading = false, totalPages = totalPages) }
                         } catch (e: Exception) {
                             _uiState.update { it.copy(
                                 isLoading = false,
@@ -72,5 +78,22 @@ class PurchasesViewModel @Inject constructor(
 
     fun onSearchQueryChange(newQuery: String) {
         _uiState.update { it.copy(searchQuery = newQuery) }
+    }
+
+    fun goToNextPage() {
+        val currentPage = _uiState.value.currentPage
+        val totalPages = _uiState.value.totalPages
+        if (currentPage < totalPages - 1) {
+            _uiState.update { it.copy(currentPage = currentPage + 1) }
+            loadPurchases()
+        }
+    }
+
+    fun goToPreviousPage() {
+        val currentPage = _uiState.value.currentPage
+        if (currentPage > 0) {
+            _uiState.update { it.copy(currentPage = currentPage - 1) }
+            loadPurchases()
+        }
     }
 }

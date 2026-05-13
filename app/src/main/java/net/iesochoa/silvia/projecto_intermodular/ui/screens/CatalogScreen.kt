@@ -17,8 +17,22 @@ fun CatalogScreen(
     onSearchQueryChange: (String) -> Unit,
     onProductClick: (Int) -> Unit,
     onBackClick: (() -> Unit)?,
-    onProfileClick: () -> Unit
+    onProfileClick: () -> Unit,
+    onNextPage: () -> Unit,
+    onPreviousPage: () -> Unit,
+    onFilterClick: () -> Unit,
+    onCategorySelect: (Int?) -> Unit,
+    onDismissFilter: () -> Unit
 ) {
+    if (uiState.showFilterDialog) {
+        CategoryFilterDialog(
+            categories = uiState.categories,
+            selectedCategoryId = uiState.selectedCategoryId,
+            onCategorySelected = onCategorySelect,
+            onDismiss = onDismissFilter
+        )
+    }
+
     LazyColumn(
         modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
@@ -33,6 +47,7 @@ fun CatalogScreen(
                 onSearchChange = onSearchQueryChange,
                 onBackClick = onBackClick,
                 onProfileClick = onProfileClick,
+                onFilterClick = onFilterClick,
                 profileImage = uiState.userProfileImage
             )
         }
@@ -63,6 +78,16 @@ fun CatalogScreen(
             CardList(
                 items = uiState.filteredProducts,
                 onItemClick = { onProductClick(it.id) },
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
+
+        item {
+            PaginationControls(
+                currentPage = uiState.currentPage,
+                totalPages = uiState.totalPages,
+                onPreviousClick = onPreviousPage,
+                onNextClick = onNextPage,
                 modifier = Modifier.fillMaxWidth()
             )
         }
