@@ -25,9 +25,9 @@ class PurchaseViewModel @Inject constructor(
         _uiState.value = _uiState.value.copy(isLoading = true, error = null)
         viewModelScope.launch {
             try {
-                val purchases = purchaseRepository.getPurchases(userId)
+                val response = purchaseRepository.getPurchases(userId)
                 _uiState.value = _uiState.value.copy(
-                    purchases = purchases,
+                    purchases = response.content,
                     isLoading = false
                 )
             } catch (e: Exception) {
