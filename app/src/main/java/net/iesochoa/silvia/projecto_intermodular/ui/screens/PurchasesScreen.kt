@@ -17,7 +17,9 @@ fun PurchasesScreen(
     onSearchChange: (String) -> Unit,
     onPurchaseClick: (Int) -> Unit,
     onBackClick: (() -> Unit)?,
-    onProfileClick: () -> Unit
+    onProfileClick: () -> Unit,
+    onNextPage: () -> Unit,
+    onPreviousPage: () -> Unit
 ) {
     LazyColumn(
         modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp),
@@ -64,6 +66,16 @@ fun PurchasesScreen(
             PedidoList(
                 pedidos = uiState.pedidos,
                 onItemClick = { onPurchaseClick(it.id) }
+            )
+        }
+
+        item {
+            PaginationControls(
+                currentPage = uiState.currentPage,
+                totalPages = uiState.totalPages,
+                onPreviousClick = onPreviousPage,
+                onNextClick = onNextPage,
+                modifier = Modifier.fillMaxWidth()
             )
         }
     }

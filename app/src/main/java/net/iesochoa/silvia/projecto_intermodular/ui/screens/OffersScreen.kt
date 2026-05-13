@@ -17,7 +17,9 @@ fun OffersScreen(
     onSearchChange: (String) -> Unit,
     onProductClick: (Int) -> Unit,
     onBackClick: (() -> Unit)?,
-    onProfileClick: () -> Unit
+    onProfileClick: () -> Unit,
+    onNextPage: () -> Unit,
+    onPreviousPage: () -> Unit
 ) {
     LazyColumn(
         modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp),
@@ -64,6 +66,16 @@ fun OffersScreen(
             HorizontalCardList(
                 items = uiState.filteredProducts,
                 onItemClick = { onProductClick(it.id) },
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
+
+        item {
+            PaginationControls(
+                currentPage = uiState.currentPage,
+                totalPages = uiState.totalPages,
+                onPreviousClick = onPreviousPage,
+                onNextClick = onNextPage,
                 modifier = Modifier.fillMaxWidth()
             )
         }

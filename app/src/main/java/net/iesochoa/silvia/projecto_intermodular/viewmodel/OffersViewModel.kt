@@ -40,11 +40,17 @@ class OffersViewModel @Inject constructor(
         }
     }
 
-    fun loadPromotions() {
+    private fun loadPromotions() {
+        val pageSize = _uiState.value.pageSize
+        val currentPage = _uiState.value.currentPage
+        
         _uiState.update { it.copy(isLoading = true, error = null) }
         viewModelScope.launch {
             try {
-                val products = productRepository.getProducts(null, 0, 100).content
+                val productsResponse = productRepository.getProducts(null, currentPage, pageSize)
+                val products = productsResponse.content
+                val totalPages = productsResponse.totalPages ?: 1
+                
                 val offerItems = mutableListOf<HorizontalCardItem>()
                 
                 for (product in products) {
@@ -70,7 +76,8 @@ class OffersViewModel @Inject constructor(
                 _uiState.update { it.copy(
                     allProducts = offerItems,
                     filteredProducts = offerItems,
-                    isLoading = false
+                    isLoading = false,
+                    totalPages = totalPages
                 ) }
             } catch (e: Exception) {
                 _uiState.update { it.copy(
@@ -94,5 +101,22 @@ class OffersViewModel @Inject constructor(
             searchQuery = query,
             filteredProducts = filtered
         ) }
+    }
+
+    fun goToNextPage() {
+        val currentPage = _uiState.value.currentPage
+        val totalPages = _uiState.value.totalPages
+        if (currentPage < totalPages - 1) {
+            _uiState.update { it.copy(currentPage = currentPage + 1) }
+            loadPromotions()
+        }
+    }
+
+    fun goToPreviousPage() {
+        val currentPage = _uiState.value.currentPage
+        if (currentPage > 0) {
+            _uiState.update { it.copy(currentPage = currentPage - 1) }
+            loadPromotions()
+        }
     }
 }
