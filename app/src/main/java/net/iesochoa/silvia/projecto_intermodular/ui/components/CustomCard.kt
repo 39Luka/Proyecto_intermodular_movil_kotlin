@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -17,119 +18,163 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
+import androidx.compose.ui.unit.sp
 import net.iesochoa.silvia.projecto_intermodular.R
+import net.iesochoa.silvia.projecto_intermodular.model.CardItem
 import net.iesochoa.silvia.projecto_intermodular.ui.theme.*
 
-data class CardItem(
-    val id: Int = 0,
-    val imageRes: Int = 0,
-    val imageUrl: String? = null,
-    val title: String,
-    val bottomText1: String? = null,
-    val bottomText2: String,
-    val categoryName: String = "Obrador diario"
-)
-
+/**
+ * Tarjeta vertical para mostrar productos en cuadrículas o listas.
+ * Incluye imagen, título, descripción corta, precio y un indicador de "Agotado".
+ */
+/**
+ * Tarjeta vertical para mostrar productos en cuadrículas o listas.
+ * Incluye imagen, título, descripción corta, precio y un indicador de "Agotado".
+ *
+ * @param item Objeto con los datos del producto para la UI.
+ * @param modifier Modificador de Compose para el tamaño y disposición.
+ * @param onClick Acción al pulsar sobre la tarjeta (solo si hay stock).
+ */
 @Composable
 fun CustomCard(
     item: CardItem,
     modifier: Modifier = Modifier,
     onClick: () -> Unit = {}
 ) {
+    val alpha = if (item.isOutOfStock) 0.6f else 1f
+    
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .clickable { onClick() }
+            .clickable(enabled = !item.isOutOfStock) { onClick() }
             .shadow(
                 elevation = 8.dp,
                 shape = RoundedCornerShape(24.dp),
                 spotColor = Color(0x14000000)
             ),
         shape = RoundedCornerShape(24.dp),
-        colors = CardDefaults.cardColors(containerColor = Neutral100),
-        border = androidx.compose.foundation.BorderStroke(1.dp, Neutral200)
+        colors = CardDefaults.cardColors(
+            containerColor = if (item.isOutOfStock) Neutral200 else Neutral100
+        ),
+        border = androidx.compose.foundation.BorderStroke(1.dp, if (item.isOutOfStock) Neutral300 else Neutral200)
     ) {
-        Column(modifier = Modifier.padding(12.dp)) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .aspectRatio(0.9f)
-                    .clip(RoundedCornerShape(18.dp))
-                    .background(Primary100)
-            ) {
-                AsyncImage(
-                    model = item.imageUrl ?: if (item.imageRes != 0) item.imageRes else R.drawable.croissant,
-                    contentDescription = item.title,
-                    placeholder = painterResource(id = R.drawable.croissant),
-                    error = painterResource(id = R.drawable.croissant),
-                    modifier = Modifier.fillMaxSize().padding(8.dp),
-                    contentScale = ContentScale.Fit
-                )
-            }
+        Box(modifier = Modifier.fillMaxSize()) {
+            Column(modifier = Modifier.padding(12.dp)) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .aspectRatio(0.9f)
+                        .clip(RoundedCornerShape(18.dp))
+                        .background(if (item.isOutOfStock) Neutral300 else Primary100)
+                ) {
+                    AppAsyncImage(
+                        model = item.imageUrl ?: if (item.imageRes != 0) item.imageRes else null,
+                        contentDescription = item.title,
+                        modifier = Modifier.fillMaxSize(),
+                        contentScale = ContentScale.Crop,
+                        alpha = alpha
+                    )
+                }
 
-            Spacer(modifier = Modifier.height(12.dp))
+                Spacer(modifier = Modifier.height(12.dp))
 
-            Text(
-                text = item.categoryName.uppercase(),
-                style = AppTypography.labelMedium,
-                color = Primary500
-            )
-
-            Text(
-                text = item.title,
-                style = AppTypography.headlineSmall.copy(fontWeight = FontWeight.Normal),
-                color = TextPrimary,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
-
-            if (!item.bottomText1.isNullOrEmpty()) {
                 Text(
-                    text = item.bottomText1,
-                    style = AppTypography.bodySmall,
-                    color = TextPrimary.copy(alpha = 0.6f),
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.weight(1f) // Esto empuja el precio hacia abajo
+                    text = item.categoryName.uppercase(),
+                    style = AppTypography.labelMedium,
+                    color = if (item.isOutOfStock) TextPrimary.copy(alpha = 0.4f) else Primary500
                 )
-            } else {
-                Spacer(modifier = Modifier.weight(1f))
-            }
 
-            Spacer(modifier = Modifier.height(8.dp))
-            
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(1.dp)
-                    .background(Primary200.copy(alpha = 0.5f))
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = androidx.compose.ui.Alignment.CenterVertically
-            ) {
                 Text(
-                    text = item.bottomText2,
-                    style = AppTypography.titleLarge,
-                    color = Secondary500
+                    text = item.title,
+                    style = AppTypography.headlineSmall.copy(fontWeight = FontWeight.Normal),
+                    color = if (item.isOutOfStock) TextPrimary.copy(alpha = 0.5f) else TextPrimary,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
+
+                if (!item.bottomText1.isNullOrEmpty()) {
+                    Text(
+                        text = item.bottomText1,
+                        style = AppTypography.bodySmall,
+                        color = TextPrimary.copy(alpha = if (item.isOutOfStock) 0.3f else 0.6f),
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.weight(1f)
+                    )
+                } else {
+                    Spacer(modifier = Modifier.weight(1f))
+                }
+
+                Spacer(modifier = Modifier.height(8.dp))
                 
-                Text(
-                    text = "Ver detalle",
-                    style = AppTypography.labelLarge,
-                    color = Primary500
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(1.dp)
+                        .background(Primary200.copy(alpha = if (item.isOutOfStock) 0.2f else 0.5f))
                 )
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = androidx.compose.ui.Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = item.bottomText2,
+                        style = AppTypography.titleLarge,
+                        color = if (item.isOutOfStock) Secondary500.copy(alpha = 0.5f) else Secondary500
+                    )
+                    
+                    Text(
+                        text = if (item.isOutOfStock) "No disponible" else "Ver detalle",
+                        style = AppTypography.labelLarge,
+                        color = if (item.isOutOfStock) TextPrimary.copy(alpha = 0.4f) else Primary500
+                    )
+                }
+            }
+
+            if (item.isOutOfStock) {
+                Box(
+                    modifier = Modifier
+                        .matchParentSize()
+                        .clip(RoundedCornerShape(24.dp))
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .requiredWidth(300.dp) // Ancho suficiente para la diagonal
+                            .height(32.dp)
+                            .align(androidx.compose.ui.Alignment.Center)
+                            .graphicsLayer {
+                                rotationZ = -35f
+                            }
+                            .background(Secondary500.copy(alpha = 0.9f)),
+                        contentAlignment = androidx.compose.ui.Alignment.Center
+                    ) {
+                        Text(
+                            text = "AGOTADO",
+                            color = Color.White,
+                            style = AppTypography.labelLarge.copy(
+                                fontWeight = FontWeight.ExtraBold,
+                                letterSpacing = 1.5.sp
+                            )
+                        )
+                    }
+                }
             }
         }
     }
 }
 
+/**
+ * Rejilla de tarjetas de productos dispuestas de dos en dos.
+ * @param items Lista de productos a mostrar.
+ * @param onItemClick Acción al pulsar sobre un producto.
+ */
 @Composable
 fun CardList(
     items: List<CardItem>,

@@ -13,7 +13,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.layout.ContentScale
@@ -22,11 +21,15 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import net.iesochoa.silvia.projecto_intermodular.R
 import net.iesochoa.silvia.projecto_intermodular.model.ProfileUiState
+import net.iesochoa.silvia.projecto_intermodular.ui.components.AppAsyncImage
 import net.iesochoa.silvia.projecto_intermodular.ui.components.PrimaryButton
 import net.iesochoa.silvia.projecto_intermodular.ui.components.ScreenHeader
 import net.iesochoa.silvia.projecto_intermodular.ui.theme.*
-import net.iesochoa.silvia.projecto_intermodular.ui.utils.decodeBase64ToBitmap
 
+/**
+ * Pantalla de perfil del usuario.
+ * Muestra información básica y enlaces para editar imagen, contraseña y cerrar sesión.
+ */
 @Composable
 fun ProfileScreen(
     uiState: ProfileUiState,
@@ -64,37 +67,14 @@ fun ProfileScreen(
                         .background(Primary100, CircleShape)
                         .padding(4.dp)
                 ) {
-                    if (!uiState.profileImage.isNullOrEmpty()) {
-                        val bitmap = uiState.profileImage!!.decodeBase64ToBitmap()
-                        if (bitmap != null) {
-                            Image(
-                                bitmap = bitmap.asImageBitmap(),
-                                contentDescription = "Avatar",
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .clip(CircleShape),
-                                contentScale = ContentScale.Crop
-                            )
-                        } else {
-                            Image(
-                                painter = painterResource(id = R.drawable.profile),
-                                contentDescription = "Avatar",
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .clip(CircleShape),
-                                contentScale = ContentScale.Crop
-                            )
-                        }
-                    } else {
-                        Image(
-                            painter = painterResource(id = R.drawable.profile),
-                            contentDescription = "Avatar",
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .clip(CircleShape),
-                            contentScale = ContentScale.Crop
-                        )
-                    }
+                    AppAsyncImage(
+                        model = uiState.profileImage ?: R.drawable.profile,
+                        contentDescription = "Avatar",
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .clip(CircleShape),
+                        contentScale = ContentScale.Crop
+                    )
                 }
 
                 Text(

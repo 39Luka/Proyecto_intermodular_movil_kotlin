@@ -10,15 +10,21 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import net.iesochoa.silvia.projecto_intermodular.data.AuthRepository
+import net.iesochoa.silvia.projecto_intermodular.data.CategoryRepository
 import net.iesochoa.silvia.projecto_intermodular.data.ProductRepository
+import net.iesochoa.silvia.projecto_intermodular.model.CardItem
 import net.iesochoa.silvia.projecto_intermodular.model.HomeUiState
-import net.iesochoa.silvia.projecto_intermodular.ui.components.CardItem
+import net.iesochoa.silvia.projecto_intermodular.ui.utils.toCurrency
 import java.util.Locale
 import javax.inject.Inject
 
+/**
+ * ViewModel que gestiona los datos de la pantalla principal (Home).
+ */
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val productRepository: ProductRepository,
+    private val categoryRepository: CategoryRepository,
     private val authRepository: AuthRepository
 ) : ViewModel() {
 
@@ -30,6 +36,7 @@ class HomeViewModel @Inject constructor(
         observeUser()
     }
 
+    /** Observa los datos del usuario para actualizar la imagen de perfil. */
     private fun observeUser() {
         viewModelScope.launch {
             authRepository.getUser().collect { user ->
@@ -38,36 +45,25 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    /** Carga la información inicial: últimas novedades y top ventas. */
     fun loadHomeData() {
         _uiState.update { it.copy(isLoading = true, error = null) }
         viewModelScope.launch {
             try {
                 Log.d("HomeViewModel", "Cargando datos de inicio...")
-                val latest = productRepository.getProducts(null, 0, 6).content
+                val categories = try { categoryRepository.getCategories() } catch (e: Exception) { emptyList() }
                 
-                val topSelling = productRepository.getTopSellingProducts(6)
+                // Obtenemos un pool mayor de datos para asegurar que tras filtrar tengamos 4 de cada
+                val latest = productRepository.getProducts(page = 0, size = 10).content
+                val topSelling = productRepository.getTopSellingProducts(10)
 
                 val latestCards = latest.map { product ->
-                    CardItem(
-                        id = product.id,
-                        imageUrl = product.getDisplayImage(),
-                        title = product.getDisplayTitle(),
-                        bottomText1 = product.description,
-                        bottomText2 = "€${String.format(Locale.US, "%.2f", product.price ?: 0.0)}",
-                        categoryName = product.getCategoryName()
-                    )
-                }
+                    mapProductToCardItem(product, categories)
+                }.sortedByDescending { it.id }.take(4)
 
                 val topCards = topSelling.map { product ->
-                    CardItem(
-                        id = product.id,
-                        imageUrl = product.getDisplayImage(),
-                        title = product.getDisplayTitle(),
-                        bottomText1 = product.description,
-                        bottomText2 = "€${String.format(Locale.US, "%.2f", product.price ?: 0.0)}",
-                        categoryName = product.getCategoryName()
-                    )
-                }
+                    mapProductToCardItem(product, categories)
+                }.take(4)
 
                 _uiState.update { it.copy(
                     promociones = latestCards,
@@ -92,6 +88,24 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    /** Mapea un producto a un objeto visual CardItem. */
+    private fun mapProductToCardItem(product: net.iesochoa.silvia.projecto_intermodular.data.Product, categories: List<net.iesochoa.silvia.projecto_intermodular.data.Category>): CardItem {
+        val catName = product.category?.name 
+            ?: categories.find { it.id == product.categoryId }?.name 
+            ?: "Obrador"
+            
+        return CardItem(
+            id = product.id,
+            imageUrl = product.getDisplayImage(),
+            title = product.getDisplayTitle(),
+            bottomText1 = product.description,
+            bottomText2 = product.price.toCurrency(),
+            categoryName = catName,
+            isOutOfStock = (product.stock ?: 0) <= 0
+        )
+    }
+
+    /** Filtra las secciones Home según la búsqueda. */
     fun onSearchQueryChange(newQuery: String) {
         _uiState.update { state ->
             val filteredProm = if (newQuery.isBlank()) state.promociones

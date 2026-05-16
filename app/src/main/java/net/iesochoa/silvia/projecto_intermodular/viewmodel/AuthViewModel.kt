@@ -9,8 +9,12 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import net.iesochoa.silvia.projecto_intermodular.data.AuthRepository
 import net.iesochoa.silvia.projecto_intermodular.data.User
+import net.iesochoa.silvia.projecto_intermodular.model.AuthUiState
 import javax.inject.Inject
 
+/**
+ * ViewModel encargado de gestionar la lógica de autenticación de la aplicación.
+ */
 @HiltViewModel
 class AuthViewModel @Inject constructor(
     private val authRepository: AuthRepository
@@ -27,6 +31,7 @@ class AuthViewModel @Inject constructor(
         }
     }
 
+    /** Intenta iniciar sesión con email y contraseña. */
     fun login(email: String, password: String) {
         _uiState.value = _uiState.value.copy(isLoading = true, error = null)
         viewModelScope.launch {
@@ -45,6 +50,7 @@ class AuthViewModel @Inject constructor(
         }
     }
 
+    /** Registra un nuevo usuario en el sistema. */
     fun register(email: String, password: String) {
         _uiState.value = _uiState.value.copy(isLoading = true, error = null)
         viewModelScope.launch {
@@ -63,6 +69,7 @@ class AuthViewModel @Inject constructor(
         }
     }
 
+    /** Cierra la sesión del usuario y limpia el estado de autenticación. */
     fun logout() {
         viewModelScope.launch {
             authRepository.logout()
@@ -73,14 +80,8 @@ class AuthViewModel @Inject constructor(
         }
     }
 
+    /** Limpia el mensaje de error del estado. */
     fun clearError() {
         _uiState.value = _uiState.value.copy(error = null)
     }
 }
-
-data class AuthUiState(
-    val isLoading: Boolean = false,
-    val isAuthenticated: Boolean = false,
-    val user: User? = null,
-    val error: String? = null
-)

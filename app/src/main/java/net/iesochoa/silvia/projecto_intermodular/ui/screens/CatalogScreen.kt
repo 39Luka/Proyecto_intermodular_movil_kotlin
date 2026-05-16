@@ -3,14 +3,22 @@ package net.iesochoa.silvia.projecto_intermodular.ui.screens
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.res.stringResource
+import net.iesochoa.silvia.projecto_intermodular.R
 import net.iesochoa.silvia.projecto_intermodular.model.CatalogUiState
 import net.iesochoa.silvia.projecto_intermodular.ui.components.*
 import net.iesochoa.silvia.projecto_intermodular.ui.theme.Primary500
+import net.iesochoa.silvia.projecto_intermodular.ui.theme.AppTypography
 
+/**
+ * Pantalla que muestra el catálogo completo de productos.
+ * Permite filtrar por categorías, realizar búsquedas y navegar de forma paginada.
+ */
 @Composable
 fun CatalogScreen(
     uiState: CatalogUiState,
@@ -40,7 +48,7 @@ fun CatalogScreen(
     ) {
         item {
             ScreenHeader(
-                title = "Catálogo",
+                title = stringResource(R.string.catalog_title),
                 showSearch = true,
                 showFilter = true,
                 searchQuery = uiState.searchQuery,
@@ -54,9 +62,9 @@ fun CatalogScreen(
 
         item {
             PageIntro(
-                eyebrow = "Catálogo",
-                title = "El mostrador completo.",
-                description = "Nuestra selección completa de bollería, pan y café organizada para ti."
+                eyebrow = stringResource(R.string.catalog_eyebrow),
+                title = stringResource(R.string.catalog_intro_title),
+                description = stringResource(R.string.catalog_intro_desc)
             )
         }
 
@@ -71,6 +79,21 @@ fun CatalogScreen(
         if (uiState.error != null) {
             item {
                 ErrorMessage(message = uiState.error)
+            }
+        }
+
+        if (!uiState.isLoading && uiState.filteredProducts.isEmpty() && uiState.error == null) {
+            item {
+                Box(
+                    modifier = Modifier.fillMaxWidth().padding(32.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = stringResource(R.string.catalog_no_results),
+                        style = AppTypography.bodyMedium,
+                        color = net.iesochoa.silvia.projecto_intermodular.ui.theme.TextPrimary.copy(alpha = 0.6f)
+                    )
+                }
             }
         }
 

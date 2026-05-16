@@ -2,21 +2,26 @@ package net.iesochoa.silvia.projecto_intermodular.data
 
 import com.google.gson.annotations.SerializedName
 
-// Auth Models
+/** Datos para la petición de autenticación (Login/Registro). */
 data class AuthRequest(
     val email: String,
     val password: String
 )
 
+/** Respuesta del servidor tras un intento de login o registro. */
 data class AuthResponse(
     val token: String? = null,
     val refreshToken: String? = null,
     val accessToken: String? = null,
     val jwt: String? = null
 ) {
+    /** Extrae el token de autenticación con fallback entre diferentes campos. */
     fun getAuthToken(): String = token ?: accessToken ?: jwt ?: ""
 }
 
+/**
+ * Representa a un usuario del sistema.
+ */
 data class User(
     val id: Int = 0,
     val email: String? = null,
@@ -34,11 +39,13 @@ data class User(
     }
 }
 
+/** Petición para actualizar la foto de perfil. */
 data class UpdateProfileImageRequest(
     @SerializedName("profileImageBase64")
     val profileImageBase64: String?
 )
 
+/** Petición para cambiar la contraseña. */
 data class ChangePasswordRequest(
     @SerializedName("currentPassword", alternate = ["current"])
     val currentPassword: String,
@@ -46,7 +53,7 @@ data class ChangePasswordRequest(
     val newPassword: String
 )
 
-// Product Models
+/** Representa un producto del catálogo. */
 data class Product(
     val id: Int,
     @SerializedName("name", alternate = ["nombre"])
@@ -64,6 +71,7 @@ data class Product(
     val categoryId: Int? = null,
     val active: Boolean = true
 ) {
+    /** Retorna la mejor fuente disponible para mostrar la imagen. */
     fun getDisplayImage(): String? {
         if (!imageUrl.isNullOrEmpty()) return imageUrl
         if (!image.isNullOrEmpty()) return image
@@ -72,22 +80,28 @@ data class Product(
         }
         return null
     }
+
+    /** Resuelve el nombre del producto (title > name). */
     fun getDisplayTitle(): String = (title ?: name ?: "Producto").ifEmpty { "Producto" }
+    
+    /** Retorna el nombre de la categoría o "Sin categoría". */
     fun getCategoryName(): String = category?.name ?: "Sin categoría"
 }
 
+/** Información de producto para las estadísticas de ventas (productos más vendidos). */
 data class TopSellingProduct(
     val productId: Int,
     val productName: String? = null,
     val totalQuantity: Int = 0
 )
 
+/** Categoría a la que pertenece un producto. */
 data class Category(
     val id: Int = 0,
     val name: String? = null
 )
 
-// Promotion Models
+/** Promoción o descuento aplicado a un producto. */
 data class Promotion(
     val id: Int,
     @SerializedName("description", alternate = ["descripcion"])
@@ -97,10 +111,11 @@ data class Promotion(
     val discountPercentage: Double? = 0.0,
     val startDate: String? = null,
     val endDate: String? = null,
-    val active: Boolean = true
+    val active: Boolean = true,
+    val used: Boolean = false
 )
 
-// Cart Models
+/** Item del carrito con información de precio y descuento. */
 data class CartItem(
     val product: Product,
     val quantity: Int,
@@ -108,7 +123,7 @@ data class CartItem(
     val discount: Double = 0.0
 )
 
-// Purchase Models
+/** Compra o pedido realizado por un usuario. */
 data class Purchase(
     val id: Int,
     val userId: Int,
@@ -122,6 +137,7 @@ data class Purchase(
     val items: List<PurchaseItem> = emptyList()
 )
 
+/** Línea de detalle de una compra realizada. */
 data class PurchaseItem(
     val id: Int? = null,
     val productId: Int,
@@ -131,18 +147,20 @@ data class PurchaseItem(
     val unitPrice: Double? = 0.0
 )
 
+/** Petición para realizar una nueva compra con sus líneas correspondientes. */
 data class CreatePurchaseRequest(
     val items: List<PurchaseItemRequest>,
     val userId: Int? = null
 )
 
+/** Información necesaria para añadir un producto a una nueva compra. */
 data class PurchaseItemRequest(
     val productId: Int,
     val quantity: Int,
     val promotionId: Int? = null
 )
 
-// API Response Wrappers
+/** Envoltorio para respuestas paginadas de la API. */
 data class PagedResponse<T>(
     val content: List<T> = emptyList(),
     val totalPages: Int = 0,

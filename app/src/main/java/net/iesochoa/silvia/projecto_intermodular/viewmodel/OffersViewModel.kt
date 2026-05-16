@@ -6,19 +6,25 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import net.iesochoa.silvia.projecto_intermodular.data.AuthRepository
+import net.iesochoa.silvia.projecto_intermodular.data.CategoryRepository
 import net.iesochoa.silvia.projecto_intermodular.data.ProductRepository
 import net.iesochoa.silvia.projecto_intermodular.data.PromotionRepository
+import net.iesochoa.silvia.projecto_intermodular.model.HorizontalCardItem
 import net.iesochoa.silvia.projecto_intermodular.model.OffersUiState
-import net.iesochoa.silvia.projecto_intermodular.ui.components.HorizontalCardItem
 import javax.inject.Inject
 
+/**
+ * ViewModel encargado de la gestión y visualización de ofertas y promociones.
+ */
 @HiltViewModel
 class OffersViewModel @Inject constructor(
     private val promotionRepository: PromotionRepository,
     private val productRepository: ProductRepository,
+    private val categoryRepository: CategoryRepository,
     private val authRepository: AuthRepository
 ) : ViewModel() {
 
@@ -32,6 +38,7 @@ class OffersViewModel @Inject constructor(
         observeUser()
     }
 
+    /** Observa cambios en el usuario autenticado para actualizar la imagen de perfil. */
     private fun observeUser() {
         viewModelScope.launch {
             authRepository.getUser().collect { user ->
@@ -40,6 +47,7 @@ class OffersViewModel @Inject constructor(
         }
     }
 
+    /** Carga la lista de promociones activas. */
     private fun loadPromotions() {
         val pageSize = _uiState.value.pageSize
         val currentPage = _uiState.value.currentPage
@@ -47,37 +55,54 @@ class OffersViewModel @Inject constructor(
         _uiState.update { it.copy(isLoading = true, error = null) }
         viewModelScope.launch {
             try {
-                val productsResponse = productRepository.getProducts(null, currentPage, pageSize)
-                val products = productsResponse.content
-                val totalPages = productsResponse.totalPages ?: 1
+                // 1. Cargamos las promociones activas y no usadas para el usuario actual
+                val categories = try { categoryRepository.getCategories() } catch (_: Exception) { emptyList() }
+                val user = authRepository.getUser().first()
                 
-                val offerItems = mutableListOf<HorizontalCardItem>()
+                // Usamos el nuevo endpoint de promociones disponibles (no usadas)
+                val promotions = promotionRepository.getAvailablePromotions(userId = user?.id)
                 
-                for (product in products) {
+                // 2. Mapeamos a items visuales
+                val offerItems = promotions.mapNotNull { promo ->
                     try {
-                        val promos = promotionRepository.getActivePromotions(product.id)
-                        for (promo in promos) {
-                            offerItems.add(
-                                HorizontalCardItem(
-                                    id = product.id,
-                                    title = product.getDisplayTitle(),
-                                    description = promo.description ?: "",
-                                    rightLabel = "Descuento",
-                                    rightValue = "-${promo.discountPercentage}%",
-                                    imageUrl = product.getDisplayImage(),
-                                    categoryName = product.getCategoryName()
-                                )
-                            )
-                        }
-                    } catch (e: Exception) {}
+                        val product = productRepository.getProductById(promo.productId)
+                        val catName = product.category?.name 
+                            ?: categories.find { it.id == product.categoryId }?.name 
+                            ?: "Obrador"
+
+                        HorizontalCardItem(
+                            id = product.id,
+                            title = product.getDisplayTitle(),
+                            description = promo.description ?: "",
+                            rightLabel = "Descuento",
+                            rightValue = "-${promo.discountPercentage}%",
+                            imageUrl = product.getDisplayImage(),
+                            categoryName = catName,
+                            isUsed = promo.used
+                        )
+                    } catch (e: Exception) {
+                        null
+                    }
                 }
+
+                // 3. Aplicamos paginación local sobre la lista de ofertas reales
+                val totalItems = offerItems.size
+                val totalPages = if (totalItems == 0) 1 else (totalItems + pageSize - 1) / pageSize
+                
+                // Ajustamos la página actual si fuera necesario
+                val adjustedPage = if (currentPage >= totalPages) 0 else currentPage
+                
+                val startIndex = adjustedPage * pageSize
+                val endIndex = (startIndex + pageSize).coerceAtMost(totalItems)
+                val pagedOffers = if (totalItems > 0) offerItems.subList(startIndex, endIndex) else emptyList()
 
                 allOffersList = offerItems
                 _uiState.update { it.copy(
                     allProducts = offerItems,
-                    filteredProducts = offerItems,
+                    filteredProducts = pagedOffers,
                     isLoading = false,
-                    totalPages = totalPages
+                    totalPages = totalPages,
+                    currentPage = adjustedPage
                 ) }
             } catch (e: Exception) {
                 _uiState.update { it.copy(
@@ -88,6 +113,7 @@ class OffersViewModel @Inject constructor(
         }
     }
 
+    /** Filtra las ofertas según la búsqueda. */
     fun onSearchQueryChange(query: String) {
         val filtered = if (query.isBlank()) {
             allOffersList
@@ -103,6 +129,7 @@ class OffersViewModel @Inject constructor(
         ) }
     }
 
+    /** Navega a la siguiente página de resultados del catálogo de promociones. */
     fun goToNextPage() {
         val currentPage = _uiState.value.currentPage
         val totalPages = _uiState.value.totalPages
@@ -112,6 +139,7 @@ class OffersViewModel @Inject constructor(
         }
     }
 
+    /** Navega a la página anterior de resultados. */
     fun goToPreviousPage() {
         val currentPage = _uiState.value.currentPage
         if (currentPage > 0) {

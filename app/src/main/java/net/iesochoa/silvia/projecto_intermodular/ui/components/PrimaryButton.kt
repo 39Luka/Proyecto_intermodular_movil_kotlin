@@ -18,6 +18,16 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import net.iesochoa.silvia.projecto_intermodular.ui.theme.*
 
+/**
+ * Botón principal de la aplicación con un diseño de degradado.
+ * Utiliza los colores secundarios (marrón/dorado) y bordes totalmente redondeados (píldora).
+ *
+ * @param text Texto visible en el botón.
+ * @param onClick Acción a ejecutar al pulsar el botón.
+ * @param modifier Modificador de Compose para el contenedor.
+ * @param enabled Si es falso, el botón se muestra en gris y no responde a clics.
+ * @param gradient Degradado de fondo para el estado habilitado.
+ */
 @Composable
 fun PrimaryButton(
     text: String,

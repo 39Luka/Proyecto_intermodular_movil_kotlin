@@ -12,6 +12,9 @@ import net.iesochoa.silvia.projecto_intermodular.model.LoginUiState
 import net.iesochoa.silvia.projecto_intermodular.ui.utils.ErrorMapper
 import javax.inject.Inject
 
+/**
+ * ViewModel que gestiona la lógica de autenticación para el inicio de sesión.
+ */
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     private val authRepository: AuthRepository
@@ -28,6 +31,7 @@ class LoginViewModel @Inject constructor(
         _uiState.update { it.copy(password = newPassword, errorMessage = "") }
     }
 
+    /** Intenta iniciar sesión con las credenciales actuales. */
     fun login(onSuccess: () -> Unit) {
         val state = _uiState.value
         if (state.email.isBlank() || state.password.isBlank()) {

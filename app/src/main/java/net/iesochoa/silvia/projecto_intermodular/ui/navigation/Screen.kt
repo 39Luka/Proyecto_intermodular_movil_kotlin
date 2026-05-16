@@ -1,5 +1,9 @@
 package net.iesochoa.silvia.projecto_intermodular.ui.navigation
 
+/**
+ * Representa las diferentes pantallas y rutas de navegación de la aplicación.
+ * @property route Identificador único de la ruta de navegación.
+ */
 sealed class Screen(val route: String) {
     object Home : Screen("home")
     object Register : Screen("register")

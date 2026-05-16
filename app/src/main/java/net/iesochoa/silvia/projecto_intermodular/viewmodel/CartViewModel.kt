@@ -18,6 +18,9 @@ import org.json.JSONObject
 import retrofit2.HttpException
 import javax.inject.Inject
 
+/**
+ * ViewModel que gestiona el carrito de la compra.
+ */
 @HiltViewModel
 class CartViewModel @Inject constructor(
     private val purchaseRepository: PurchaseRepository,
@@ -31,6 +34,11 @@ class CartViewModel @Inject constructor(
 
     init {
         observeUser()
+        observeCartItems()
+    }
+
+    /** Observa los items del carrito y busca promociones para cada uno. */
+    private fun observeCartItems() {
         viewModelScope.launch {
             cartRepository.items.collect { repoItems ->
                 val currentItems = _uiState.value.items
@@ -54,6 +62,7 @@ class CartViewModel @Inject constructor(
         }
     }
 
+    /** Obtiene la imagen de perfil del usuario actual. */
     private fun observeUser() {
         viewModelScope.launch {
             authRepository.getUser().collect { user ->
@@ -62,12 +71,12 @@ class CartViewModel @Inject constructor(
         }
     }
 
+    /** Obtiene las promociones activas para un producto en el carrito. */
     private fun fetchPromotionsForItem(productId: Int) {
         viewModelScope.launch {
             try {
                 val user = authRepository.getUser().first()
                 val promos = promotionRepository.getActivePromotions(productId, user?.id)
-                Log.d("CartViewModel", "Fetched ${promos.size} promotions for product $productId (user: ${user?.id})")
                 _uiState.update { state ->
                     val newItems = state.items.map { item ->
                         if (item.product.id == productId) {
@@ -83,14 +92,17 @@ class CartViewModel @Inject constructor(
         }
     }
 
+    /** Actualiza la cantidad de un producto en el carrito. */
     fun updateQuantity(productId: Int, newQuantity: Int) {
         cartRepository.updateQuantity(productId, newQuantity)
     }
 
+    /** Elimina un producto del carrito. */
     fun removeItem(productId: Int) {
         cartRepository.removeItem(productId)
     }
 
+    /** Selecciona una promoción específica para un producto del carrito. */
     fun onPromotionSelected(productId: Int, promotionId: Int?) {
         _uiState.update { state ->
             val newItems = state.items.map { item ->
@@ -103,6 +115,7 @@ class CartViewModel @Inject constructor(
         calculateTotal()
     }
 
+    /** Calcula el precio total aplicando descuentos de las promociones seleccionadas. */
     private fun calculateTotal() {
         var total = 0.0
         _uiState.value.items.forEach { item ->
@@ -119,6 +132,7 @@ class CartViewModel @Inject constructor(
         _uiState.update { it.copy(total = total.coerceAtLeast(0.0)) }
     }
 
+    /** Procesa la compra de los productos actuales y vacía el carrito tras el éxito. */
     fun checkout(onSuccess: () -> Unit) {
         _uiState.update { it.copy(isProcessing = true, error = null) }
         viewModelScope.launch {
@@ -132,7 +146,6 @@ class CartViewModel @Inject constructor(
                             promotionId = item.selectedPromotionId
                         )
                     }
-                    Log.d("CartViewModel", "Sending purchase request: $requests for user ${user.id}")
                     purchaseRepository.createPurchase(requests, user.id)
                     cartRepository.clearCart()
                     _uiState.update { it.copy(isProcessing = false) }

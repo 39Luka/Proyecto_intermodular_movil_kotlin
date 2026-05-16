@@ -15,6 +15,17 @@ import net.iesochoa.silvia.projecto_intermodular.model.ProfileUiState
 import net.iesochoa.silvia.projecto_intermodular.ui.components.*
 import net.iesochoa.silvia.projecto_intermodular.ui.theme.*
 
+/**
+ * Pantalla que permite al usuario actualizar su contraseña.
+ * Solicita la contraseña actual para verificar la identidad y la nueva contraseña por duplicado.
+ *
+ * @param uiState Estado de la interfaz de usuario con los campos del formulario y mensajes de error/éxito.
+ * @param onCurrentPasswordChange Callback para actualizar la contraseña actual.
+ * @param onNewPasswordChange Callback para actualizar la nueva contraseña.
+ * @param onRepeatPasswordChange Callback para actualizar la repetición de la nueva contraseña.
+ * @param onSaveClick Acción para validar y guardar la nueva contraseña en el servidor.
+ * @param onBackClick Acción para regresar a la pantalla de perfil.
+ */
 @Composable
 fun ChangePasswordScreen(
     uiState: ProfileUiState,
@@ -86,7 +97,7 @@ fun ChangePasswordScreen(
                         value = uiState.currentPassword,
                         onValueChange = onCurrentPasswordChange,
                         modifier = Modifier.fillMaxWidth(),
-                        visualTransformation = PasswordVisualTransformation(),
+                        isPasswordField = true,
                         enabled = !uiState.isLoading
                     )
 
@@ -95,7 +106,7 @@ fun ChangePasswordScreen(
                         value = uiState.newPassword,
                         onValueChange = onNewPasswordChange,
                         modifier = Modifier.fillMaxWidth(),
-                        visualTransformation = PasswordVisualTransformation(),
+                        isPasswordField = true,
                         enabled = !uiState.isLoading
                     )
 
@@ -104,7 +115,7 @@ fun ChangePasswordScreen(
                         value = uiState.repeatPassword,
                         onValueChange = onRepeatPasswordChange,
                         modifier = Modifier.fillMaxWidth(),
-                        visualTransformation = PasswordVisualTransformation(),
+                        isPasswordField = true,
                         enabled = !uiState.isLoading
                     )
 

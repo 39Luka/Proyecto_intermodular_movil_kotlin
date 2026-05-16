@@ -21,6 +21,9 @@ import java.io.ByteArrayOutputStream
 import java.io.InputStream
 import javax.inject.Inject
 
+/**
+ * ViewModel que gestiona el perfil del usuario.
+ */
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
     private val authRepository: AuthRepository
@@ -30,6 +33,11 @@ class ProfileViewModel @Inject constructor(
     val uiState: StateFlow<ProfileUiState> = _uiState.asStateFlow()
 
     init {
+        observeUser()
+    }
+
+    /** Carga los datos iniciales del usuario y los mantiene actualizados. */
+    private fun observeUser() {
         viewModelScope.launch {
             authRepository.getUser().collect { user ->
                 if (user != null) {
@@ -43,22 +51,27 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
+    /** Actualiza la URI de la imagen seleccionada. */
     fun onImageSelected(uri: Uri?) {
         _uiState.update { it.copy(selectedImageUri = uri?.toString(), errorMessage = null) }
     }
 
+    /** Actualiza el campo de contraseña actual. */
     fun onCurrentPasswordChange(newValue: String) {
         _uiState.update { it.copy(currentPassword = newValue, errorMessage = null) }
     }
 
+    /** Actualiza el campo de nueva contraseña. */
     fun onNewPasswordChange(newPassword: String) {
         _uiState.update { it.copy(newPassword = newPassword, errorMessage = null) }
     }
 
+    /** Actualiza el campo de repetir contraseña. */
     fun onRepeatPasswordChange(repeatPassword: String) {
         _uiState.update { it.copy(repeatPassword = repeatPassword, errorMessage = null) }
     }
 
+    /** Sube la nueva imagen de perfil al servidor. */
     fun updateImage(contentResolver: ContentResolver, onSuccess: () -> Unit) {
         val selectedUri = _uiState.value.selectedImageUri
         
@@ -78,7 +91,6 @@ class ProfileViewModel @Inject constructor(
                 if (base64Image != null) {
                     authRepository.updateProfileImage(base64Image)
                     
-                    // Actualizamos el estado local inmediatamente para que la UI cambie ya
                     _uiState.update { it.copy(
                         isLoading = false,
                         successMessage = "Imagen actualizada correctamente",
@@ -96,21 +108,21 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
+    /** Convierte una imagen de la galería (URI) a formato Base64 comprimido. */
     private fun uriToBase64(contentResolver: ContentResolver, uri: Uri): String? {
         return try {
             val inputStream: InputStream? = contentResolver.openInputStream(uri)
             val bitmap = BitmapFactory.decodeStream(inputStream)
             val outputStream = ByteArrayOutputStream()
-            // Reducimos un poco la calidad para ahorrar espacio y evitar errores 413
             bitmap.compress(Bitmap.CompressFormat.JPEG, 60, outputStream)
             val byteArray = outputStream.toByteArray()
-            // Usamos NO_WRAP para evitar saltos de línea que rompen el JSON de la API
             Base64.encodeToString(byteArray, Base64.NO_WRAP)
         } catch (e: Exception) {
             null
         }
     }
 
+    /** Cambia la contraseña del usuario tras validar los campos. */
     fun updatePassword(onSuccess: () -> Unit) {
         val state = _uiState.value
         when {
@@ -132,10 +144,8 @@ class ProfileViewModel @Inject constructor(
                             newPassword = "",
                             repeatPassword = ""
                         ) }
-                        // Navegar después de un pequeño delay para que el usuario vea el mensaje
                         kotlinx.coroutines.delay(1000)
                         onSuccess()
-                        // Limpiar mensaje después de navegar
                         _uiState.update { it.copy(successMessage = null) }
                     } catch (e: Exception) {
                         _uiState.update { it.copy(isLoading = false, errorMessage = e.message ?: "Error al cambiar contraseña") }
@@ -145,10 +155,12 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
+    /** Limpia los mensajes de error y éxito del estado. */
     fun clearMessages() {
         _uiState.update { it.copy(errorMessage = null, successMessage = null) }
     }
 
+    /** Cierra la sesión del usuario. */
     fun logout(onLogoutSuccess: () -> Unit) {
         viewModelScope.launch {
             authRepository.logout()

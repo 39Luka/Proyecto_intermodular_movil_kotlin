@@ -15,12 +15,16 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
+/**
+ * Módulo Dagger Hilt para provisión de dependencias de red.
+ */
 @Module
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
     
     private const val BASE_URL = "https://proyectointermodularapi-production.up.railway.app/"
 
+    /** Proporciona un interceptor para añadir el token JWT a las peticiones. */
     @Provides
     @Singleton
     fun provideAuthInterceptor(tokenManager: TokenManager): Interceptor {
@@ -28,7 +32,6 @@ object NetworkModule {
             val originalRequest = chain.request()
             val path = originalRequest.url.encodedPath
             
-            // Si es login o registro, no añadimos el token
             if (path.contains("/auth/login") || path.contains("/auth/register")) {
                 return@Interceptor chain.proceed(originalRequest)
             }
@@ -43,6 +46,7 @@ object NetworkModule {
         }
     }
 
+    /** Configura el cliente HTTP con interceptores y tiempos de espera. */
     @Provides
     @Singleton
     fun provideHttpClient(authInterceptor: Interceptor): OkHttpClient {
@@ -59,6 +63,7 @@ object NetworkModule {
             .build()
     }
 
+    /** Proporciona la instancia configurada de Retrofit. */
     @Provides
     @Singleton
     fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit {
@@ -69,12 +74,14 @@ object NetworkModule {
             .build()
     }
 
+    /** Proporciona el servicio de acceso a la API. */
     @Provides
     @Singleton
     fun provideApiService(retrofit: Retrofit): ApiService {
         return retrofit.create(ApiService::class.java)
     }
 
+    /** Proporciona el gestor de tokens. */
     @Provides
     @Singleton
     fun provideTokenManager(@ApplicationContext context: Context): TokenManager {
@@ -82,6 +89,9 @@ object NetworkModule {
     }
 }
 
+/**
+ * Módulo Dagger Hilt para provisión de repositorios de datos.
+ */
 @Module
 @InstallIn(SingletonComponent::class)
 object RepositoryModule {

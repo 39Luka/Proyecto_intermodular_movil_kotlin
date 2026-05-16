@@ -3,37 +3,32 @@ package net.iesochoa.silvia.projecto_intermodular.ui.components
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
 import net.iesochoa.silvia.projecto_intermodular.R
-import net.iesochoa.silvia.projecto_intermodular.ui.theme.AppTypography
-import net.iesochoa.silvia.projecto_intermodular.ui.theme.BorderColor
-import net.iesochoa.silvia.projecto_intermodular.ui.theme.Neutral100
-import net.iesochoa.silvia.projecto_intermodular.ui.theme.Primary600
-import net.iesochoa.silvia.projecto_intermodular.ui.theme.Secondary600
+import net.iesochoa.silvia.projecto_intermodular.ui.theme.*
 import net.iesochoa.silvia.projecto_intermodular.ui.utils.decodeBase64ToBitmap
 
+/**
+ * Cabecera accesible con áreas de toque de 48dp.
+ */
+/**
+ * Cabecera estándar para las pantallas de la aplicación.
+ * Soporta título central, botón de retroceso, imagen de perfil del usuario,
+ * barra de búsqueda integrada y botón de filtros.
+ */
 @Composable
 fun ScreenHeader(
     title: String? = null,
@@ -43,7 +38,9 @@ fun ScreenHeader(
     showSearch: Boolean = false,
     showFilter: Boolean = false,
     searchQuery: String = "",
+    searchPlaceholder: String = "Buscar",
     onSearchChange: (String) -> Unit = {},
+    onSearchClick: (() -> Unit)? = null,
     onFilterClick: () -> Unit = {},
 ) {
     Card(
@@ -63,16 +60,27 @@ fun ScreenHeader(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
+                // Área de toque mínima de 48dp (estándar de accesibilidad)
                 if (onBackClick != null) {
-                    Image(
-                        painter = painterResource(id = R.drawable.back),
-                        contentDescription = "Back",
+                    Box(
                         modifier = Modifier
-                            .size(30.dp)
-                            .clickable { onBackClick() }
-                    )
+                            .size(48.dp)
+                            .clip(CircleShape)
+                            .semantics { role = Role.Button }
+                            .clickable(
+                                onClickLabel = "Regresar a la pantalla anterior",
+                                onClick = onBackClick
+                            ),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Image(
+                            painter = painterResource(id = R.drawable.back),
+                            contentDescription = "Botón regresar",
+                            modifier = Modifier.size(30.dp)
+                        )
+                    }
                 } else {
-                    Spacer(modifier = Modifier.size(30.dp))
+                    Spacer(modifier = Modifier.size(48.dp))
                 }
 
                 if (title != null) {
@@ -90,40 +98,30 @@ fun ScreenHeader(
                 if (onProfileClick != null) {
                     Box(
                         modifier = Modifier
-                            .size(34.dp)
+                            .size(48.dp)
                             .clip(CircleShape)
-                            .clickable { onProfileClick() }
+                            .semantics { role = Role.Button }
+                            .clickable(
+                                onClickLabel = "Ver mi perfil",
+                                onClick = onProfileClick
+                            ),
+                        contentAlignment = Alignment.Center
                     ) {
-                        val cleanImage = profileImage?.trim()?.replace("\n", "")?.replace("\r", "")
-                        
-                        if (!cleanImage.isNullOrEmpty()) {
-                            val bitmap = cleanImage.decodeBase64ToBitmap()
-                            if (bitmap != null) {
-                                Image(
-                                    bitmap = bitmap.asImageBitmap(),
-                                    contentDescription = "Perfil",
+                        Box(modifier = Modifier.size(34.dp).clip(CircleShape)) {
+                            if (!profileImage.isNullOrEmpty()) {
+                                AppAsyncImage(
+                                    model = profileImage,
+                                    contentDescription = "Foto de perfil",
                                     modifier = Modifier.fillMaxSize(),
                                     contentScale = ContentScale.Crop
                                 )
                             } else {
-                                Image(
-                                    painter = painterResource(id = R.drawable.profile),
-                                    contentDescription = "Perfil",
-                                    modifier = Modifier.fillMaxSize()
-                                )
+                                DefaultProfileIcon()
                             }
-                        } else {
-                            Image(
-                                painter = painterResource(id = R.drawable.profile),
-                                contentDescription = "Perfil",
-                                modifier = Modifier.fillMaxSize()
-                            )
                         }
                     }
-                }
-else if (onBackClick != null) {
-                    // Si hay botón de atrás pero no de perfil, ponemos un espacio para centrar el título
-                    Spacer(modifier = Modifier.size(30.dp))
+                } else if (onBackClick != null) {
+                    Spacer(modifier = Modifier.size(48.dp))
                 }
             }
 
@@ -136,22 +134,44 @@ else if (onBackClick != null) {
                     SearchBar(
                         query = searchQuery,
                         onQueryChange = onSearchChange,
+                        placeholderText = searchPlaceholder,
                         modifier = Modifier.weight(1f),
                         cornerRadius = 999.dp,
-                        textColor = Primary600
+                        textColor = Primary600,
+                        readOnly = onSearchClick != null,
+                        onClick = onSearchClick
                     )
 
                     if (showFilter) {
-                        Image(
-                            painter = painterResource(id = R.drawable.filter),
-                            contentDescription = "Filtro",
+                        Box(
                             modifier = Modifier
-                                .size(30.dp)
-                                .clickable { onFilterClick() }
-                        )
+                                .size(48.dp)
+                                .clip(RoundedCornerShape(12.dp))
+                                .semantics { role = Role.Button }
+                                .clickable(
+                                    onClickLabel = "Abrir opciones de filtrado",
+                                    onClick = onFilterClick
+                                ),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Image(
+                                painter = painterResource(id = R.drawable.filter),
+                                contentDescription = "Filtros",
+                                modifier = Modifier.size(30.dp)
+                            )
+                        }
                     }
                 }
             }
         }
     }
+}
+
+@Composable
+private fun DefaultProfileIcon() {
+    Image(
+        painter = painterResource(id = R.drawable.profile),
+        contentDescription = "Ir al perfil",
+        modifier = Modifier.fillMaxSize()
+    )
 }

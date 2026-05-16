@@ -14,6 +14,14 @@ import androidx.navigation.NavType
 import net.iesochoa.silvia.projecto_intermodular.ui.screens.*
 import net.iesochoa.silvia.projecto_intermodular.viewmodel.*
 
+/**
+ * Componente principal de navegación de la aplicación.
+ * Define el grafo de navegación (NavHost) y las rutas de todas las pantallas,
+ * gestionando la inyección de ViewModels y el flujo entre ellas.
+ *
+ * @param navController Controlador de navegación de Jetpack Compose.
+ * @param modifier Modificador opcional para el host de navegación.
+ */
 @Composable
 fun AppNavigation(
     navController: NavHostController = rememberNavController(),
@@ -50,7 +58,6 @@ fun AppNavigation(
             val uiState by viewModel.uiState.collectAsState()
             RegisterScreen(
                 uiState = uiState,
-                onUsernameChange = { viewModel.onUsernameChange(it) },
                 onEmailChange = { viewModel.onEmailChange(it) },
                 onPasswordChange = { viewModel.onPasswordChange(it) },
                 onConfirmPasswordChange = { viewModel.onConfirmPasswordChange(it) },
@@ -73,7 +80,6 @@ fun AppNavigation(
             val uiState by viewModel.uiState.collectAsState()
             HomeScreen(
                 uiState = uiState,
-                onSearchChange = { viewModel.onSearchQueryChange(it) },
                 onRetryClick = { viewModel.loadHomeData() },
                 onProductClick = { productId ->
                     navController.navigate("${Screen.ProductDetail.route}/$productId")
@@ -123,7 +129,7 @@ fun AppNavigation(
             val uiState by viewModel.uiState.collectAsState()
             PurchasesScreen(
                 uiState = uiState,
-                onSearchChange = { viewModel.onSearchQueryChange(it) },
+                onDateRangeSelected = { start, end -> viewModel.onDateRangeSelected(start, end) },
                 onPurchaseClick = { purchaseId ->
                     navController.navigate("${Screen.PurchaseDetail.route}/$purchaseId")
                 },

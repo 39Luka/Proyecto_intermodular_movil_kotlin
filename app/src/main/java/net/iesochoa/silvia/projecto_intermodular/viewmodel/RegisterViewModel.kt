@@ -12,6 +12,9 @@ import net.iesochoa.silvia.projecto_intermodular.model.RegisterUiState
 import net.iesochoa.silvia.projecto_intermodular.ui.utils.ErrorMapper
 import javax.inject.Inject
 
+/**
+ * ViewModel que gestiona la lógica de registro de nuevos usuarios.
+ */
 @HiltViewModel
 class RegisterViewModel @Inject constructor(
     private val authRepository: AuthRepository
@@ -19,10 +22,6 @@ class RegisterViewModel @Inject constructor(
 
     private val _uiState = MutableStateFlow(RegisterUiState())
     val uiState: StateFlow<RegisterUiState> = _uiState
-
-    fun onUsernameChange(newValue: String) {
-        _uiState.update { it.copy(username = newValue, errorMessage = "") }
-    }
 
     fun onEmailChange(newValue: String) {
         _uiState.update { it.copy(email = newValue, errorMessage = "") }
@@ -36,6 +35,7 @@ class RegisterViewModel @Inject constructor(
         _uiState.update { it.copy(confirmPassword = newValue, errorMessage = "") }
     }
 
+    /** Valida los datos e intenta registrar al nuevo usuario. */
     fun register(onSuccess: () -> Unit) {
         val state = _uiState.value
         val emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$".toRegex()

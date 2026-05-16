@@ -6,33 +6,29 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.launch
 import net.iesochoa.silvia.projecto_intermodular.data.Purchase
-import net.iesochoa.silvia.projecto_intermodular.data.PurchaseRepository
+import net.iesochoa.silvia.projecto_intermodular.data.PurchaseItem
 import net.iesochoa.silvia.projecto_intermodular.ui.components.PageIntro
 import net.iesochoa.silvia.projecto_intermodular.ui.components.ScreenHeader
 import net.iesochoa.silvia.projecto_intermodular.ui.theme.*
+import net.iesochoa.silvia.projecto_intermodular.viewmodel.PurchaseDetailViewModel
 import java.util.Locale
-import javax.inject.Inject
 
+/**
+ * Pantalla de detalle de pedido optimizada: Sin FABs redundantes y scroll corregido.
+ */
 @Composable
 fun PurchaseDetailScreen(
     purchaseId: Int,
@@ -53,7 +49,7 @@ fun PurchaseDetailScreen(
         Spacer(modifier = Modifier.height(16.dp))
 
         ScreenHeader(
-            title = "Pedido #${purchaseId}",
+            title = "Detalle del Pedido",
             onBackClick = onBackClick
         )
 
@@ -61,19 +57,30 @@ fun PurchaseDetailScreen(
 
         when {
             uiState.isLoading -> {
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                Box(modifier = Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.Center) {
                     CircularProgressIndicator(color = Primary500)
                 }
             }
 
             uiState.error != null -> {
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Text("Error: ${uiState.error}", color = Error600)
+                Box(modifier = Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.Center) {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Text("Error: ${uiState.error}", color = Error600)
+                        Button(onClick = { viewModel.loadPurchase(purchaseId) }) {
+                            Text("Reintentar")
+                        }
+                    }
                 }
             }
 
             uiState.purchase != null -> {
-                PurchaseDetailContent(purchase = uiState.purchase!!)
+                PurchaseDetailContent(
+                    purchase = uiState.purchase!!,
+                    isProcessing = uiState.isProcessing,
+                    onPayClick = { viewModel.payPurchase() },
+                    onCancelClick = { viewModel.cancelPurchase() },
+                    modifier = Modifier.weight(1f)
+                )
             }
         }
     }
@@ -81,28 +88,33 @@ fun PurchaseDetailScreen(
 
 @Composable
 private fun PurchaseDetailContent(
-    purchase: Purchase
+    purchase: Purchase,
+    isProcessing: Boolean,
+    onPayClick: () -> Unit,
+    onCancelClick: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     val scrollState = rememberScrollState()
 
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .verticalScroll(scrollState)
             .padding(bottom = 32.dp),
         verticalArrangement = Arrangement.spacedBy(24.dp)
     ) {
         PageIntro(
-            eyebrow = "Seguimiento",
-            title = "Detalle del pedido.",
-            description = "Información detallada sobre los artículos, importes y estado de tu compra."
+            eyebrow = "Pedido #${purchase.id}",
+            title = "Resumen de compra",
+            description = "Consulta aquí los artículos y el estado actual de tu transacción."
         )
 
-        // 🔹 Info Section
+        // Tarjeta de información con acciones integradas (No flotantes)
         Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .shadow(4.dp, RoundedCornerShape(26.dp), spotColor = Color(0x14000000)),
+                .shadow(4.dp, RoundedCornerShape(26.dp), spotColor = Color(0x14000000))
+                .semantics(mergeDescendants = true) { },
             shape = RoundedCornerShape(26.dp),
             colors = CardDefaults.cardColors(containerColor = Neutral100),
             border = androidx.compose.foundation.BorderStroke(1.dp, Neutral200)
@@ -127,33 +139,46 @@ private fun PurchaseDetailContent(
 
                 Box(modifier = Modifier.fillMaxWidth().height(1.dp).background(Neutral200.copy(alpha = 0.5f)))
 
-                PriceRow("Subtotal", purchase.subtotal ?: 0.0)
-                if ((purchase.discount ?: 0.0) > 0) {
-                    PriceRow("Descuento", -(purchase.discount ?: 0.0), color = Success600)
-                }
-                
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.Bottom
-                ) {
-                    Text(
-                        "Total final",
-                        style = AppTypography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                        color = TextPrimary
-                    )
-                    Text(
-                        "€${String.format(Locale.US, "%.2f", purchase.total ?: 0.0)}",
-                        style = AppTypography.headlineSmall.copy(fontWeight = FontWeight.ExtraBold),
-                        color = Secondary500
-                    )
+                PriceRow("Total pagado", purchase.total ?: 0.0)
+
+                // Botones de acción dentro de la tarjeta para mejor contexto visual
+                val canModify = purchase.status?.uppercase() != "PAID" && 
+                                purchase.status?.uppercase() != "PAGADA" && 
+                                purchase.status?.uppercase() != "CANCELLED" && 
+                                purchase.status?.uppercase() != "CANCELADA"
+
+                if (canModify) {
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Button(
+                        onClick = onPayClick,
+                        modifier = Modifier.fillMaxWidth().height(52.dp),
+                        shape = RoundedCornerShape(14.dp),
+                        colors = ButtonDefaults.buttonColors(containerColor = Secondary500),
+                        enabled = !isProcessing
+                    ) {
+                        if (isProcessing) {
+                            CircularProgressIndicator(modifier = Modifier.size(24.dp), color = Color.White)
+                        } else {
+                            Text("Pagar ahora", style = AppTypography.labelLarge.copy(fontWeight = FontWeight.Bold))
+                        }
+                    }
+
+                    OutlinedButton(
+                        onClick = onCancelClick,
+                        modifier = Modifier.fillMaxWidth().height(52.dp),
+                        shape = RoundedCornerShape(14.dp),
+                        colors = ButtonDefaults.outlinedButtonColors(contentColor = Error600),
+                        border = androidx.compose.foundation.BorderStroke(1.dp, Error600),
+                        enabled = !isProcessing
+                    ) {
+                        Text("Cancelar pedido", style = AppTypography.labelLarge)
+                    }
                 }
             }
         }
 
-        // 🔹 Items Section
         Text(
-            text = "ARTÍCULOS INCLUIDOS",
+            text = "ARTÍCULOS",
             style = AppTypography.labelMedium.copy(fontWeight = FontWeight.Bold),
             color = Primary500,
             modifier = Modifier.padding(horizontal = 8.dp)
@@ -169,60 +194,42 @@ private fun PurchaseDetailContent(
 
 @Composable
 private fun InfoRow(label: String, value: String) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
+    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
         Text(text = label, style = AppTypography.bodyMedium, color = TextPrimary.copy(alpha = 0.6f))
         Text(text = value, style = AppTypography.bodyMedium.copy(fontWeight = FontWeight.Bold), color = TextPrimary)
     }
 }
 
 @Composable
-private fun PriceRow(label: String, amount: Double, color: Color = TextPrimary) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
+private fun PriceRow(label: String, amount: Double) {
+    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
         Text(text = label, style = AppTypography.bodyMedium, color = TextPrimary.copy(alpha = 0.6f))
         Text(
             text = "€${String.format(Locale.US, "%.2f", amount)}",
-            style = AppTypography.bodyMedium.copy(fontWeight = FontWeight.Bold),
-            color = color
+            style = AppTypography.titleMedium.copy(fontWeight = FontWeight.Bold),
+            color = Secondary500
         )
     }
 }
 
 @Composable
-private fun ItemCard(item: net.iesochoa.silvia.projecto_intermodular.data.PurchaseItem) {
+private fun ItemCard(item: PurchaseItem) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .shadow(2.dp, RoundedCornerShape(20.dp), spotColor = Color(0x14000000)),
+            .semantics(mergeDescendants = true) { },
         shape = RoundedCornerShape(20.dp),
         colors = CardDefaults.cardColors(containerColor = Neutral100),
         border = androidx.compose.foundation.BorderStroke(1.dp, Neutral200.copy(alpha = 0.5f))
     ) {
-        Row(
-            modifier = Modifier.padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
+        Row(modifier = Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
             Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = item.productName ?: "Producto",
-                    style = AppTypography.bodyMedium.copy(fontWeight = FontWeight.Bold),
-                    color = TextPrimary
-                )
-                Text(
-                    text = "Cantidad: ${item.quantity}",
-                    style = AppTypography.labelLarge,
-                    color = TextPrimary.copy(alpha = 0.5f)
-                )
+                Text(text = item.productName ?: "Producto", style = AppTypography.bodyMedium.copy(fontWeight = FontWeight.Bold))
+                Text(text = "Cantidad: ${item.quantity}", style = AppTypography.labelLarge, color = TextPrimary.copy(alpha = 0.5f))
             }
             Text(
-                text = "€${String.format(Locale.US, "%.2f", item.subtotal)}",
-                style = AppTypography.bodyLarge.copy(fontWeight = FontWeight.ExtraBold),
+                text = "€${String.format(Locale.US, "%.2f", (item.unitPrice ?: 0.0) * (item.quantity ?: 0))}",
+                style = AppTypography.bodyLarge.copy(fontWeight = FontWeight.Bold),
                 color = Secondary500
             )
         }
@@ -236,49 +243,12 @@ private fun StatusBadge(status: String) {
         "CANCELLED", "CANCELADA" -> Error100 to Error600
         else -> Warning100 to Warning600
     }
-
-    Surface(
-        color = bgColor,
-        shape = RoundedCornerShape(999.dp)
-    ) {
+    Surface(color = bgColor, shape = RoundedCornerShape(999.dp)) {
         Text(
             text = status.uppercase(),
             modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp),
-            style = AppTypography.labelLarge.copy(fontWeight = FontWeight.Bold, fontSize = 10.sp),
+            style = AppTypography.labelLarge.copy(fontWeight = FontWeight.Bold),
             color = textColor
         )
     }
 }
-
-@HiltViewModel
-class PurchaseDetailViewModel @Inject constructor(
-    private val purchaseRepository: PurchaseRepository
-) : ViewModel() {
-
-    private val _uiState = MutableStateFlow(PurchaseDetailUiState())
-    val uiState: StateFlow<PurchaseDetailUiState> = _uiState.asStateFlow()
-
-    fun loadPurchase(purchaseId: Int) {
-        _uiState.value = _uiState.value.copy(isLoading = true, error = null)
-        viewModelScope.launch {
-            try {
-                val purchase = purchaseRepository.getPurchaseById(purchaseId)
-                _uiState.value = _uiState.value.copy(
-                    purchase = purchase,
-                    isLoading = false
-                )
-            } catch (e: Exception) {
-                _uiState.value = _uiState.value.copy(
-                    isLoading = false,
-                    error = e.message ?: "Error al cargar compra"
-                )
-            }
-        }
-    }
-}
-
-data class PurchaseDetailUiState(
-    val purchase: Purchase? = null,
-    val isLoading: Boolean = false,
-    val error: String? = null
-)

@@ -29,18 +29,19 @@ import net.iesochoa.silvia.projecto_intermodular.ui.components.PrimaryButton
 import net.iesochoa.silvia.projecto_intermodular.ui.components.SimpleInput
 import net.iesochoa.silvia.projecto_intermodular.ui.theme.*
 
+/**
+ * Pantalla de registro de nuevos usuarios.
+ */
 @Composable
 fun RegisterScreen(
     uiState: RegisterUiState,
-    onUsernameChange: (String) -> Unit,
     onEmailChange: (String) -> Unit,
     onPasswordChange: (String) -> Unit,
     onConfirmPasswordChange: (String) -> Unit,
     onRegisterClick: () -> Unit,
     onLoginClick: () -> Unit
 ) {
-    val isValid = uiState.username.isNotBlank() &&
-        uiState.email.isNotBlank() &&
+    val isValid = uiState.email.isNotBlank() &&
         uiState.password.isNotBlank() &&
         uiState.confirmPassword.isNotBlank() &&
         !uiState.isLoading
@@ -116,14 +117,6 @@ fun RegisterScreen(
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     SimpleInput(
-                        label = "NOMBRE DE USUARIO",
-                        value = uiState.username,
-                        onValueChange = onUsernameChange,
-                        modifier = Modifier.fillMaxWidth(),
-                        enabled = !uiState.isLoading
-                    )
-
-                    SimpleInput(
                         label = "CORREO ELECTRÓNICO",
                         value = uiState.email,
                         onValueChange = onEmailChange,
@@ -136,7 +129,7 @@ fun RegisterScreen(
                         value = uiState.password,
                         onValueChange = onPasswordChange,
                         modifier = Modifier.fillMaxWidth(),
-                        visualTransformation = PasswordVisualTransformation(),
+                        isPasswordField = true,
                         enabled = !uiState.isLoading
                     )
 
@@ -145,7 +138,7 @@ fun RegisterScreen(
                         value = uiState.confirmPassword,
                         onValueChange = onConfirmPasswordChange,
                         modifier = Modifier.fillMaxWidth(),
-                        visualTransformation = PasswordVisualTransformation(),
+                        isPasswordField = true,
                         enabled = !uiState.isLoading
                     )
 

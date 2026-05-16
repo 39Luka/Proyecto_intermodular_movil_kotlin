@@ -22,6 +22,10 @@ import net.iesochoa.silvia.projecto_intermodular.ui.theme.BackgroundColor
 import net.iesochoa.silvia.projecto_intermodular.ui.theme.BorderColor
 import net.iesochoa.silvia.projecto_intermodular.ui.theme.Primary600
 import net.iesochoa.silvia.projecto_intermodular.ui.theme.Secondary500
+/**
+ * Barra de navegación inferior de la aplicación.
+ * Permite alternar entre las secciones principales: Inicio, Catálogo, Ofertas, Pedidos y Carrito.
+ */
 @Composable
 fun BottomBar(
     navController: NavController,

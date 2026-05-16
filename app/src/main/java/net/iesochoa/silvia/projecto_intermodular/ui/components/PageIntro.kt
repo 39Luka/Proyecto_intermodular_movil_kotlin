@@ -15,6 +15,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import net.iesochoa.silvia.projecto_intermodular.ui.theme.*
 
+/**
+ * Componente de introducción para las pantallas principales.
+ * Presenta una estructura con un texto superior corto (eyebrow), un título grande y una descripción.
+ * Utiliza un fondo degradado lila suave y bordes redondeados pronunciados.
+ *
+ * @param eyebrow Texto pequeño superior (ej. categoría o sección).
+ * @param title Título principal de la página.
+ * @param description Texto explicativo detallado.
+ * @param modifier Modificador de Compose.
+ */
 @Composable
 fun PageIntro(
     eyebrow: String,

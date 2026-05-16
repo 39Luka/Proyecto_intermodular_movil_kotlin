@@ -15,6 +15,15 @@ import androidx.compose.ui.unit.dp
 import net.iesochoa.silvia.projecto_intermodular.data.Category
 import net.iesochoa.silvia.projecto_intermodular.ui.theme.*
 
+/**
+ * Diálogo de selección para filtrar productos por categoría.
+ * Muestra una lista de categorías disponibles y una opción para limpiar el filtro.
+ *
+ * @param categories Lista de categorías para mostrar.
+ * @param selectedCategoryId ID de la categoría actualmente seleccionada (null si ninguna).
+ * @param onCategorySelected Callback invocado al elegir una categoría.
+ * @param onDismiss Callback invocado al cerrar el diálogo.
+ */
 @Composable
 fun CategoryFilterDialog(
     categories: List<Category>,

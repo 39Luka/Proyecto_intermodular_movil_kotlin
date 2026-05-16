@@ -25,25 +25,20 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import coil.compose.AsyncImage
-import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
-import net.iesochoa.silvia.projecto_intermodular.data.AuthRepository
-import net.iesochoa.silvia.projecto_intermodular.data.CartRepository
 import net.iesochoa.silvia.projecto_intermodular.data.Product
-import net.iesochoa.silvia.projecto_intermodular.data.ProductRepository
+import net.iesochoa.silvia.projecto_intermodular.model.ProductDetailUiState
+import net.iesochoa.silvia.projecto_intermodular.ui.components.AppAsyncImage
 import net.iesochoa.silvia.projecto_intermodular.ui.components.PrimaryButton
 import net.iesochoa.silvia.projecto_intermodular.ui.components.ScreenHeader
 import net.iesochoa.silvia.projecto_intermodular.ui.theme.*
+import net.iesochoa.silvia.projecto_intermodular.ui.utils.toCurrency
+import net.iesochoa.silvia.projecto_intermodular.viewmodel.ProductDetailViewModel
 import java.util.Locale
-import javax.inject.Inject
 
+/**
+ * Pantalla de detalle de un producto individual.
+ * Proporciona información extendida, selección de cantidad y opción de compra.
+ */
 @Composable
 fun ProductDetailScreen(
     productId: Int,
@@ -138,11 +133,11 @@ private fun ProductDetailContent(
                             )
                         )
                 ) {
-                    AsyncImage(
+                    AppAsyncImage(
                         model = product.getDisplayImage(),
                         contentDescription = product.getDisplayTitle(),
-                        modifier = Modifier.fillMaxSize().padding(16.dp),
-                        contentScale = ContentScale.Fit
+                        modifier = Modifier.fillMaxSize(),
+                        contentScale = ContentScale.Crop
                     )
                 }
 
@@ -212,7 +207,7 @@ private fun ActionSection(
             // Price Stat
             StatCard(
                 label = "Precio",
-                value = "€${String.format(Locale.US, "%.2f", product.price ?: 0.0)}",
+                value = product.price.toCurrency(),
                 modifier = Modifier.weight(1f)
             )
 
@@ -296,67 +291,3 @@ private fun StatCard(
         }
     }
 }
-
-@HiltViewModel
-class ProductDetailViewModel @Inject constructor(
-    private val productRepository: ProductRepository,
-    private val cartRepository: CartRepository,
-    private val authRepository: AuthRepository
-) : ViewModel() {
-
-    private val _uiState = MutableStateFlow(ProductDetailUiState())
-    val uiState: StateFlow<ProductDetailUiState> = _uiState.asStateFlow()
-
-    init {
-        observeUser()
-    }
-
-    private fun observeUser() {
-        viewModelScope.launch {
-            authRepository.getUser().collect { user ->
-                _uiState.update { it.copy(userProfileImage = user?.profileImageBase64) }
-            }
-        }
-    }
-
-    fun loadProduct(productId: Int) {
-        _uiState.value = _uiState.value.copy(isLoading = true, error = null)
-        viewModelScope.launch {
-            try {
-                val product = productRepository.getProductById(productId)
-                _uiState.value = _uiState.value.copy(
-                    product = product,
-                    isLoading = false
-                )
-            } catch (e: Exception) {
-                _uiState.value = _uiState.value.copy(
-                    isLoading = false,
-                    error = e.message ?: "Error al cargar producto"
-                )
-            }
-        }
-    }
-
-    fun updateQuantity(quantity: Int) {
-        _uiState.value = _uiState.value.copy(quantity = quantity)
-    }
-
-    fun addToCart() {
-        val product = _uiState.value.product ?: return
-        val quantity = _uiState.value.quantity
-        cartRepository.addToCart(product, quantity)
-        _uiState.value = _uiState.value.copy(
-            quantity = 1,
-            addedToCart = true
-        )
-    }
-}
-
-data class ProductDetailUiState(
-    val product: Product? = null,
-    val quantity: Int = 1,
-    val userProfileImage: String? = null,
-    val isLoading: Boolean = false,
-    val error: String? = null,
-    val addedToCart: Boolean = false
-)

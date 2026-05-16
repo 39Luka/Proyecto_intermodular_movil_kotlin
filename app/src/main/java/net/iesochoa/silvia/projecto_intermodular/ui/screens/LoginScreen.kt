@@ -29,6 +29,10 @@ import net.iesochoa.silvia.projecto_intermodular.ui.components.PrimaryButton
 import net.iesochoa.silvia.projecto_intermodular.ui.components.SimpleInput
 import net.iesochoa.silvia.projecto_intermodular.ui.theme.*
 
+/**
+ * Pantalla de inicio de sesión.
+ * Permite a los usuarios existentes acceder a su cuenta.
+ */
 @Composable
 fun LoginScreen(
     uiState: LoginUiState,
@@ -123,7 +127,7 @@ fun LoginScreen(
                         value = uiState.password,
                         onValueChange = onPasswordChange,
                         modifier = Modifier.fillMaxWidth(),
-                        visualTransformation = PasswordVisualTransformation(),
+                        isPasswordField = true,
                         enabled = !uiState.isLoading
                     )
 
