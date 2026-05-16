@@ -2,6 +2,7 @@ package net.iesochoa.silvia.projecto_intermodular.ui.screens
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -41,6 +42,12 @@ fun PurchasesScreen(
 ) {
     var showDateRangePicker by remember { mutableStateOf(false) }
     val dateRangePickerState = rememberDateRangePickerState()
+    val listState = rememberLazyListState()
+
+    // Scroll al principio al cambiar de página
+    LaunchedEffect(uiState.currentPage) {
+        listState.animateScrollToItem(0)
+    }
 
     // Diálogo del Selector de Fechas
     if (showDateRangePicker) {
@@ -85,6 +92,7 @@ fun PurchasesScreen(
     Column(modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp)) {
         
         LazyColumn(
+            state = listState,
             modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(16.dp),
             contentPadding = PaddingValues(top = 16.dp, bottom = 100.dp) // Espacio para la BottomBar del sistema

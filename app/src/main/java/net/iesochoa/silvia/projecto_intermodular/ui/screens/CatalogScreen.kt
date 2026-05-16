@@ -2,9 +2,11 @@ package net.iesochoa.silvia.projecto_intermodular.ui.screens
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -32,6 +34,13 @@ fun CatalogScreen(
     onCategorySelect: (Int?) -> Unit,
     onDismissFilter: () -> Unit
 ) {
+    val listState = rememberLazyListState()
+
+    // Scroll al principio al cambiar de página
+    LaunchedEffect(uiState.currentPage) {
+        listState.animateScrollToItem(0)
+    }
+
     if (uiState.showFilterDialog) {
         CategoryFilterDialog(
             categories = uiState.categories,
@@ -42,6 +51,7 @@ fun CatalogScreen(
     }
 
     LazyColumn(
+        state = listState,
         modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
         contentPadding = PaddingValues(bottom = 80.dp, top = 16.dp)
