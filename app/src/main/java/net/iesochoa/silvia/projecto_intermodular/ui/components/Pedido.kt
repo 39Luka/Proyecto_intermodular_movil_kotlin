@@ -17,15 +17,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import net.iesochoa.silvia.projecto_intermodular.model.PedidoItem
 import net.iesochoa.silvia.projecto_intermodular.ui.theme.*
 
-data class PedidoItem(
-    val id: Int = 0,
-    val fecha: String,
-    val estado: String,
-    val total: String
-)
-
+/**
+ * Tarjeta para mostrar el resumen de un pedido en la lista de compras.
+ * Incluye el ID del pedido, fecha, estado (badge) e importe total.
+ *
+ * @param pedido Objeto con la información del pedido.
+ * @param onClick Acción al pulsar sobre la tarjeta.
+ */
 @Composable
 fun PedidoCard(
     pedido: PedidoItem,
@@ -75,6 +76,10 @@ fun PedidoCard(
     }
 }
 
+/**
+ * Etiqueta visual para indicar el estado de un pedido con colores semánticos.
+ * (Ej: Verde para pagado, rojo para cancelado, amarillo para pendiente).
+ */
 @Composable
 private fun StatusBadge(status: String) {
     val (bgColor, textColor) = when (status.uppercase()) {

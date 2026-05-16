@@ -1,3 +1,55 @@
 <resources>
-    <string name="app_name">Projecto_Intermodular</string>
+    <string name="app_name">La Croassantina</string>
+
+    <!-- General -->
+    <string name="error_generic">Ha ocurrido un error inesperado</string>
+    <string name="loading">Cargando...</string>
+    <string name="save">Guardar</string>
+    <string name="cancel">Cancelar</string>
+    <string name="retry">Reintentar</string>
+    <string name="search_placeholder">Buscar...</string>
+
+    <!-- Home Screen -->
+    <string name="home_title">La Croassantina</string>
+    <string name="home_eyebrow_latest">Recién salido</string>
+    <string name="home_section_latest">Novedades del Obrador</string>
+    <string name="home_eyebrow_favorites">Lo más vendido</string>
+    <string name="home_section_favorites">Favoritos de la Casa</string>
+    <string name="home_no_products">No hay productos disponibles actualmente.</string>
+    <string name="home_hero_label">TRADICIÓN EN CADA BOCADO</string>
+    <string name="home_hero_title">Pan y repostería artesanal.</string>
+    <string name="home_hero_description">Horneados cada mañana con ingredientes naturales.</string>
+
+    <!-- Catalog Screen -->
+    <string name="catalog_title">Catálogo</string>
+    <string name="catalog_eyebrow">Catálogo</string>
+    <string name="catalog_intro_title">El mostrador completo.</string>
+    <string name="catalog_intro_desc">Nuestra selección completa de bollería, pan y café organizada para ti.</string>
+    <string name="catalog_no_results">No se encontraron productos en esta categoría.</string>
+
+    <!-- Offers Screen -->
+    <string name="offers_title">Promociones</string>
+    <string name="offers_eyebrow">Ofertas activas</string>
+    <string name="offers_intro_title">Promociones con mejor contexto.</string>
+    <string name="offers_intro_desc">Cada oferta se presenta como una oportunidad real de compra con lectura clara y ritmo visual.</string>
+    <string name="offers_no_results">No hay promociones activas en este momento.</string>
+    <string name="offers_label_discount">Descuento</string>
+    <string name="offers_badge_used">YA USADA</string>
+
+    <!-- Cart Screen -->
+    <string name="cart_title">Carrito</string>
+    <string name="cart_empty">Tu carrito está vacío</string>
+    <string name="cart_empty_desc">Parece que aún no has añadido ninguna delicia a tu cesta.</string>
+    <string name="cart_go_catalog">Ir al catálogo</string>
+    <string name="cart_total_label">Total final</string>
+    <string name="cart_checkout_btn">Finalizar compra</string>
+    <string name="cart_processing">Procesando...</string>
+    <string name="cart_promotion_label">Promoción aplicada</string>
+    <string name="cart_no_promotion">Sin promoción</string>
+
+    <!-- Profile Screen -->
+    <string name="profile_title">Mi Perfil</string>
+    <string name="profile_change_image">Cambiar imagen</string>
+    <string name="profile_change_password">Cambiar contraseña</string>
+    <string name="profile_logout">Cerrar Sesión</string>
 </resources>

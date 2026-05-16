@@ -15,14 +15,19 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.res.stringResource
+import net.iesochoa.silvia.projecto_intermodular.R
 import net.iesochoa.silvia.projecto_intermodular.model.HomeUiState
 import net.iesochoa.silvia.projecto_intermodular.ui.components.*
 import net.iesochoa.silvia.projecto_intermodular.ui.theme.*
 
+/**
+ * Pantalla de inicio de la aplicación.
+ * Muestra el Hero (Sección destacada), novedades y productos más vendidos.
+ */
 @Composable
 fun HomeScreen(
     uiState: HomeUiState,
-    onSearchChange: (String) -> Unit,
     onRetryClick: () -> Unit,
     onProductClick: (Int) -> Unit,
     onBackClick: (() -> Unit)?,
@@ -37,10 +42,8 @@ fun HomeScreen(
 
         item {
             ScreenHeader(
-                title = "La Croassantina",
-                showSearch = true,
-                searchQuery = uiState.searchQuery,
-                onSearchChange = onSearchChange,
+                title = stringResource(R.string.home_title),
+                showSearch = false,
                 onBackClick = onBackClick,
                 onProfileClick = onProfileClick,
                 profileImage = uiState.userProfileImage
@@ -67,7 +70,10 @@ fun HomeScreen(
             // 🔹 Sección Novedades
             if (uiState.filteredPromociones.isNotEmpty()) {
                 item {
-                    SectionHeader(title = "Novedades del Obrador", eyebrow = "Recién salido")
+                    SectionHeader(
+                        title = stringResource(R.string.home_section_latest),
+                        eyebrow = stringResource(R.string.home_eyebrow_latest)
+                    )
                 }
 
                 item {
@@ -82,7 +88,10 @@ fun HomeScreen(
             // 🔹 Sección Favoritos
             if (uiState.filteredTopVentas.isNotEmpty()) {
                 item {
-                    SectionHeader(title = "Favoritos de la Casa", eyebrow = "Lo más vendido")
+                    SectionHeader(
+                        title = stringResource(R.string.home_section_favorites),
+                        eyebrow = stringResource(R.string.home_eyebrow_favorites)
+                    )
                 }
 
                 item {
@@ -97,7 +106,11 @@ fun HomeScreen(
             if (uiState.filteredPromociones.isEmpty() && uiState.filteredTopVentas.isEmpty() && uiState.error == null) {
                 item {
                     Box(modifier = Modifier.fillMaxWidth().padding(32.dp), contentAlignment = Alignment.Center) {
-                        Text(text = "No hay productos disponibles actualmente.", style = AppTypography.bodyMedium)
+                        Text(
+                            text = stringResource(R.string.home_no_products),
+                            style = AppTypography.bodyMedium,
+                            color = TextPrimary.copy(alpha = 0.6f)
+                        )
                     }
                 }
             }
@@ -107,49 +120,66 @@ fun HomeScreen(
 
 @Composable
 private fun HeroSection() {
+    val lilacGradient = Brush.linearGradient(
+        colors = listOf(Neutral100.copy(alpha = 0.97f), Primary100.copy(alpha = 0.64f))
+    )
+    val orangeGradient = Brush.verticalGradient(
+        colors = listOf(Secondary400, Secondary600)
+    )
+
     Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(12.dp)
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(IntrinsicSize.Max), // Igualar altura de ambas tarjetas
+        horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        // 🔹 Left Panel
+        // 🔹 Left Panel - Estilo PageIntro
         Card(
-            modifier = Modifier.weight(1.3f),
-            shape = RoundedCornerShape(24.dp),
-            colors = CardDefaults.cardColors(containerColor = Primary100),
-            border = androidx.compose.foundation.BorderStroke(1.dp, Primary200)
+            modifier = Modifier
+                .weight(1.4f)
+                .fillMaxHeight(),
+            shape = RoundedCornerShape(28.dp),
+            colors = CardDefaults.cardColors(containerColor = Color.Transparent),
+            border = androidx.compose.foundation.BorderStroke(1.dp, Primary200.copy(alpha = 0.55f))
         ) {
-            Column(modifier = Modifier.padding(20.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            Column(
+                modifier = Modifier
+                    .background(lilacGradient)
+                    .fillMaxSize()
+                    .padding(24.dp),
+                verticalArrangement = Arrangement.Center // Centrado vertical para equilibrar
+            ) {
                 Text(
-                    text = "TRADICIÓN EN CADA BOCADO",
+                    text = stringResource(R.string.home_hero_label),
                     style = AppTypography.labelMedium.copy(fontWeight = FontWeight.Bold),
                     color = Primary500
                 )
                 Text(
-                    text = "Pan y repostería artesanal.",
+                    text = stringResource(R.string.home_hero_title),
                     style = AppTypography.headlineSmall.copy(fontWeight = FontWeight.ExtraBold),
                     color = TextPrimary
                 )
                 Text(
-                    text = "Horneados cada mañana con ingredientes naturales.",
+                    text = stringResource(R.string.home_hero_description),
                     style = AppTypography.bodySmall,
-                    color = TextPrimary.copy(alpha = 0.8f)
+                    color = TextPrimary.copy(alpha = 0.7f),
+                    modifier = Modifier.padding(top = 4.dp)
                 )
             }
         }
 
-        // 🔹 Right Panel
-        val secondaryGradient = Brush.verticalGradient(
-            colors = listOf(Secondary400, Secondary600)
-        )
+        // 🔹 Right Panel - Naranja
         Card(
-            modifier = Modifier.weight(1f).height(IntrinsicSize.Min),
-            shape = RoundedCornerShape(24.dp),
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxHeight(),
+            shape = RoundedCornerShape(28.dp),
             colors = CardDefaults.cardColors(containerColor = Color.Transparent)
         ) {
             Column(
                 modifier = Modifier
-                    .background(secondaryGradient)
-                    .fillMaxHeight()
+                    .background(orangeGradient)
+                    .fillMaxSize()
                     .padding(20.dp),
                 verticalArrangement = Arrangement.SpaceAround,
                 horizontalAlignment = Alignment.CenterHorizontally

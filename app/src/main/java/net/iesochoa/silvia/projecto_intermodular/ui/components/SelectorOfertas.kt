@@ -22,17 +22,19 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.material3.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import net.iesochoa.silvia.projecto_intermodular.model.Oferta
 import net.iesochoa.silvia.projecto_intermodular.ui.theme.AppTypography
 import net.iesochoa.silvia.projecto_intermodular.ui.theme.Primary100
 import net.iesochoa.silvia.projecto_intermodular.ui.theme.Primary600
 
-data class Oferta(
-    val id: String,
-    val nombre: String,
-    val descuento: Double // o porcentaje
-)
-
-
+/**
+ * Componente interactivo para seleccionar múltiples ofertas de una lista.
+ * Muestra las ofertas seleccionadas como chips y permite añadir más mediante un menú desplegable.
+ *
+ * @param ofertas Lista completa de ofertas disponibles para seleccionar.
+ * @param seleccionadas Conjunto inicial de ofertas ya seleccionadas.
+ * @param onSeleccionCambio Callback que se dispara al añadir o eliminar una oferta.
+ */
 @Composable
 fun SelectorOfertas(
     ofertas: List<Oferta>,
@@ -108,6 +110,10 @@ fun SelectorOfertas(
 }
 
 
+/**
+ * Pequeño chip visual para representar una oferta seleccionada.
+ * Incluye un botón de eliminar (X).
+ */
 @Composable
 fun OfertaChip(
     text: String,

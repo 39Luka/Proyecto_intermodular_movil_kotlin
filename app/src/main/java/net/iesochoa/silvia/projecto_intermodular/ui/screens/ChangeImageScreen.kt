@@ -17,18 +17,24 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
 import net.iesochoa.silvia.projecto_intermodular.R
 import net.iesochoa.silvia.projecto_intermodular.model.ProfileUiState
 import net.iesochoa.silvia.projecto_intermodular.ui.components.*
 import net.iesochoa.silvia.projecto_intermodular.ui.theme.*
-import net.iesochoa.silvia.projecto_intermodular.ui.utils.decodeBase64ToBitmap
 
+/**
+ * Pantalla que permite al usuario cambiar su imagen de perfil.
+ * Incluye un selector de imágenes de la galería del dispositivo y una vista previa.
+ *
+ * @param uiState Estado de la interfaz de usuario con la información del perfil y errores.
+ * @param onImageSelected Callback invocado cuando el usuario elige una imagen de la galería.
+ * @param onSaveClick Acción para subir la imagen seleccionada al servidor.
+ * @param onBackClick Acción para regresar a la pantalla anterior.
+ */
 @Composable
 fun ChangeImageScreen(
     uiState: ProfileUiState,
@@ -95,44 +101,13 @@ fun ChangeImageScreen(
                                 .background(Primary100),
                             contentAlignment = Alignment.Center
                         ) {
-                            when {
-                                uiState.selectedImageUri != null -> {
-                                    AsyncImage(
-                                        model = uiState.selectedImageUri,
-                                        contentDescription = "Vista previa",
-                                        modifier = Modifier.fillMaxSize(),
-                                        contentScale = ContentScale.Crop,
-                                        placeholder = painterResource(id = R.drawable.profile),
-                                        error = painterResource(id = R.drawable.profile)
-                                    )
-                                }
-                                !uiState.profileImage.isNullOrEmpty() -> {
-                                    val bitmap = uiState.profileImage!!.decodeBase64ToBitmap()
-                                    if (bitmap != null) {
-                                        Image(
-                                            bitmap = bitmap.asImageBitmap(),
-                                            contentDescription = "Vista previa",
-                                            modifier = Modifier.fillMaxSize(),
-                                            contentScale = ContentScale.Crop
-                                        )
-                                    } else {
-                                        Image(
-                                            painter = painterResource(id = R.drawable.profile),
-                                            contentDescription = "Vista previa",
-                                            modifier = Modifier.fillMaxSize(),
-                                            contentScale = ContentScale.Crop
-                                        )
-                                    }
-                                }
-                                else -> {
-                                    Image(
-                                        painter = painterResource(id = R.drawable.profile),
-                                        contentDescription = "Vista previa",
-                                        modifier = Modifier.fillMaxSize(),
-                                        contentScale = ContentScale.Crop
-                                    )
-                                }
-                            }
+                            val displayImage = uiState.selectedImageUri ?: uiState.profileImage ?: R.drawable.profile
+                            AppAsyncImage(
+                                model = displayImage,
+                                contentDescription = "Vista previa",
+                                modifier = Modifier.fillMaxSize(),
+                                contentScale = ContentScale.Crop
+                            )
 
                             if (uiState.isLoading) {
                                 CircularProgressIndicator(

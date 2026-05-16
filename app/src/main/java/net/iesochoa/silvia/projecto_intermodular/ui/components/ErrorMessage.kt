@@ -12,6 +12,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import net.iesochoa.silvia.projecto_intermodular.ui.theme.*
 
+/**
+ * Componente para mostrar mensajes de error de forma visualmente destacada.
+ * Utiliza un fondo rojizo suave y permite incluir una acción de reintento.
+ *
+ * @param message El mensaje de error a mostrar.
+ * @param onRetry Callback opcional para reintentar la operación fallida.
+ * @param modifier Modificador para el contenedor externo.
+ */
 @Composable
 fun ErrorMessage(
     message: String,

@@ -18,6 +18,10 @@ import net.iesochoa.silvia.projecto_intermodular.ui.navigation.AppNavigation
 import net.iesochoa.silvia.projecto_intermodular.ui.navigation.Screen
 import net.iesochoa.silvia.projecto_intermodular.ui.theme.Projecto_IntermodularTheme
 
+/**
+ * Actividad principal de la aplicación que sirve como punto de entrada.
+ * Configura el tema, activa el modo edge-to-edge e inicializa la pantalla principal.
+ */
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -31,12 +35,17 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+/**
+ * Composable principal que gestiona la estructura de la aplicación.
+ * Controla la navegación y la visibilidad de la barra inferior (BottomBar).
+ */
 @Composable
 fun MainScreen() {
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
 
+    // Define en qué rutas se debe mostrar la barra de navegación inferior
     val showBottomBar = currentRoute in listOf(
         Screen.Home.route,
         Screen.Catalog.route,

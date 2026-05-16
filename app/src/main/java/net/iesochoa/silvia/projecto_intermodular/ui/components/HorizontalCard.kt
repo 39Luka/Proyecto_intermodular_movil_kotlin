@@ -19,41 +19,44 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
 import net.iesochoa.silvia.projecto_intermodular.R
+import net.iesochoa.silvia.projecto_intermodular.model.HorizontalCardItem
 import net.iesochoa.silvia.projecto_intermodular.ui.theme.*
 
-data class HorizontalCardItem(
-    val id: Int = 0,
-    val title: String,
-    val description: String = "",
-    val leftLabel: String? = null,
-    val leftValue: String? = null,
-    val rightLabel: String? = null,
-    val rightValue: String? = null,
-    val imageUrl: String? = null,
-    val imageRes: Int? = null,
-    val categoryName: String = "Obrador"
-)
-
+/**
+ * Tarjeta horizontal diseñada para destacar promociones o items detallados.
+ * Muestra información de descuento y permite un estado de "Usada" con opacidad reducida.
+ */
+/**
+ * Tarjeta horizontal diseñada para destacar promociones o items detallados.
+ * Muestra información de descuento y permite un estado de "Usada" con opacidad reducida.
+ *
+ * @param item Objeto con los datos a mostrar en la tarjeta.
+ * @param onClick Acción al pulsar sobre la tarjeta (si no está usada).
+ * @param modifier Modificador de Compose.
+ */
 @Composable
 fun HorizontalCard(
     item: HorizontalCardItem,
     onClick: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
+    val alpha = if (item.isUsed) 0.5f else 1f
+    
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .clickable { onClick() }
+            .clickable(enabled = !item.isUsed) { onClick() }
             .shadow(
                 elevation = 4.dp,
                 shape = RoundedCornerShape(26.dp),
                 spotColor = Color(0x14000000)
             ),
         shape = RoundedCornerShape(26.dp),
-        colors = CardDefaults.cardColors(containerColor = Neutral100),
-        border = androidx.compose.foundation.BorderStroke(1.dp, Neutral200)
+        colors = CardDefaults.cardColors(
+            containerColor = if (item.isUsed) Neutral200 else Neutral100
+        ),
+        border = androidx.compose.foundation.BorderStroke(1.dp, if (item.isUsed) Neutral300 else Neutral200)
     ) {
         Row(
             modifier = Modifier
@@ -63,16 +66,36 @@ fun HorizontalCard(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = item.categoryName.uppercase(),
-                    style = AppTypography.labelMedium,
-                    color = Primary500
-                )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = item.categoryName.uppercase(),
+                        style = AppTypography.labelMedium,
+                        color = if (item.isUsed) TextPrimary.copy(alpha = 0.4f) else Primary500
+                    )
+                    
+                    if (item.isUsed) {
+                        androidx.compose.material3.Surface(
+                            color = Neutral400,
+                            shape = RoundedCornerShape(4.dp)
+                        ) {
+                            Text(
+                                text = "YA USADA",
+                                modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
+                                style = AppTypography.labelSmall.copy(fontWeight = FontWeight.Bold),
+                                color = Color.White
+                            )
+                        }
+                    }
+                }
 
                 Text(
                     text = item.title,
                     style = AppTypography.titleMedium,
-                    color = TextPrimary,
+                    color = if (item.isUsed) TextPrimary.copy(alpha = 0.5f) else TextPrimary,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
@@ -81,7 +104,7 @@ fun HorizontalCard(
                     Text(
                         text = item.description,
                         style = AppTypography.bodySmall,
-                        color = TextPrimary.copy(alpha = 0.7f),
+                        color = TextPrimary.copy(alpha = if (item.isUsed) 0.3f else 0.7f),
                         maxLines = 2,
                         overflow = TextOverflow.Ellipsis
                     )
@@ -93,7 +116,7 @@ fun HorizontalCard(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(1.dp)
-                        .background(Neutral200.copy(alpha = 0.5f))
+                        .background(Neutral200.copy(alpha = if (item.isUsed) 0.2f else 0.5f))
                 )
 
                 Spacer(modifier = Modifier.height(12.dp))
@@ -108,12 +131,12 @@ fun HorizontalCard(
                             Text(
                                 text = item.leftLabel,
                                 style = AppTypography.labelMedium,
-                                color = TextPrimary.copy(alpha = 0.6f)
+                                color = TextPrimary.copy(alpha = if (item.isUsed) 0.3f else 0.6f)
                             )
                             Text(
                                 text = item.leftValue,
                                 style = AppTypography.bodyMedium,
-                                color = TextPrimary
+                                color = if (item.isUsed) TextPrimary.copy(alpha = 0.4f) else TextPrimary
                             )
                         }
                     }
@@ -123,12 +146,12 @@ fun HorizontalCard(
                             Text(
                                 text = item.rightLabel,
                                 style = AppTypography.labelMedium,
-                                color = Secondary500.copy(alpha = 0.6f)
+                                color = Secondary500.copy(alpha = if (item.isUsed) 0.3f else 0.6f)
                             )
                             Text(
                                 text = item.rightValue,
                                 style = AppTypography.bodyLarge,
-                                color = Secondary500
+                                color = if (item.isUsed) Secondary500.copy(alpha = 0.4f) else Secondary500
                             )
                         }
                     }
@@ -139,21 +162,25 @@ fun HorizontalCard(
                 modifier = Modifier
                     .size(110.dp)
                     .clip(RoundedCornerShape(18.dp))
-                    .background(Secondary100)
+                    .background(if (item.isUsed) Neutral300 else Secondary100)
             ) {
-                AsyncImage(
-                    model = item.imageUrl ?: if (item.imageRes != null && item.imageRes != 0) item.imageRes else R.drawable.croissant,
+                AppAsyncImage(
+                    model = item.imageUrl ?: if (item.imageRes != null && item.imageRes != 0) item.imageRes else null,
                     contentDescription = item.title,
-                    placeholder = painterResource(id = R.drawable.croissant),
-                    error = painterResource(id = R.drawable.croissant),
-                    modifier = Modifier.fillMaxSize().padding(4.dp),
-                    contentScale = ContentScale.Fit
+                    modifier = Modifier.fillMaxSize(),
+                    contentScale = ContentScale.Crop,
+                    alpha = alpha
                 )
             }
         }
     }
 }
 
+/**
+ * Lista vertical de tarjetas horizontales.
+ * @param items Lista de elementos a visualizar.
+ * @param onItemClick Acción al pulsar en cualquier tarjeta.
+ */
 @Composable
 fun HorizontalCardList(
     items: List<HorizontalCardItem>,

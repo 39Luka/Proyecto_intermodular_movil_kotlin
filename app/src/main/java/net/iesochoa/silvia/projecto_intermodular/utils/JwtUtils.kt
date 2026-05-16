@@ -4,7 +4,11 @@ import android.util.Base64
 import net.iesochoa.silvia.projecto_intermodular.data.User
 import org.json.JSONObject
 
+/**
+ * Utilidades para el manejo de JSON Web Tokens (JWT).
+ */
 object JwtUtils {
+    /** Decodifica el payload de un JWT para extraer información del usuario. */
     fun decodeUser(token: String, fallbackEmail: String = ""): User {
         return try {
             val parts = token.split(".")

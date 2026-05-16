@@ -19,14 +19,17 @@ object PreferenceKeys {
     val USER_IMAGE = stringPreferencesKey("user_image")
 }
 
+/**
+ * Repositorio de autenticación y persistencia del perfil de usuario.
+ */
 class AuthRepository(
     private val context: Context,
     private val apiService: ApiService,
     private val tokenManager: TokenManager
 ) {
     
+    /** Realiza el login del usuario y guarda el token JWT. */
     suspend fun login(email: String, password: String): User {
-        // 1. Limpieza absoluta antes de entrar
         logout()
         
         val response = apiService.login(AuthRequest(email, password))
@@ -38,7 +41,6 @@ class AuthRepository(
             context.dataStore.edit { prefs -> prefs[PreferenceKeys.REFRESH_TOKEN] = it }
         }
         
-        // 2. Intentar obtener el perfil con imagen inmediatamente
         var user = JwtUtils.decodeUser(token, email)
         try {
             val profile = apiService.getUserByEmail(email)
@@ -62,6 +64,7 @@ class AuthRepository(
         return user
     }
 
+    /** Actualiza la imagen de perfil del usuario. */
     suspend fun updateProfileImage(base64Image: String?) {
         val updatedUser = apiService.updateProfileImage(UpdateProfileImageRequest(base64Image))
         
@@ -77,9 +80,8 @@ class AuthRepository(
     }
 
     suspend fun changePassword(current: String, new: String) {
-        apiService.changePassword(ChangePasswordRequest(current, new))
-        // Al cambiar contraseña el backend suele invalidar tokens, 
-        // pero aquí dependerá de si el backend devuelve un nuevo token o no.
+        val response = apiService.changePassword(ChangePasswordRequest(current, new))
+        if (!response.isSuccessful) throw retrofit2.HttpException(response)
     }
 
     private suspend fun saveUserLocal(user: User) {
@@ -120,30 +122,47 @@ class AuthRepository(
     }
 }
 
+/**
+ * Repositorio para la gestión de productos.
+ */
 class ProductRepository(private val apiService: ApiService) {
     
-    suspend fun getProducts(categoryId: Int? = null, page: Int = 0, size: Int = 12): PagedResponse<Product> {
-        return apiService.getProducts(categoryId, page, size)
+    /** Obtiene una lista paginada de productos, opcionalmente filtrada por categoría y nombre. */
+    suspend fun getProducts(
+        categoryId: Int? = null,
+        name: String? = null,
+        page: Int = 0,
+        size: Int = 12,
+        sort: String? = "id,desc"
+    ): PagedResponse<Product> {
+        val response = apiService.getProducts(categoryId, name, page, size, sort)
+        // Mostrar solo productos activos
+        return response.copy(content = response.content.filter { it.active })
     }
 
+    /** Busca un producto por su ID único. */
     suspend fun getProductById(id: Int): Product {
-        return apiService.getProductById(id)
+        val product = apiService.getProductById(id)
+        if (!product.active) throw Exception("Este producto ya no está disponible")
+        return product
     }
 
+    /** Obtiene los productos más vendidos del sistema. */
     suspend fun getTopSellingProducts(size: Int = 6): List<Product> {
         return try {
             val response = apiService.getTopSellingProducts(0, size)
             val items = response.content
             items.mapNotNull { item ->
                 try {
-                    apiService.getProductById(item.productId)
+                    val p = apiService.getProductById(item.productId)
+                    if (p.active) p else null
                 } catch (e: Exception) { null }
             }.ifEmpty { 
-                apiService.getProducts(null, 0, size).content
+                getProducts(categoryId = null, name = null, page = 0, size = size).content
             }
         } catch (e: Exception) {
             try {
-                apiService.getProducts(null, 0, size).content
+                getProducts(categoryId = null, name = null, page = 0, size = size).content
             } catch (e2: Exception) {
                 emptyList()
             }
@@ -151,40 +170,78 @@ class ProductRepository(private val apiService: ApiService) {
     }
 }
 
+/**
+ * Repositorio para la gestión de categorías.
+ */
 class CategoryRepository(private val apiService: ApiService) {
+    /** Obtiene todas las categorías de productos disponibles. */
     suspend fun getCategories(): List<Category> {
         return apiService.getCategories().content
     }
 }
 
+/**
+ * Repositorio para la gestión de promociones y ofertas.
+ */
 class PromotionRepository(private val apiService: ApiService) {
-    suspend fun getActivePromotions(productId: Int, userId: Int? = null): List<Promotion> {
-        return apiService.getActivePromotions(productId, userId).content
+    /** Obtiene las promociones activas. Si se pasa productId y/o userId, filtra por ellos. */
+    suspend fun getActivePromotions(productId: Int? = null, userId: Int? = null): List<Promotion> {
+        return apiService.getActivePromotions(productId, userId).content.filter { it.active }
     }
 
+    /** Obtiene el listado completo de promociones del sistema. */
     suspend fun getAllPromotions(): List<Promotion> {
-        return apiService.getAllPromotions().content
+        return apiService.getAllPromotions().content.filter { it.active }
+    }
+
+    /** Obtiene las promociones disponibles (no usadas) para un usuario. */
+    suspend fun getAvailablePromotions(userId: Int? = null): List<Promotion> {
+        return apiService.getAvailablePromotions(userId).content
     }
 }
 
+/**
+ * Repositorio para la gestión de compras y pedidos.
+ */
 class PurchaseRepository(private val apiService: ApiService) {
-    suspend fun getPurchases(userId: Int? = null, page: Int = 0, pageSize: Int = 10): PagedResponse<Purchase> {
-        return apiService.getPurchases(page = page, size = pageSize, userId = userId)
+    /**
+     * Obtiene el historial de compras de un usuario con filtros opcionales.
+     */
+    suspend fun getPurchases(
+        userId: Int? = null,
+        page: Int = 0,
+        pageSize: Int = 10,
+        startDate: String? = null,
+        endDate: String? = null
+    ): PagedResponse<Purchase> {
+        return apiService.getPurchases(
+            page = page,
+            size = pageSize,
+            userId = userId,
+            startDate = startDate,
+            endDate = endDate
+        )
     }
 
+    /** Obtiene el detalle de un pedido por su ID. */
     suspend fun getPurchaseById(id: Int): Purchase {
         return apiService.getPurchaseById(id)
     }
 
+    /** Registra un nuevo pedido en el servidor. */
     suspend fun createPurchase(items: List<PurchaseItemRequest>, userId: Int? = null): Purchase {
         return apiService.createPurchase(CreatePurchaseRequest(items, userId))
     }
 
+    /** Marca un pedido como pagado. */
     suspend fun payPurchase(id: Int) {
-        apiService.payPurchase(id)
+        val response = apiService.payPurchase(id)
+        if (!response.isSuccessful) throw retrofit2.HttpException(response)
     }
 
+    /** Solicita la cancelación de un pedido. */
     suspend fun cancelPurchase(id: Int) {
-        apiService.cancelPurchase(id)
+        val response = apiService.cancelPurchase(id)
+        if (!response.isSuccessful) throw retrofit2.HttpException(response)
     }
 }

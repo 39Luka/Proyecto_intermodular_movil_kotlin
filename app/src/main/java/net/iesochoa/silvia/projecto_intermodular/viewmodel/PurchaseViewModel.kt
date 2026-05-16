@@ -10,8 +10,12 @@ import kotlinx.coroutines.launch
 import net.iesochoa.silvia.projecto_intermodular.data.Purchase
 import net.iesochoa.silvia.projecto_intermodular.data.PurchaseRepository
 import net.iesochoa.silvia.projecto_intermodular.data.ProductRepository
+import net.iesochoa.silvia.projecto_intermodular.model.PurchaseUiState
 import javax.inject.Inject
 
+/**
+ * ViewModel para la gestión de compras generales.
+ */
 @HiltViewModel
 class PurchaseViewModel @Inject constructor(
     private val purchaseRepository: PurchaseRepository,
@@ -21,6 +25,7 @@ class PurchaseViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(PurchaseUiState())
     val uiState: StateFlow<PurchaseUiState> = _uiState.asStateFlow()
 
+    /** Carga la lista de compras del usuario. */
     fun loadPurchases(userId: Int? = null) {
         _uiState.value = _uiState.value.copy(isLoading = true, error = null)
         viewModelScope.launch {
@@ -39,6 +44,7 @@ class PurchaseViewModel @Inject constructor(
         }
     }
 
+    /** Carga el detalle de una compra específica. */
     fun loadPurchaseDetail(purchaseId: Int) {
         _uiState.value = _uiState.value.copy(detailLoading = true)
         viewModelScope.launch {
@@ -93,12 +99,3 @@ class PurchaseViewModel @Inject constructor(
         _uiState.value = _uiState.value.copy(error = null)
     }
 }
-
-data class PurchaseUiState(
-    val purchases: List<Purchase> = emptyList(),
-    val selectedPurchase: Purchase? = null,
-    val isLoading: Boolean = false,
-    val detailLoading: Boolean = false,
-    val isProcessing: Boolean = false,
-    val error: String? = null
-)

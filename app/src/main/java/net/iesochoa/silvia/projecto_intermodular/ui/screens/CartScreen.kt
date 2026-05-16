@@ -20,10 +20,17 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import net.iesochoa.silvia.projecto_intermodular.model.CartUiState
 import net.iesochoa.silvia.projecto_intermodular.model.CartItemState
+import net.iesochoa.silvia.projecto_intermodular.model.HorizontalCardItem
 import net.iesochoa.silvia.projecto_intermodular.ui.components.*
 import net.iesochoa.silvia.projecto_intermodular.ui.theme.*
+import net.iesochoa.silvia.projecto_intermodular.ui.utils.toCurrency
 import java.util.Locale
 
+/**
+ * Pantalla del carrito de la compra.
+ * Lista los productos seleccionados, permite gestionar cantidades,
+ * aplicar promociones y finalizar el pedido.
+ */
 @Composable
 fun CartScreen(
     uiState: CartUiState,
@@ -72,6 +79,13 @@ fun CartScreen(
             }
         } else {
             items(uiState.items) { cartItem ->
+                val itemBasePrice = (cartItem.product.price ?: 0.0) * cartItem.quantity
+                val selectedPromo = cartItem.applicablePromotions.find { it.id == cartItem.selectedPromotionId }
+                val itemDiscount = if (selectedPromo != null) {
+                    itemBasePrice * ((selectedPromo.discountPercentage ?: 0.0) / 100.0)
+                } else 0.0
+                val itemFinalPrice = itemBasePrice - itemDiscount
+
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     HorizontalCard(
                         item = HorizontalCardItem(
@@ -80,8 +94,8 @@ fun CartScreen(
                             description = cartItem.product.description ?: "",
                             leftLabel = "Cantidad",
                             leftValue = cartItem.quantity.toString(),
-                            rightLabel = "Subtotal",
-                            rightValue = "€${String.format(Locale.US, "%.2f", (cartItem.product.price ?: 0.0) * cartItem.quantity)}"
+                            rightLabel = if (itemDiscount > 0) "Subtotal (con promo)" else "Subtotal",
+                            rightValue = "€${String.format(Locale.US, "%.2f", itemFinalPrice)}"
                         ),
                         modifier = Modifier.fillMaxWidth()
                     )
@@ -123,7 +137,7 @@ fun CartScreen(
                                 color = TextPrimary
                             )
                             Text(
-                                "€${String.format(Locale.US, "%.2f", uiState.total)}",
+                                uiState.total.toCurrency(),
                                 style = AppTypography.displaySmall.copy(fontWeight = FontWeight.ExtraBold),
                                 color = Secondary500
                             )
