@@ -2,6 +2,7 @@ package net.iesochoa.silvia.projecto_intermodular.ui.screens
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
@@ -31,7 +32,15 @@ fun OffersScreen(
     onNextPage: () -> Unit,
     onPreviousPage: () -> Unit
 ) {
+    val listState = rememberLazyListState()
+
+    // Scroll al principio al cambiar de página
+    LaunchedEffect(uiState.currentPage) {
+        listState.animateScrollToItem(0)
+    }
+
     LazyColumn(
+        state = listState,
         modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
         contentPadding = PaddingValues(bottom = 80.dp, top = 16.dp)
