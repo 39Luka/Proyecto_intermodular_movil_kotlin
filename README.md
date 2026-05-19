@@ -450,7 +450,7 @@ Configuración de tema:
 - [ ] Soporte para múltiples métodos de pago
 - [ ] Sistema de reseñas y calificaciones
 - [ ] Notificaciones push
-- [ ] Modo oscuro mejorado
+- [ ] Modo oscuro
 - [ ] Sincronización en tiempo real
 
 ## 📖 Recursos Útiles
