@@ -16,6 +16,10 @@ class BottomBarTest {
     @get:Rule
     val composeTestRule = createComposeRule()
 
+    /**
+     * CP-30: bottomBar_displaysAllDestinations
+     * Verifica que la barra de navegación inferior muestre todos los destinos principales de la aplicación.
+     */
     @Test
     fun bottomBar_displaysAllDestinations() {
         composeTestRule.setContent {

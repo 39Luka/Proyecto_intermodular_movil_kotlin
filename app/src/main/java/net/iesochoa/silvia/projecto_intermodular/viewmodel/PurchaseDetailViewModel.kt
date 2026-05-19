@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import net.iesochoa.silvia.projecto_intermodular.data.PurchaseRepository
 import net.iesochoa.silvia.projecto_intermodular.model.PurchaseDetailUiState
+import net.iesochoa.silvia.projecto_intermodular.ui.utils.ErrorMapper
 import javax.inject.Inject
 
 /**
@@ -36,7 +37,7 @@ class PurchaseDetailViewModel @Inject constructor(
             } catch (e: Exception) {
                 _uiState.update { it.copy(
                     isLoading = false,
-                    error = e.message ?: "Error al cargar compra"
+                    error = ErrorMapper.map(e, "Error al cargar la compra")
                 ) }
             }
         }
@@ -51,7 +52,10 @@ class PurchaseDetailViewModel @Inject constructor(
                 purchaseRepository.payPurchase(purchase.id)
                 loadPurchase(purchase.id)
             } catch (e: Exception) {
-                _uiState.update { it.copy(isProcessing = false, error = "Error al pagar: ${e.message}") }
+                _uiState.update { it.copy(
+                    isProcessing = false, 
+                    error = ErrorMapper.map(e, "Error al procesar el pago")
+                ) }
             }
         }
     }
@@ -65,7 +69,10 @@ class PurchaseDetailViewModel @Inject constructor(
                 purchaseRepository.cancelPurchase(purchase.id)
                 loadPurchase(purchase.id)
             } catch (e: Exception) {
-                _uiState.update { it.copy(isProcessing = false, error = "Error al cancelar: ${e.message}") }
+                _uiState.update { it.copy(
+                    isProcessing = false, 
+                    error = ErrorMapper.map(e, "Error al cancelar la compra")
+                ) }
             }
         }
     }

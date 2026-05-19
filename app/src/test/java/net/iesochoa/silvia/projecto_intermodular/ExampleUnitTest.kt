@@ -10,6 +10,10 @@ import org.junit.Assert.*
  * See [testing documentation](http://d.android.com/tools/testing).
  */
 class ExampleUnitTest {
+    /**
+     * CP-00: addition_isCorrect
+     * Prueba unitaria de ejemplo para verificar que el entorno de testing básico funciona.
+     */
     @Test
     fun addition_isCorrect() {
         assertEquals(4, 2 + 2)

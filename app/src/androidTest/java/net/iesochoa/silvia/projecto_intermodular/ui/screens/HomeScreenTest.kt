@@ -13,6 +13,10 @@ class HomeScreenTest {
     @get:Rule
     val composeTestRule = createComposeRule()
 
+    /**
+     * CP-31: homeScreen_displaysHeroAndSections
+     * Comprueba que la pantalla de inicio cargue visualmente las secciones principales de contenido.
+     */
     @Test
     fun homeScreen_displaysHeroAndSections() {
         composeTestRule.setContent {
@@ -37,6 +41,10 @@ class HomeScreenTest {
         // R.string.home_title suele ser "Inicio" o similar.
     }
 
+    /**
+     * CP-32: homeScreen_showsLoadingIndicator_whenLoading
+     * Verifica que se muestre un indicador de carga cuando el estado de la pantalla está en proceso de obtención de datos.
+     */
     @Test
     fun homeScreen_showsLoadingIndicator_whenLoading() {
         composeTestRule.setContent {

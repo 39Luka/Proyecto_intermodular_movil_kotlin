@@ -13,6 +13,8 @@ import net.iesochoa.silvia.projecto_intermodular.data.AuthRepository
 import net.iesochoa.silvia.projecto_intermodular.data.CategoryRepository
 import net.iesochoa.silvia.projecto_intermodular.data.ProductRepository
 import net.iesochoa.silvia.projecto_intermodular.data.PromotionRepository
+import net.iesochoa.silvia.projecto_intermodular.ui.utils.ErrorMapper
+import net.iesochoa.silvia.projecto_intermodular.ui.utils.ProductMapper
 import net.iesochoa.silvia.projecto_intermodular.model.HorizontalCardItem
 import net.iesochoa.silvia.projecto_intermodular.model.OffersUiState
 import javax.inject.Inject
@@ -66,20 +68,7 @@ class OffersViewModel @Inject constructor(
                 val offerItems = promotions.mapNotNull { promo ->
                     try {
                         val product = productRepository.getProductById(promo.productId)
-                        val catName = product.category?.name 
-                            ?: categories.find { it.id == product.categoryId }?.name 
-                            ?: "Obrador"
-
-                        HorizontalCardItem(
-                            id = product.id,
-                            title = product.getDisplayTitle(),
-                            description = promo.description ?: "",
-                            rightLabel = "Descuento",
-                            rightValue = "-${promo.discountPercentage}%",
-                            imageUrl = product.getDisplayImage(),
-                            categoryName = catName,
-                            isUsed = promo.used
-                        )
+                        ProductMapper.toHorizontalCardItem(product, promo, categories)
                     } catch (e: Exception) {
                         null
                     }
@@ -107,7 +96,7 @@ class OffersViewModel @Inject constructor(
             } catch (e: Exception) {
                 _uiState.update { it.copy(
                     isLoading = false,
-                    error = "No se han podido cargar las ofertas activas."
+                    error = ErrorMapper.map(e, "No se han podido cargar las ofertas activas.")
                 ) }
             }
         }

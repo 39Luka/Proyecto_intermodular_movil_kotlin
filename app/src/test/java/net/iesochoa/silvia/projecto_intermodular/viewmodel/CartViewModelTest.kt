@@ -77,7 +77,6 @@ class CartViewModelTest {
         val product = Product(id = 1, name = "Pan", price = 10.0)
         val promotion = Promotion(id = 1, productId = 1, discountPercentage = 10.0)
         
-        // Mock promotionRepository to return our promotion
         coEvery { promotionRepository.getActivePromotions(1, any()) } returns listOf(promotion)
         
         val cartItems = listOf(CartItemState(product, 1))
@@ -88,7 +87,6 @@ class CartViewModelTest {
 
         viewModel.onPromotionSelected(1, 1)
         
-        // Subtotal 10.0, Descuento 10% (1.0) -> Total 9.0
         assertEquals(9.0, viewModel.uiState.value.total, 0.001)
     }
 
@@ -115,5 +113,62 @@ class CartViewModelTest {
         assertEquals(true, successCalled)
         coVerify { purchaseRepository.createPurchase(any(), 1) }
         coVerify { cartRepository.clearCart() }
+    }
+
+    /**
+     * CP-14.2: calculateTotal_with_empty_cart_is_zero
+     * Verifica que si el carrito no tiene elementos, el total sea exactamente 0.0.
+     */
+    @Test
+    fun `calculateTotal with empty cart is zero`() = runTest {
+        viewModel = CartViewModel(purchaseRepository, promotionRepository, authRepository, cartRepository)
+        cartItemsFlow.value = emptyList()
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        assertEquals(0.0, viewModel.uiState.value.total, 0.001)
+    }
+
+    /**
+     * CP-15.1: onPromotionSelected_updates_total_correctly_when_switching_promos
+     * Valida que al cambiar entre diferentes promociones, el total se recalcule correctamente eliminando el descuento anterior.
+     */
+    @Test
+    fun `onPromotionSelected updates total correctly when switching promos`() = runTest {
+        val product = Product(id = 1, name = "Pan", price = 10.0)
+        val promo1 = Promotion(id = 1, productId = 1, discountPercentage = 10.0)
+        val promo2 = Promotion(id = 2, productId = 1, discountPercentage = 20.0)
+        
+        coEvery { promotionRepository.getActivePromotions(1, any()) } returns listOf(promo1, promo2)
+        
+        viewModel = CartViewModel(purchaseRepository, promotionRepository, authRepository, cartRepository)
+        cartItemsFlow.value = listOf(CartItemState(product, 1))
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        // Aplicar 10% -> 9.0
+        viewModel.onPromotionSelected(1, 1)
+        assertEquals(9.0, viewModel.uiState.value.total, 0.001)
+
+        // Cambiar a 20% -> 8.0
+        viewModel.onPromotionSelected(1, 2)
+        assertEquals(8.0, viewModel.uiState.value.total, 0.001)
+    }
+
+    /**
+     * CP-16.3: checkout_network_error_shows_error_message
+     * Comprueba que si falla la red durante el proceso de compra, el error se capture y se muestre al usuario.
+     */
+    @Test
+    fun `checkout network error shows error message`() = runTest {
+        val product = Product(id = 1, name = "Pan", price = 10.0)
+        coEvery { purchaseRepository.createPurchase(any(), any()) } throws java.net.UnknownHostException()
+
+        viewModel = CartViewModel(purchaseRepository, promotionRepository, authRepository, cartRepository)
+        cartItemsFlow.value = listOf(CartItemState(product, 1))
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        viewModel.checkout { }
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        assertEquals("No se pudo conectar al servidor. Revisa tu conexión a internet.", viewModel.uiState.value.error)
     }
 }

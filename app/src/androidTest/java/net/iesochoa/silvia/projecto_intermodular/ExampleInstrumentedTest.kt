@@ -15,6 +15,10 @@ import org.junit.Assert.*
  */
 @RunWith(AndroidJUnit4::class)
 class ExampleInstrumentedTest {
+    /**
+     * CP-34: useAppContext
+     * Prueba de instrumentación básica para verificar el contexto de la aplicación en el dispositivo.
+     */
     @Test
     fun useAppContext() {
         // Context of the app under test.

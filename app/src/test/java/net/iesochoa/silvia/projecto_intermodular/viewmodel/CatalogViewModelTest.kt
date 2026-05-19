@@ -123,4 +123,18 @@ class CatalogViewModelTest {
         assertEquals(1, viewModel.uiState.value.currentPage)
         coVerify { productRepository.getProducts(null, null, 1, 12) }
     }
+
+    /**
+     * CP-06.1: loadProducts_error_sets_friendly_message
+     * Valida que un error al cargar el catálogo muestre un mensaje mapeado correctamente al usuario.
+     */
+    @Test
+    fun `loadProducts error sets friendly message`() = runTest {
+        coEvery { productRepository.getProducts(any(), any(), any(), any(), any()) } throws Exception("Catalog Error")
+
+        viewModel = CatalogViewModel(productRepository, categoryRepository, authRepository)
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        assertEquals("Catalog Error", viewModel.uiState.value.error)
+    }
 }
