@@ -46,7 +46,7 @@ class CatalogViewModelTest {
      * Comprueba que al inicializar el ViewModel se cargan las categorías y productos iniciales.
      */
     @Test
-    fun `initial load fetches categories and products`() = runTest {
+    fun initial_load_fetches_categories_and_products() = runTest {
         val categories = listOf(Category(1, "Panadería"), Category(2, "Bollería"))
         val products = listOf(Product(id = 1, name = "Croissant", price = 1.2, active = true))
         val pagedResponse = PagedResponse(content = products, totalPages = 1, totalElements = 1)
@@ -71,7 +71,7 @@ class CatalogViewModelTest {
      * Valida que al cambiar la búsqueda se actualiza el estado y se piden nuevos productos al repositorio.
      */
     @Test
-    fun `onSearchQueryChange updates query and reloads products`() = runTest {
+    fun onSearchQueryChange_updates_query_and_reloads_products() = runTest {
         viewModel = CatalogViewModel(productRepository, categoryRepository, authRepository)
         testDispatcher.scheduler.advanceUntilIdle()
 
@@ -90,7 +90,7 @@ class CatalogViewModelTest {
      * Verifica que al seleccionar una categoría se filtre la lista de productos correctamente.
      */
     @Test
-    fun `selectCategory updates category and reloads products`() = runTest {
+    fun selectCategory_updates_category_and_reloads_products() = runTest {
         viewModel = CatalogViewModel(productRepository, categoryRepository, authRepository)
         testDispatcher.scheduler.advanceUntilIdle()
 
@@ -109,7 +109,7 @@ class CatalogViewModelTest {
      * Comprueba que la navegación a la siguiente página incrementa el índice y solicita nuevos datos.
      */
     @Test
-    fun `goToNextPage increments page and reloads`() = runTest {
+    fun goToNextPage_increments_page_and_reloads() = runTest {
         val pagedResponse = PagedResponse<Product>(content = emptyList(), totalPages = 2, totalElements = 0)
         coEvery { productRepository.getProducts(null, null, 0, 12) } returns pagedResponse
         coEvery { productRepository.getProducts(null, null, 1, 12) } returns PagedResponse(emptyList(), 2, 0, 1)
@@ -129,7 +129,7 @@ class CatalogViewModelTest {
      * Valida que un error al cargar el catálogo muestre un mensaje mapeado correctamente al usuario.
      */
     @Test
-    fun `loadProducts error sets friendly message`() = runTest {
+    fun loadProducts_error_sets_friendly_message() = runTest {
         coEvery { productRepository.getProducts(any(), any(), any(), any(), any()) } throws Exception("Catalog Error")
 
         viewModel = CatalogViewModel(productRepository, categoryRepository, authRepository)

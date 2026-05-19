@@ -19,7 +19,7 @@ class ImageUtilsTest {
      * Verifica que la utilidad de imagen maneje correctamente cadenas corruptas o no válidas devolviendo null.
      */
     @Test
-    fun `decodeBase64ToBitmap returns null for invalid string`() {
+    fun decodeBase64ToBitmap_returns_null_for_invalid_string() {
         val invalidBase64 = "not-a-base64-string"
         
         // Mock Base64.decode to throw exception for invalid input
@@ -34,7 +34,7 @@ class ImageUtilsTest {
      * Valida que una cadena vacía sea procesada de forma segura sin provocar excepciones.
      */
     @Test
-    fun `decodeBase64ToBitmap handles empty string`() {
+    fun decodeBase64ToBitmap_handles_empty_string() {
         val result = "".decodeBase64ToBitmap()
         assertNull(result)
     }

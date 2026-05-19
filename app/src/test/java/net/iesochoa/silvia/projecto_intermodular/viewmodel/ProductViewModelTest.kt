@@ -45,7 +45,7 @@ class ProductViewModelTest {
      * Verifica que el listado de productos se cargue correctamente en el estado de la UI desde el repositorio.
      */
     @Test
-    fun `loadProducts updates uiState with products`() = runTest {
+    fun loadProducts_updates_uiState_with_products() = runTest {
         val products = listOf(
             Product(id = 1, name = "Pan", price = 1.0, active = true),
             Product(id = 2, name = "Leche", price = 1.5, active = true)
@@ -76,7 +76,7 @@ class ProductViewModelTest {
      * Valida que los errores durante la carga de productos se capturen y se muestre un mensaje de error en la UI.
      */
     @Test
-    fun `loadProducts handles error`() = runTest {
+    fun loadProducts_handles_error() = runTest {
         val errorMessage = "Error de red"
         coEvery { productRepository.getProducts(any(), any(), any(), any(), any()) } throws Exception(errorMessage)
 

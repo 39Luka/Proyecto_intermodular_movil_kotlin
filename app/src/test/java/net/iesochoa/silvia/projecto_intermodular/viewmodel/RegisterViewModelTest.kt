@@ -39,7 +39,7 @@ class RegisterViewModelTest {
      * Verifica que la validación de formato de correo electrónico funcione correctamente.
      */
     @Test
-    fun `register with invalid email sets error`() = runTest {
+    fun register_with_invalid_email_sets_error() = runTest {
         viewModel.onEmailChange("invalid-email")
         viewModel.register { }
         
@@ -51,7 +51,7 @@ class RegisterViewModelTest {
      * Comprueba que se impida el registro si la contraseña no cumple la longitud mínima de seguridad.
      */
     @Test
-    fun `register with short password sets error`() = runTest {
+    fun register_with_short_password_sets_error() = runTest {
         viewModel.onEmailChange("test@example.com")
         viewModel.onPasswordChange("123")
         viewModel.register { }
@@ -64,7 +64,7 @@ class RegisterViewModelTest {
      * Valida que el sistema detecte si las contraseñas introducidas en el registro no coinciden.
      */
     @Test
-    fun `register with mismatching passwords sets error`() = runTest {
+    fun register_with_mismatching_passwords_sets_error() = runTest {
         viewModel.onEmailChange("test@example.com")
         viewModel.onPasswordChange("password123")
         viewModel.onConfirmPasswordChange("different")
@@ -78,7 +78,7 @@ class RegisterViewModelTest {
      * Verifica que el registro de usuario se complete con éxito y llame al callback de navegación.
      */
     @Test
-    fun `register success calls onSuccess`() = runTest {
+    fun register_success_calls_onSuccess() = runTest {
         val email = "test@example.com"
         val password = "password123"
         var successCalled = false

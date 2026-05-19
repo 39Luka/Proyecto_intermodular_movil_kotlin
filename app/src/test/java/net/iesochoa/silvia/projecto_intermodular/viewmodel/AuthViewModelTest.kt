@@ -40,7 +40,7 @@ class AuthViewModelTest {
      * Simula una respuesta 401 (Unauthorized) y verifica que el ViewModel maneje el error de sesión expirada.
      */
     @Test
-    fun `login handles unauthorized exception`() = runTest {
+    fun login_handles_unauthorized_exception() = runTest {
         val email = "test@example.com"
         val password = "password"
         coEvery { authRepository.login(email, password) } throws Exception("Unauthorized")
@@ -58,7 +58,7 @@ class AuthViewModelTest {
      * Verifica que tras un registro exitoso, el estado de autenticación cambie a verdadero.
      */
     @Test
-    fun `register updates auth state on success`() = runTest {
+    fun register_updates_auth_state_on_success() = runTest {
         coEvery { authRepository.register(any(), any()) } returns User(id = 1)
 
         viewModel = AuthViewModel(authRepository)

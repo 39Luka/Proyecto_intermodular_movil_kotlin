@@ -22,7 +22,7 @@ class PurchaseRepositoryTest {
      * Verifica que el repositorio reciba y entregue correctamente la respuesta paginada del historial de compras.
      */
     @Test
-    fun `getPurchases returns paged response from api`() = runTest {
+    fun getPurchases_returns_paged_response_from_api() = runTest {
         val purchases = listOf(Purchase(id = 1, userId = 1, total = 100.0))
         val response = PagedResponse(content = purchases, totalPages = 1)
 
@@ -40,7 +40,7 @@ class PurchaseRepositoryTest {
      * Comprueba que la creación de una nueva compra en el repositorio genere la llamada correcta a la API.
      */
     @Test
-    fun `createPurchase sends correct request`() = runTest {
+    fun createPurchase_sends_correct_request() = runTest {
         val items = listOf(PurchaseItemRequest(productId = 1, quantity = 2))
         val expectedPurchase = Purchase(id = 10, userId = 1, items = emptyList())
         

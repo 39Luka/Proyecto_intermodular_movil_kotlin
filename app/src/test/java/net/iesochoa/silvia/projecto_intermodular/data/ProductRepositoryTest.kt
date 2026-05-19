@@ -23,7 +23,7 @@ class ProductRepositoryTest {
      * Comprueba que el repositorio filtre los productos inactivos antes de entregarlos a la capa superior.
      */
     @Test
-    fun `getProducts filters only active products`() = runTest {
+    fun getProducts_filters_only_active_products() = runTest {
         val allProducts = listOf(
             Product(id = 1, name = "Active", active = true),
             Product(id = 2, name = "Inactive", active = false)
@@ -44,7 +44,7 @@ class ProductRepositoryTest {
      * Verifica que el sistema no permita acceder al detalle de productos que ya no están disponibles (activos).
      */
     @Test
-    fun `getProductById throws exception if product is inactive`() = runTest {
+    fun getProductById_throws_exception_if_product_is_inactive() = runTest {
         val inactiveProduct = Product(id = 1, name = "Old", active = false)
         coEvery { apiService.getProductById(1) } returns inactiveProduct
 
