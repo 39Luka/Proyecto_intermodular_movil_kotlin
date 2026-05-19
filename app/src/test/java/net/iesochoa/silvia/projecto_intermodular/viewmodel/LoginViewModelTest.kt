@@ -41,7 +41,7 @@ class LoginViewModelTest {
      * Verifica que si los campos están vacíos, se establece el mensaje de error correspondiente.
      */
     @Test
-    fun `login with empty fields sets error message`() = runTest {
+    fun login_with_empty_fields_sets_error_message() = runTest {
         viewModel.onEmailChange("")
         viewModel.onPasswordChange("")
         
@@ -58,7 +58,7 @@ class LoginViewModelTest {
      * Verifica que un inicio de sesión exitoso invoque el callback de éxito.
      */
     @Test
-    fun `login success calls onSuccess callback`() = runTest {
+    fun login_success_calls_onSuccess_callback() = runTest {
         val email = "test@example.com"
         val password = "password123"
         var successCalled = false
@@ -80,7 +80,7 @@ class LoginViewModelTest {
      * Verifica que un error en la autenticación se refleje en el estado de la UI.
      */
     @Test
-    fun `login failure sets error message`() = runTest {
+    fun login_failure_sets_error_message() = runTest {
         val email = "test@example.com"
         val password = "wrong"
         

@@ -41,7 +41,7 @@ class ProfileViewModelTest {
      * Verifica que al cargar el perfil se obtengan correctamente el nombre y email del usuario.
      */
     @Test
-    fun `observeUser updates state with user data`() = runTest {
+    fun observeUser_updates_state_with_user_data() = runTest {
         viewModel = ProfileViewModel(authRepository)
         testDispatcher.scheduler.advanceUntilIdle()
 
@@ -54,7 +54,7 @@ class ProfileViewModelTest {
      * Comprueba que si las contraseñas nuevas no coinciden se muestra un error de validación.
      */
     @Test
-    fun `updatePassword with mismatching passwords sets error`() = runTest {
+    fun updatePassword_with_mismatching_passwords_sets_error() = runTest {
         viewModel = ProfileViewModel(authRepository)
         testDispatcher.scheduler.advanceUntilIdle()
 
@@ -72,7 +72,7 @@ class ProfileViewModelTest {
      * Valida que el cambio de contraseña se envíe correctamente al repositorio tras pasar las validaciones.
      */
     @Test
-    fun `updatePassword success calls repository and onSuccess`() = runTest {
+    fun updatePassword_success_calls_repository_and_onSuccess() = runTest {
         var successCalled = false
         coEvery { authRepository.changePassword("old", "newpassword123") } returns Unit
 
@@ -95,7 +95,7 @@ class ProfileViewModelTest {
      * Verifica que la acción de cerrar sesión limpie los datos y ejecute la navegación de salida.
      */
     @Test
-    fun `logout calls repository and success callback`() = runTest {
+    fun logout_calls_repository_and_success_callback() = runTest {
         var logoutCalled = false
         coEvery { authRepository.logout() } returns Unit
 
@@ -112,7 +112,7 @@ class ProfileViewModelTest {
      * Valida que si el usuario no tiene imagen de perfil configurada (null), el estado lo maneje correctamente.
      */
     @Test
-    fun `observeUser handles null profile image`() = runTest {
+    fun observeUser_handles_null_profile_image() = runTest {
         coEvery { authRepository.getUser() } returns flowOf(User(id = 1, profileImageBase64 = null))
         
         viewModel = ProfileViewModel(authRepository)

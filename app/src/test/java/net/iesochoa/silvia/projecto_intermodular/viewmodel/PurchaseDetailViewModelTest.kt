@@ -40,7 +40,7 @@ class PurchaseDetailViewModelTest {
      * Verifica que al cargar el detalle de una compra, la UI reciba los datos correctos del pedido.
      */
     @Test
-    fun `loadPurchase success updates state`() = runTest {
+    fun loadPurchase_success_updates_state() = runTest {
         val purchase = Purchase(id = 1, userId = 1, total = 50.0)
         coEvery { purchaseRepository.getPurchaseById(1) } returns purchase
 
@@ -56,7 +56,7 @@ class PurchaseDetailViewModelTest {
      * Comprueba que la acción de cancelar un pedido llame al repositorio y refresque los datos de la compra.
      */
     @Test
-    fun `cancelPurchase calls repository and reloads`() = runTest {
+    fun cancelPurchase_calls_repository_and_reloads() = runTest {
         val purchase = Purchase(id = 1, userId = 1, status = "CREATED")
         coEvery { purchaseRepository.getPurchaseById(1) } returns purchase
         coEvery { purchaseRepository.cancelPurchase(1) } returns Unit

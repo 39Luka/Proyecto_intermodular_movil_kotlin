@@ -43,7 +43,7 @@ class PurchasesViewModelTest {
      * Verifica que el historial de compras se cargue y formatee correctamente para el usuario autenticado.
      */
     @Test
-    fun `loadPurchases fetches and maps purchases for logged user`() = runTest {
+    fun loadPurchases_fetches_and_maps_purchases_for_logged_user() = runTest {
         val purchases = listOf(
             Purchase(id = 1, userId = 1, total = 20.0, createdAt = "2023-10-27T10:00:00Z", status = "COMPLETADO")
         )
@@ -66,7 +66,7 @@ class PurchasesViewModelTest {
      * Comprueba que al seleccionar un rango de fechas, la UI se actualice y solicite los datos filtrados a la API.
      */
     @Test
-    fun `onDateRangeSelected updates state and reloads`() = runTest {
+    fun onDateRangeSelected_updates_state_and_reloads() = runTest {
         viewModel = PurchasesViewModel(purchaseRepository, authRepository)
         testDispatcher.scheduler.advanceUntilIdle()
 
@@ -87,7 +87,7 @@ class PurchasesViewModelTest {
      * Valida que los errores de red en la carga del historial se comuniquen al usuario mediante un mensaje.
      */
     @Test
-    fun `loadPurchases error sets error message`() = runTest {
+    fun loadPurchases_error_sets_error_message() = runTest {
         coEvery { purchaseRepository.getPurchases(any(), any(), any(), any(), any()) } throws Exception("API Error")
 
         viewModel = PurchasesViewModel(purchaseRepository, authRepository)
@@ -101,7 +101,7 @@ class PurchasesViewModelTest {
      * Verifica que si el usuario no tiene pedidos, el estado refleje una lista vacía sin errores.
      */
     @Test
-    fun `loadPurchases empty response shows no items`() = runTest {
+    fun loadPurchases_empty_response_shows_no_items() = runTest {
         coEvery { purchaseRepository.getPurchases(any(), any(), any(), any(), any()) } returns PagedResponse(emptyList())
 
         viewModel = PurchasesViewModel(purchaseRepository, authRepository)

@@ -46,7 +46,7 @@ class OffersViewModelTest {
      * Verifica que el ViewModel cargue las promociones activas y las asocie correctamente con sus productos.
      */
     @Test
-    fun `loadPromotions fetches and maps promotions`() = runTest {
+    fun loadPromotions_fetches_and_maps_promotions() = runTest {
         val promotions = listOf(
             Promotion(id = 1, description = "Oferta 1", productId = 10, discountPercentage = 10.0)
         )
@@ -72,7 +72,7 @@ class OffersViewModelTest {
      * Comprueba que la búsqueda en la pantalla de ofertas filtre los items disponibles de forma instantánea.
      */
     @Test
-    fun `onSearchQueryChange filters items locally`() = runTest {
+    fun onSearchQueryChange_filters_items_locally() = runTest {
         val promotions = listOf(
             Promotion(id = 1, description = "Promo A", productId = 10),
             Promotion(id = 2, description = "Promo B", productId = 11)
@@ -95,7 +95,7 @@ class OffersViewModelTest {
      * Valida que si falla la carga de promociones, se muestre un mensaje de error amigable al usuario.
      */
     @Test
-    fun `loadPromotions handles errors gracefully`() = runTest {
+    fun loadPromotions_handles_errors_gracefully() = runTest {
         coEvery { promotionRepository.getAvailablePromotions(any()) } throws Exception("API Error")
 
         viewModel = OffersViewModel(promotionRepository, productRepository, categoryRepository, authRepository)

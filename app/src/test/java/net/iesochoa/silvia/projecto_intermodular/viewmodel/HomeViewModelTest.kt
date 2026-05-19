@@ -52,7 +52,7 @@ class HomeViewModelTest {
      * Verifica que la pantalla de inicio cargue correctamente las novedades y los productos más vendidos.
      */
     @Test
-    fun `loadHomeData updates state with products`() = runTest {
+    fun loadHomeData_updates_state_with_products() = runTest {
         val products = listOf(Product(id = 1, name = "Novedad", price = 1.0))
         val topSelling = listOf(Product(id = 2, name = "Top", price = 2.0))
         
@@ -73,7 +73,7 @@ class HomeViewModelTest {
      * Valida que la búsqueda en la Home filtre correctamente tanto las novedades como los productos más vendidos.
      */
     @Test
-    fun `onSearchQueryChange filters home sections`() = runTest {
+    fun onSearchQueryChange_filters_home_sections() = runTest {
         val products = listOf(Product(id = 1, name = "Croissant", price = 1.0))
         coEvery { productRepository.getProducts(any(), any(), any(), any(), any()) } returns PagedResponse(content = products)
 
@@ -92,7 +92,7 @@ class HomeViewModelTest {
      * Verifica que si ocurre un error al cargar los datos de la Home, el mensaje se mapee y se muestre correctamente.
      */
     @Test
-    fun `loadHomeData error sets error message`() = runTest {
+    fun loadHomeData_error_sets_error_message() = runTest {
         coEvery { productRepository.getProducts(any(), any(), any(), any(), any()) } throws Exception("Home API Error")
 
         viewModel = HomeViewModel(productRepository, categoryRepository, authRepository)

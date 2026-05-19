@@ -56,7 +56,7 @@ class CartViewModelTest {
      * Verifica que el total se calcule correctamente al observar cambios en los items del carrito.
      */
     @Test
-    fun `observing cart items updates uiState and calculates total`() = runTest {
+    fun observing_cart_items_updates_uiState_and_calculates_total() = runTest {
         val product = Product(id = 1, name = "Pan", price = 10.0)
         val cartItems = listOf(CartItemState(product, 2))
         
@@ -73,7 +73,7 @@ class CartViewModelTest {
      * Valida que al aplicar una promoción seleccionada, el total final se actualice restando el descuento.
      */
     @Test
-    fun `onPromotionSelected recalculates total`() = runTest {
+    fun onPromotionSelected_recalculates_total() = runTest {
         val product = Product(id = 1, name = "Pan", price = 10.0)
         val promotion = Promotion(id = 1, productId = 1, discountPercentage = 10.0)
         
@@ -95,7 +95,7 @@ class CartViewModelTest {
      * Verifica que el proceso de checkout cree la compra y vacíe el carrito al finalizar con éxito.
      */
     @Test
-    fun `checkout success calls onSuccess and clears cart`() = runTest {
+    fun checkout_success_calls_onSuccess_and_clears_cart() = runTest {
         val product = Product(id = 1, name = "Pan", price = 10.0)
         val cartItems = listOf(CartItemState(product, 1))
         var successCalled = false
@@ -120,7 +120,7 @@ class CartViewModelTest {
      * Verifica que si el carrito no tiene elementos, el total sea exactamente 0.0.
      */
     @Test
-    fun `calculateTotal with empty cart is zero`() = runTest {
+    fun calculateTotal_with_empty_cart_is_zero() = runTest {
         viewModel = CartViewModel(purchaseRepository, promotionRepository, authRepository, cartRepository)
         cartItemsFlow.value = emptyList()
         testDispatcher.scheduler.advanceUntilIdle()
@@ -133,7 +133,7 @@ class CartViewModelTest {
      * Valida que al cambiar entre diferentes promociones, el total se recalcule correctamente eliminando el descuento anterior.
      */
     @Test
-    fun `onPromotionSelected updates total correctly when switching promos`() = runTest {
+    fun onPromotionSelected_updates_total_correctly_when_switching_promos() = runTest {
         val product = Product(id = 1, name = "Pan", price = 10.0)
         val promo1 = Promotion(id = 1, productId = 1, discountPercentage = 10.0)
         val promo2 = Promotion(id = 2, productId = 1, discountPercentage = 20.0)
@@ -158,7 +158,7 @@ class CartViewModelTest {
      * Comprueba que si falla la red durante el proceso de compra, el error se capture y se muestre al usuario.
      */
     @Test
-    fun `checkout network error shows error message`() = runTest {
+    fun checkout_network_error_shows_error_message() = runTest {
         val product = Product(id = 1, name = "Pan", price = 10.0)
         coEvery { purchaseRepository.createPurchase(any(), any()) } throws java.net.UnknownHostException()
 
