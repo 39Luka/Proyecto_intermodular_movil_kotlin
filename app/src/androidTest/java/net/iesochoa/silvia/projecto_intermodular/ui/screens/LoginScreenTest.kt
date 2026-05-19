@@ -16,6 +16,10 @@ class LoginScreenTest {
     @get:Rule
     val composeTestRule = createComposeRule()
 
+    /**
+     * CP-27: loginButton_isDisabled_whenFieldsAreEmpty
+     * Verifica que el botón de inicio de sesión esté deshabilitado si los campos están vacíos.
+     */
     @Test
     fun loginButton_isDisabled_whenFieldsAreEmpty() {
         composeTestRule.setContent {
@@ -33,6 +37,10 @@ class LoginScreenTest {
         composeTestRule.onNodeWithText("Iniciar Sesión").assertIsNotEnabled()
     }
 
+    /**
+     * CP-28: loginButton_isEnabled_whenFieldsAreNotEmpty
+     * Comprueba que el botón de login se habilite correctamente cuando el usuario introduce datos.
+     */
     @Test
     fun loginButton_isEnabled_whenFieldsAreNotEmpty() {
         composeTestRule.setContent {
@@ -50,6 +58,10 @@ class LoginScreenTest {
         composeTestRule.onNodeWithText("Iniciar Sesión").assertIsEnabled()
     }
 
+    /**
+     * CP-29: loginClick_triggersCallback
+     * Valida que al pulsar el botón de login se dispare el evento de acción correspondiente.
+     */
     @Test
     fun loginClick_triggersCallback() {
         var loginClicked = false

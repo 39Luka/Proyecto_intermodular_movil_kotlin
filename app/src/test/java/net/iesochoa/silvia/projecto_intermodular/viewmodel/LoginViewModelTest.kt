@@ -76,7 +76,7 @@ class LoginViewModelTest {
     }
 
     /**
-     * CP-XX: login_failure_sets_error_message
+     * CP-02.1: login_failure_sets_error_message
      * Verifica que un error en la autenticación se refleje en el estado de la UI.
      */
     @Test

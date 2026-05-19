@@ -93,6 +93,21 @@ class PurchasesViewModelTest {
         viewModel = PurchasesViewModel(purchaseRepository, authRepository)
         testDispatcher.scheduler.advanceUntilIdle()
 
-        assertEquals("No se pudo cargar el historial de pedidos.", viewModel.uiState.value.error)
+        assertEquals("API Error", viewModel.uiState.value.error)
+    }
+
+    /**
+     * CP-17.3: loadPurchases_empty_response_shows_no_items
+     * Verifica que si el usuario no tiene pedidos, el estado refleje una lista vacía sin errores.
+     */
+    @Test
+    fun `loadPurchases empty response shows no items`() = runTest {
+        coEvery { purchaseRepository.getPurchases(any(), any(), any(), any(), any()) } returns PagedResponse(emptyList())
+
+        viewModel = PurchasesViewModel(purchaseRepository, authRepository)
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        assertEquals(0, viewModel.uiState.value.pedidos.size)
+        assertEquals(null, viewModel.uiState.value.error)
     }
 }

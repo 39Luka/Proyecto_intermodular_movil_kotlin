@@ -8,11 +8,13 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.first
 import net.iesochoa.silvia.projecto_intermodular.data.AuthRepository
 import net.iesochoa.silvia.projecto_intermodular.data.Purchase
 import net.iesochoa.silvia.projecto_intermodular.data.PurchaseRepository
 import net.iesochoa.silvia.projecto_intermodular.model.PedidoItem
 import net.iesochoa.silvia.projecto_intermodular.model.PurchasesUiState
+import net.iesochoa.silvia.projecto_intermodular.ui.utils.ErrorMapper
 import net.iesochoa.silvia.projecto_intermodular.ui.utils.toCurrency
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -59,46 +61,41 @@ class PurchasesViewModel @Inject constructor(
         _uiState.update { it.copy(isLoading = true, error = null) }
         viewModelScope.launch {
             try {
-                authRepository.getUser().collect { user ->
-                    if (user != null) {
-                        try {
-                            val response = purchaseRepository.getPurchases(
-                                userId = user.id, 
-                                page = currentPage, 
-                                pageSize = pageSize,
-                                startDate = startStr,
-                                endDate = endStr
-                            )
-                            
-                            val uiItems = response.content.map { purchase ->
-                                PedidoItem(
-                                    id = purchase.id,
-                                    fecha = purchase.createdAt?.take(10) ?: "N/A",
-                                    estado = purchase.status ?: "PENDIENTE",
-                                    total = purchase.total.toCurrency()
-                                )
-                            }
-                            
-                            _uiState.update { it.copy(
-                                pedidos = uiItems,
-                                totalPages = response.totalPages,
-                                isLoading = false
-                            ) }
-                        } catch (e: Exception) {
-                            _uiState.update { it.copy(
-                                isLoading = false,
-                                error = "No se pudo cargar el historial de pedidos."
-                            ) }
-                        }
-                    } else {
-                        _uiState.update { it.copy(
-                            isLoading = false, 
-                            error = "Debes iniciar sesión para ver tus pedidos."
-                        ) }
+                val user = authRepository.getUser().first()
+                if (user != null) {
+                    val response = purchaseRepository.getPurchases(
+                        userId = user.id, 
+                        page = currentPage, 
+                        pageSize = pageSize,
+                        startDate = startStr,
+                        endDate = endStr
+                    )
+                    
+                    val uiItems = response.content.map { purchase ->
+                        PedidoItem(
+                            id = purchase.id,
+                            fecha = purchase.createdAt?.take(10) ?: "N/A",
+                            estado = purchase.status ?: "PENDIENTE",
+                            total = purchase.total.toCurrency()
+                        )
                     }
+                    
+                    _uiState.update { it.copy(
+                        pedidos = uiItems,
+                        totalPages = response.totalPages,
+                        isLoading = false
+                    ) }
+                } else {
+                    _uiState.update { it.copy(
+                        isLoading = false, 
+                        error = "Debes iniciar sesión para ver tus pedidos."
+                    ) }
                 }
             } catch (e: Exception) {
-                _uiState.update { it.copy(isLoading = false, error = "Error inesperado.") }
+                _uiState.update { it.copy(
+                    isLoading = false, 
+                    error = ErrorMapper.map(e, "No se pudo cargar el historial de pedidos.")
+                ) }
             }
         }
     }

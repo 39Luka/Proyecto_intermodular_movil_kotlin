@@ -14,6 +14,10 @@ class RegisterScreenTest {
     @get:Rule
     val composeTestRule = createComposeRule()
 
+    /**
+     * CP-33: registerScreen_displaysFields
+     * Verifica que la pantalla de registro muestre correctamente todos los campos necesarios para el usuario.
+     */
     @Test
     fun registerScreen_displaysFields() {
         composeTestRule.setContent {

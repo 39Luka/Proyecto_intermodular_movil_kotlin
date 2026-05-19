@@ -10,6 +10,7 @@ import kotlinx.coroutines.launch
 import net.iesochoa.silvia.projecto_intermodular.data.AuthRepository
 import net.iesochoa.silvia.projecto_intermodular.model.RegisterUiState
 import net.iesochoa.silvia.projecto_intermodular.ui.utils.ErrorMapper
+import net.iesochoa.silvia.projecto_intermodular.ui.utils.ValidationUtils
 import javax.inject.Inject
 
 /**
@@ -38,12 +39,11 @@ class RegisterViewModel @Inject constructor(
     /** Valida los datos e intenta registrar al nuevo usuario. */
     fun register(onSuccess: () -> Unit) {
         val state = _uiState.value
-        val emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$".toRegex()
 
         when {
             state.email.isBlank() -> 
                 _uiState.update { it.copy(errorMessage = "El email es obligatorio") }
-            !state.email.matches(emailRegex) -> 
+            !ValidationUtils.isValidEmail(state.email) ->
                 _uiState.update { it.copy(errorMessage = "El formato del email no es válido") }
             state.password.isBlank() -> 
                 _uiState.update { it.copy(errorMessage = "La contraseña es obligatoria") }

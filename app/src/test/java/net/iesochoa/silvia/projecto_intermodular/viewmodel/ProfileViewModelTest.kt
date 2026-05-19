@@ -106,4 +106,18 @@ class ProfileViewModelTest {
         assertEquals(true, logoutCalled)
         coVerify { authRepository.logout() }
     }
+
+    /**
+     * CP-18.3: observeUser_handles_null_profile_image
+     * Valida que si el usuario no tiene imagen de perfil configurada (null), el estado lo maneje correctamente.
+     */
+    @Test
+    fun `observeUser handles null profile image`() = runTest {
+        coEvery { authRepository.getUser() } returns flowOf(User(id = 1, profileImageBase64 = null))
+        
+        viewModel = ProfileViewModel(authRepository)
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        assertEquals(null, viewModel.uiState.value.profileImage)
+    }
 }

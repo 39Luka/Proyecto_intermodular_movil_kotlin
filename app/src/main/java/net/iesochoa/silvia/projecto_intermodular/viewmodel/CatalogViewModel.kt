@@ -13,6 +13,8 @@ import net.iesochoa.silvia.projecto_intermodular.data.CategoryRepository
 import net.iesochoa.silvia.projecto_intermodular.data.ProductRepository
 import net.iesochoa.silvia.projecto_intermodular.model.CardItem
 import net.iesochoa.silvia.projecto_intermodular.model.CatalogUiState
+import net.iesochoa.silvia.projecto_intermodular.ui.utils.ErrorMapper
+import net.iesochoa.silvia.projecto_intermodular.ui.utils.ProductMapper
 import net.iesochoa.silvia.projecto_intermodular.ui.utils.toCurrency
 import java.util.Locale
 import javax.inject.Inject
@@ -83,19 +85,7 @@ class CatalogViewModel @Inject constructor(
                 val categories = _uiState.value.categories
                 
                 val cards = products.map { product ->
-                    val catName = product.category?.name 
-                        ?: categories.find { it.id == product.categoryId }?.name 
-                        ?: "Obrador"
-
-                    CardItem(
-                        id = product.id,
-                        imageUrl = product.getDisplayImage(),
-                        title = product.getDisplayTitle(),
-                        bottomText1 = product.description,
-                        bottomText2 = product.price.toCurrency(),
-                        categoryName = catName,
-                        isOutOfStock = (product.stock ?: 0) <= 0
-                    )
+                    ProductMapper.toCardItem(product, categories)
                 }
                 allProductsList = cards
                 _uiState.update { it.copy(
@@ -107,7 +97,7 @@ class CatalogViewModel @Inject constructor(
             } catch (e: Exception) {
                 _uiState.update { it.copy(
                     isLoading = false,
-                    error = "Error al cargar el catálogo. Comprueba tu conexión."
+                    error = ErrorMapper.map(e, "Error al cargar el catálogo")
                 ) }
             }
         }

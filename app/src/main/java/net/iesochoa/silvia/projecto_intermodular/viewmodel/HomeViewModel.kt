@@ -14,6 +14,8 @@ import net.iesochoa.silvia.projecto_intermodular.data.CategoryRepository
 import net.iesochoa.silvia.projecto_intermodular.data.ProductRepository
 import net.iesochoa.silvia.projecto_intermodular.model.CardItem
 import net.iesochoa.silvia.projecto_intermodular.model.HomeUiState
+import net.iesochoa.silvia.projecto_intermodular.ui.utils.ErrorMapper
+import net.iesochoa.silvia.projecto_intermodular.ui.utils.ProductMapper
 import net.iesochoa.silvia.projecto_intermodular.ui.utils.toCurrency
 import java.util.Locale
 import javax.inject.Inject
@@ -58,11 +60,11 @@ class HomeViewModel @Inject constructor(
                 val topSelling = productRepository.getTopSellingProducts(10)
 
                 val latestCards = latest.map { product ->
-                    mapProductToCardItem(product, categories)
+                    ProductMapper.toCardItem(product, categories)
                 }.sortedByDescending { it.id }.take(4)
 
                 val topCards = topSelling.map { product ->
-                    mapProductToCardItem(product, categories)
+                    ProductMapper.toCardItem(product, categories)
                 }.take(4)
 
                 _uiState.update { it.copy(
@@ -75,34 +77,12 @@ class HomeViewModel @Inject constructor(
                 ) }
             } catch (e: Exception) {
                 Log.e("HomeViewModel", "Error cargando datos", e)
-                val errorMsg = when (e) {
-                    is java.net.SocketTimeoutException -> "Tiempo de espera agotado. El servidor tarda demasiado en responder."
-                    is java.net.UnknownHostException -> "No hay conexión a internet."
-                    else -> "Error: ${e.localizedMessage ?: "Error de conexión"}"
-                }
                 _uiState.update { it.copy(
                     isLoading = false,
-                    error = errorMsg
+                    error = ErrorMapper.map(e, "Error al cargar los datos de inicio")
                 ) }
             }
         }
-    }
-
-    /** Mapea un producto a un objeto visual CardItem. */
-    private fun mapProductToCardItem(product: net.iesochoa.silvia.projecto_intermodular.data.Product, categories: List<net.iesochoa.silvia.projecto_intermodular.data.Category>): CardItem {
-        val catName = product.category?.name 
-            ?: categories.find { it.id == product.categoryId }?.name 
-            ?: "Obrador"
-            
-        return CardItem(
-            id = product.id,
-            imageUrl = product.getDisplayImage(),
-            title = product.getDisplayTitle(),
-            bottomText1 = product.description,
-            bottomText2 = product.price.toCurrency(),
-            categoryName = catName,
-            isOutOfStock = (product.stock ?: 0) <= 0
-        )
     }
 
     /** Filtra las secciones Home según la búsqueda. */

@@ -12,6 +12,7 @@ import net.iesochoa.silvia.projecto_intermodular.data.AuthRepository
 import net.iesochoa.silvia.projecto_intermodular.data.CartRepository
 import net.iesochoa.silvia.projecto_intermodular.data.ProductRepository
 import net.iesochoa.silvia.projecto_intermodular.model.ProductDetailUiState
+import net.iesochoa.silvia.projecto_intermodular.ui.utils.ErrorMapper
 import javax.inject.Inject
 
 /**
@@ -53,7 +54,7 @@ class ProductDetailViewModel @Inject constructor(
             } catch (e: Exception) {
                 _uiState.update { it.copy(
                     isLoading = false,
-                    error = e.message ?: "Error al cargar producto"
+                    error = ErrorMapper.map(e, "Error al cargar el producto")
                 ) }
             }
         }

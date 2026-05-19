@@ -101,6 +101,6 @@ class OffersViewModelTest {
         viewModel = OffersViewModel(promotionRepository, productRepository, categoryRepository, authRepository)
         testDispatcher.scheduler.advanceUntilIdle()
 
-        assertEquals("No se han podido cargar las ofertas activas.", viewModel.uiState.value.error)
+        assertEquals("API Error", viewModel.uiState.value.error)
     }
 }

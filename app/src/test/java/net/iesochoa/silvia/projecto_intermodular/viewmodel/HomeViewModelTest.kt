@@ -86,4 +86,18 @@ class HomeViewModelTest {
         viewModel.onSearchQueryChange("Donut")
         assertEquals(0, viewModel.uiState.value.filteredPromociones.size)
     }
+
+    /**
+     * CP-25.2: loadHomeData_error_sets_error_message
+     * Verifica que si ocurre un error al cargar los datos de la Home, el mensaje se mapee y se muestre correctamente.
+     */
+    @Test
+    fun `loadHomeData error sets error message`() = runTest {
+        coEvery { productRepository.getProducts(any(), any(), any(), any(), any()) } throws Exception("Home API Error")
+
+        viewModel = HomeViewModel(productRepository, categoryRepository, authRepository)
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        assertEquals("Home API Error", viewModel.uiState.value.error)
+    }
 }

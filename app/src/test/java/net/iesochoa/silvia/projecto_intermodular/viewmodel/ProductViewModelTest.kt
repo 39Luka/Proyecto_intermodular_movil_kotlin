@@ -40,6 +40,10 @@ class ProductViewModelTest {
         Dispatchers.resetMain()
     }
 
+    /**
+     * CP-24: loadProducts_updates_uiState_with_products
+     * Verifica que el listado de productos se cargue correctamente en el estado de la UI desde el repositorio.
+     */
     @Test
     fun `loadProducts updates uiState with products`() = runTest {
         val products = listOf(
@@ -67,6 +71,10 @@ class ProductViewModelTest {
         }
     }
 
+    /**
+     * CP-24.1: loadProducts_handles_error
+     * Valida que los errores durante la carga de productos se capturen y se muestre un mensaje de error en la UI.
+     */
     @Test
     fun `loadProducts handles error`() = runTest {
         val errorMessage = "Error de red"
