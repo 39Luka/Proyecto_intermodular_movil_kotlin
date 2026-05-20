@@ -20,7 +20,7 @@ class CartRepositoryTest {
      * Verifica que al añadir un producto nuevo al repositorio del carrito, este se incluya en la lista.
      */
     @Test
-    fun addToCart_adds_new_product_to_items() {
+    fun `addToCart adds new product to items`() {
         val product = Product(id = 1, name = "Pan")
         
         repository.addToCart(product, 2)
@@ -36,7 +36,7 @@ class CartRepositoryTest {
      * Comprueba que añadir un producto que ya estaba en el carrito incremente su cantidad en lugar de duplicarlo.
      */
     @Test
-    fun addToCart_increments_quantity_if_product_exists() {
+    fun `addToCart increments quantity if product exists`() {
         val product = Product(id = 1, name = "Pan")
         
         repository.addToCart(product, 2)
@@ -52,7 +52,7 @@ class CartRepositoryTest {
      * Valida que se elimine el producto correcto de la lista del carrito al llamar a la función de borrado.
      */
     @Test
-    fun removeItem_removes_correct_product() {
+    fun `removeItem removes correct product`() {
         val p1 = Product(id = 1, name = "A")
         val p2 = Product(id = 2, name = "B")
         
@@ -70,7 +70,7 @@ class CartRepositoryTest {
      * Verifica que la función de limpiar el carrito elimine todos los elementos almacenados.
      */
     @Test
-    fun clearCart_empties_the_list() {
+    fun `clearCart empties the list`() {
         repository.addToCart(Product(id = 1), 1)
         repository.clearCart()
         assertEquals(0, repository.items.value.size)
