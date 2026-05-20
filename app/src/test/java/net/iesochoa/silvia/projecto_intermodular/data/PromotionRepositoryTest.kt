@@ -22,7 +22,7 @@ class PromotionRepositoryTest {
      * Valida que el repositorio de promociones ignore las ofertas que ya han caducado o están inactivas.
      */
     @Test
-    fun getActivePromotions_filters_only_active_ones() = runTest {
+    fun `getActivePromotions filters only active ones`() = runTest {
         val promotions = listOf(
             Promotion(id = 1, active = true, productId = 10),
             Promotion(id = 2, active = false, productId = 11)
@@ -41,7 +41,7 @@ class PromotionRepositoryTest {
      * Comprueba que la obtención de todas las promociones del sistema también aplique el filtro de actividad.
      */
     @Test
-    fun getAllPromotions_also_filters_only_active_ones() = runTest {
+    fun `getAllPromotions also filters only active ones`() = runTest {
         val promotions = listOf(
             Promotion(id = 3, active = true, productId = 12)
         )

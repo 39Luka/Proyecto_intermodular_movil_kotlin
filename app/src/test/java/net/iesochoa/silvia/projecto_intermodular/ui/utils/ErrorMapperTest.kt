@@ -12,7 +12,7 @@ class ErrorMapperTest {
      * Valida que los errores de conexión se traduzcan en mensajes comprensibles sobre el estado del internet.
      */
     @Test
-    fun map_handles_connection_errors() {
+    fun `map handles connection errors`() {
         val e1 = UnknownHostException()
         val result1 = ErrorMapper.map(e1, "Default")
         assertEquals("No se pudo conectar al servidor. Revisa tu conexión a internet.", result1)
@@ -27,7 +27,7 @@ class ErrorMapperTest {
      * Comprueba que si la excepción es desconocida, se utilice el mensaje de error por defecto o el mensaje de la excepción.
      */
     @Test
-    fun map_uses_default_message_for_unknown_exceptions() {
+    fun `map uses default message for unknown exceptions`() {
         val e = Exception("Technical error")
         val result = ErrorMapper.map(e, "Friendly default")
         assertEquals("Technical error", result)
