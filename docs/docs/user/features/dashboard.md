@@ -2,49 +2,23 @@
 sidebar_position: 2
 ---
 
-# 📊 Dashboard
+# 🏠 Pantalla de Inicio
 
-## Descripción general
+La pantalla principal es tu punto de partida para descubrir las mejores delicias artesanales.
 
-El **Dashboard** es tu centro de control. Aquí encontrarás toda la información importante en un vistazo.
+## Novedades del Obrador
 
-## Elementos principales
+En la parte superior verás las **Novedades**. Son los últimos productos añadidos al catálogo. Desliza horizontalmente para ver las fotos y precios de los productos más recientes.
 
-### 1. Resumen rápido
-- **Actividades del día** - Eventos recientes
-- **Estadísticas** - Datos clave
-- **Notificaciones** - Alertas pendientes
+## Favoritos de la Casa
 
-### 2. Widgets personalizables
-Puedes agregar o quitar widgets:
-1. Mantén presionado un widget
-2. Selecciona **"Editar"**
-3. Añade o elimina los que desees
+Debajo de las novedades, presentamos los **Favoritos**. Estos productos son los más vendidos y mejor valorados por nuestra comunidad.
 
-### 3. Sincronización
-- Los datos se sincronizan automáticamente
-- Último sincronizado: *Ver en la esquina superior*
-- Tirar hacia abajo para refrescar manualmente
+## Accesos Directos
 
-## Widgets disponibles
-
-| Widget | Descripción |
-|--------|-------------|
-| 📈 Estadísticas | Gráficos de tendencias |
-| 🔔 Notificaciones | Alertas recientes |
-| 📅 Calendario | Eventos próximos |
-| ⚡ Actividad | Resumen de actividad |
-
-## Personalización
-
-### Cambiar tema
-**Dashboard → ⚙️ Configuración → Tema**
-
-### Organizar widgets
-1. Mantén presionado un widget
-2. Arrastra a la posición deseada
-3. Suelta para confirmar
+- **Ver Catálogo**: Te lleva al listado completo de productos donde podrás filtrar por categorías.
+- **Ver Ofertas**: Acceso directo a las promociones exclusivas y descuentos del día.
 
 ---
 
-¿Necesitas más ayuda? Consulta [Solución de problemas](../troubleshooting.md)
+**Tip:** Toca sobre cualquier tarjeta de producto para ver su descripción detallada y añadirlo al carrito.

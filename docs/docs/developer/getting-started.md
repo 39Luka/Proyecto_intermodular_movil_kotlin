@@ -2,120 +2,86 @@
 sidebar_position: 4
 ---
 
-# 🚀 Getting Started para desarrolladores
+# 🚀 Primeros pasos para desarrolladores
 
-Guía rápida para empezar a desarrollar en 5 minutos.
+Guía rápida para empezar a desarrollar en La Croassantina.
 
 ---
 
 ## 1. Clonar y configurar
 
 ```bash
-# Clonar
+# Clonar repositorio
 git clone https://github.com/39Luka/Proyecto_intermodular_movil_kotlin.git
 cd Proyecto_intermodular_movil_kotlin
 
-# Ver ramas disponibles
-git branch -a
-
-# Crear rama de desarrollo
-git checkout -b feature/mi-feature
+# Cambiar a rama de trabajo
+git checkout -b feature/nueva-funcionalidad
 ```
 
 ---
 
 ## 2. Abrir en Android Studio
 
-1. Abre Android Studio
-2. File → Open → Selecciona la carpeta
-3. Espera a que sincronice
-4. ¡Listo!
+1. Abre **Android Studio Ladybug** (o superior).
+2. **File → Open** → Selecciona la carpeta raíz del proyecto.
+3. Espera a que la sincronización de Gradle finalice.
+4. ✅ Si ves el botón de "Run" habilitado, todo está correcto.
 
 ---
 
-## 3. Ejecutar app
+## 3. Ejecutar la App
 
-```bash
-# Debug
-./gradlew installDebug
-
-# O en Android Studio: Run → Run 'app'
-```
+- **Físico:** Conecta tu móvil Android con depuración USB activada.
+- **Emulador:** Crea un dispositivo virtual con API 34.
+- **Acción:** Pulsa el botón **Run** (flecha verde) en la barra superior del IDE.
 
 ---
 
-## 4. Crear primera feature
+## 4. Estructura de una funcionalidad (Compose)
 
-Estructura básica:
+El flujo estándar para añadir una pantalla es:
 
 ```kotlin
-// 1. Crear interface en domain layer
-interface MyRepository {
-    suspend fun doSomething(): Result<String>
-}
+// 1. Definir el estado en ui/model/
+data class MyUiState(val data: String = "", val isLoading: Boolean = false)
 
-// 2. Crear implementación en data layer
-@Inject
-class MyRepositoryImpl(
-    private val api: MyApi
-) : MyRepository {
-    override suspend fun doSomething() = runCatching {
-        api.getSomething().body ?: throw Exception("Empty")
-    }
-}
+// 2. Crear Repositorio en data/ (si es necesario nueva API)
+class MyRepository(private val apiService: ApiService) { ... }
 
-// 3. Crear UseCase en domain
-@Inject
-class MyUseCase(private val repo: MyRepository) {
-    suspend operator fun invoke() = repo.doSomething()
-}
-
-// 4. Crear ViewModel
+// 3. Crear ViewModel en viewmodel/
 @HiltViewModel
-class MyViewModel @Inject constructor(
-    private val useCase: MyUseCase
-) : ViewModel() {
-    // Logic
+class MyViewModel @Inject constructor(private val repository: MyRepository) : ViewModel() {
+    private val _uiState = MutableStateFlow(MyUiState())
+    val uiState = _uiState.asStateFlow()
 }
 
-// 5. Crear UI (Activity/Fragment)
-class MyActivity : AppCompatActivity() {
-    private val viewModel: MyViewModel by viewModels()
-    // UI code
+// 4. Crear Pantalla en ui/screens/
+@Composable
+fun MyScreen(viewModel: MyViewModel) {
+    val state by viewModel.uiState.collectAsState()
+    // UI declarativa con Compose
 }
 ```
 
 ---
 
-## 5. Testing
+## 5. Ejecutar Pruebas
+
+Para asegurar que no has roto nada:
 
 ```bash
-# Tests unitarios
+# Ejecutar Unit Tests desde terminal
 ./gradlew test
-
-# Tests instrumentados
-./gradlew connectedAndroidTest
-```
-
----
-
-## 6. Hacer commit
-
-```bash
-git add .
-git commit -m "feat: descripción concisa de cambios"
-git push origin feature/mi-feature
 ```
 
 ---
 
 ## Próximos pasos
 
-- 📖 Lee [Arquitectura](./architecture.md)
-- 📂 Entiende la [Estructura](./project-structure.md)
-- 🧪 Escribe tests en [Testing](./testing)
-- 🚀 Deploy en [Release](./deployment/release.md)
+- 📖 Lee la [Arquitectura](./architecture.md).
+- 📂 Entiende la [Estructura de paquetes](./project-structure.md).
+- 🧪 Aprende sobre el [Testing en Móvil](./mobile/testing).
 
 ---
 
-**¿Problemas?** Consulta [Solución de problemas](../troubleshooting.md)

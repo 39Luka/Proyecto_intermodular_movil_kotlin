@@ -87,11 +87,14 @@ fun CartScreen(
                 val itemFinalPrice = itemBasePrice - itemDiscount
 
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    val displayImage = cartItem.product.getDisplayImage()
                     HorizontalCard(
                         item = HorizontalCardItem(
                             id = cartItem.product.id,
                             title = cartItem.product.getDisplayTitle(),
                             description = cartItem.product.description ?: "",
+                            imageUrl = displayImage,
+                            categoryName = cartItem.product.getCategoryName(),
                             leftLabel = "Cantidad",
                             leftValue = cartItem.quantity.toString(),
                             rightLabel = if (itemDiscount > 0) "Subtotal (con promo)" else "Subtotal",

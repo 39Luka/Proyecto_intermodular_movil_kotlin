@@ -2,26 +2,26 @@
 sidebar_position: 5
 ---
 
-# 🏗️ Arquitectura
+# Arquitectura
 
 ## Visión general
 
-El proyecto utiliza **arquitectura modular** con **MVVM** (Model-View-ViewModel).
+El proyecto utiliza una arquitectura **MVVM (Model-View-ViewModel)** moderna con **Clean Architecture** mediante una capa de Repositorios.
 
 ```
 ┌─────────────────────────────────────────┐
-│         Presentation Layer              │
-│  (Activities, Fragments, ViewModels)    │
+│         Capa de Presentación            │
+│       (Composables, ViewModels)         │
 └────────────────┬────────────────────────┘
                  │
 ┌────────────────▼────────────────────────┐
-│         Domain Layer                    │
-│  (Use Cases, Repositories)              │
+│         Capa de Dominio/Datos           │
+│             (Repositories)              │
 └────────────────┬────────────────────────┘
                  │
 ┌────────────────▼────────────────────────┐
-│         Data Layer                      │
-│  (Database, API, Cache)                 │
+│         Capa de Infraestructura         │
+│         (API Retrofit, DataStore)       │
 └─────────────────────────────────────────┘
 ```
 
@@ -29,89 +29,57 @@ El proyecto utiliza **arquitectura modular** con **MVVM** (Model-View-ViewModel)
 
 ## Capas
 
-### 1. **Presentation Layer** (Interfaz)
-- **Activities**: Pantallas principales
-- **Fragments**: Componentes reutilizables
-- **ViewModels**: Lógica de presentación
-- **Composables**: UI con Jetpack Compose (futuro)
+### 1. **Capa de Presentación** (Interfaz)
+- **Jetpack Compose**: UI 100% declarativa sin XML.
+- **ViewModels**: Gestionan el estado de la UI mediante `StateFlow` y procesan los eventos del usuario.
+- **UI States**: Clases de datos que encapsulan todo lo que la vista necesita mostrar.
 
-### 2. **Domain Layer** (Lógica de negocio)
-- **Use Cases**: Funcionalidades específicas
-- **Repositories**: Abstracción de datos
-- **Entities**: Modelos del dominio
+### 2. **Capa de Datos** (Repositorios)
+- **Repositories**: Actúan como la única fuente de verdad. Centralizan el acceso a los datos (API y persistencia local).
+- **Mappers**: Transforman los objetos de la API (DTOs) en objetos optimizados para la UI.
 
-### 3. **Data Layer** (Persistencia)
-- **Database**: Room (SQLite)
-- **API**: Retrofit (servicios web)
-- **Cache**: Shared Preferences
+### 3. **Capa de Infraestructura** (Fuentes Externas)
+- **API (Retrofit)**: Comunicación con el backend en la nube.
+- **DataStore**: Persistencia local asíncrona para tokens JWT y perfil de usuario.
 
 ---
 
 ## Patrones utilizados
 
-### Dependency Injection (Hilt)
+### Inyección de Dependencias (Hilt)
+Se utiliza Hilt para gestionar el ciclo de vida de los componentes y facilitar la testabilidad.
+
 ```kotlin
 @HiltViewModel
-class LoginViewModel @Inject constructor(
-    private val loginUseCase: LoginUseCase
+class HomeViewModel @Inject constructor(
+    private val productRepository: ProductRepository
 ) : ViewModel() {
     // ...
 }
 ```
 
-### Repository Pattern
-```kotlin
-interface UserRepository {
-    suspend fun getUser(id: String): Result<User>
-    suspend fun saveUser(user: User): Result<Unit>
-}
-```
+### Unidirectional Data Flow (UDF)
+La interfaz solo reacciona a cambios en el estado expuesto por el ViewModel.
 
-### MVVM
 ```
-UI (Activity/Fragment)
-    ↓
-ViewModel (ReduceState)
-    ↓
-Repository (Data operations)
-    ↓
-Data Source (API/DB)
+UI (Compose)
+    ↑ (Observa StateFlow)
+ViewModel (Lógica de negocio)
+    ↓ (Llamadas suspendidas)
+Repository (Gestión de datos)
 ```
 
 ---
 
-## Flow de datos
+## Flujo de datos
 
-```
-1. Usuario interactúa con UI
-   ↓
-2. ViewModel recibe evento
-   ↓
-3. ViewModel llama Use Case
-   ↓
-4. Use Case llama Repository
-   ↓
-5. Repository accede a Data Layer
-   ↓
-6. Datos retornan a ViewModel
-   ↓
-7. ViewModel emite state
-   ↓
-8. UI se actualiza
-```
-
----
-
-## Módulos principales
-
-| Módulo | Responsabilidad |
-|--------|-----------------|
-| `:app` | Aplicación principal |
-| `:core` | Utilidades compartidas |
-| `:auth` | Autenticación |
-| `:dashboard` | Panel de control |
-| `:settings` | Configuración |
-| `:data` | Acceso a datos |
+1. El usuario pulsa un botón en un **Composable**.
+2. El **ViewModel** recibe el evento y lanza una **Corrutina**.
+3. El ViewModel solicita datos al **Repositorio**.
+4. El Repositorio obtiene los datos de la **API** mediante Retrofit.
+5. El Repositorio mapea los datos y los devuelve al ViewModel.
+6. El ViewModel actualiza el **StateFlow** con el nuevo estado.
+7. La **UI** se repinta automáticamente con la nueva información.
 
 ---
 

@@ -5,52 +5,54 @@ import styles from './styles.module.css';
 
 type FeatureItem = {
   title: string;
-  Svg: React.ComponentType<React.ComponentProps<'svg'>>;
+  emoji: string;
   description: ReactNode;
 };
 
 const FeatureList: FeatureItem[] = [
   {
-    title: 'Easy to Use',
-    Svg: require('@site/static/img/undraw_docusaurus_mountain.svg').default,
+    title: 'Experiencia Nativa Fluida',
+    emoji: '📱',
     description: (
       <>
-        Docusaurus was designed from the ground up to be easily installed and
-        used to get your website up and running quickly.
+        Interfaz construida 100% con Jetpack Compose, garantizando una navegación fluida,
+        animaciones nativas y un rendimiento optimizado para dispositivos Android.
       </>
     ),
   },
   {
-    title: 'Focus on What Matters',
-    Svg: require('@site/static/img/undraw_docusaurus_tree.svg').default,
+    title: 'Gestión de Pedidos Táctil',
+    emoji: '🥐',
     description: (
       <>
-        Docusaurus lets you focus on your docs, and we&apos;ll do the chores. Go
-        ahead and move your docs into the <code>docs</code> directory.
+        Proceso de compra intuitivo: catálogo por categorías, carrito reactivo con cálculo de totales
+        en tiempo real y aplicación de promociones exclusivas.
       </>
     ),
   },
   {
-    title: 'Powered by React',
-    Svg: require('@site/static/img/undraw_docusaurus_react.svg').default,
+    title: 'Seguridad y Persistencia',
+    emoji: '🔐',
     description: (
       <>
-        Extend or customize your website layout by reusing React. Docusaurus can
-        be extended while reusing the same header and footer.
+        Autenticación robusta con JWT, almacenamiento seguro de credenciales mediante Jetpack DataStore
+        y sesión persistente para una experiencia sin interrupciones.
       </>
     ),
   },
 ];
 
-function Feature({title, Svg, description}: FeatureItem) {
+function Feature({title, emoji, description}: FeatureItem) {
   return (
     <div className={clsx('col col--4')}>
-      <div className="text--center">
-        <Svg className={styles.featureSvg} role="img" />
-      </div>
-      <div className="text--center padding-horiz--md">
-        <Heading as="h3">{title}</Heading>
-        <p>{description}</p>
+      <div className={clsx('card', styles.featureCard)}>
+        <div className="card__header text--center">
+          <div style={{fontSize: '3rem', marginBottom: '1rem'}}>{emoji}</div>
+          <Heading as="h3">{title}</Heading>
+        </div>
+        <div className="card__body text--center">
+          <p>{description}</p>
+        </div>
       </div>
     </div>
   );

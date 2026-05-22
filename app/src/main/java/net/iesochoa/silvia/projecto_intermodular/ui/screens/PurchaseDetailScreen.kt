@@ -10,6 +10,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
@@ -222,7 +223,27 @@ private fun ItemCard(item: PurchaseItem) {
         colors = CardDefaults.cardColors(containerColor = Neutral100),
         border = androidx.compose.foundation.BorderStroke(1.dp, Neutral200.copy(alpha = 0.5f))
     ) {
-        Row(modifier = Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
+        Row(
+            modifier = Modifier.padding(12.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            // 🔹 Miniatura del producto (Carga real si la API lo permite, o fallback)
+            Box(
+                modifier = Modifier
+                    .size(60.dp)
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(Secondary100),
+                contentAlignment = Alignment.Center
+            ) {
+                net.iesochoa.silvia.projecto_intermodular.ui.components.AppAsyncImage(
+                    model = item.productImage,
+                    contentDescription = item.productName,
+                    modifier = Modifier.fillMaxSize(),
+                    contentScale = androidx.compose.ui.layout.ContentScale.Crop
+                )
+            }
+
             Column(modifier = Modifier.weight(1f)) {
                 Text(text = item.productName ?: "Producto", style = AppTypography.bodyMedium.copy(fontWeight = FontWeight.Bold))
                 Text(text = "Cantidad: ${item.quantity}", style = AppTypography.labelLarge, color = TextPrimary.copy(alpha = 0.5f))
