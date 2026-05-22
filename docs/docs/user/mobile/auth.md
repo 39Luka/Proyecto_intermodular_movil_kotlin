@@ -11,7 +11,7 @@ Para realizar pedidos en **La Croassantina** es necesario tener una sesión acti
 
 1. Introduce tu **email**.
 2. Escribe tu **contraseña**.
-3. Pulsa el botón **"Entrar"**.
+3. Pulsa el botón **"Iniciar Sesión"**.
 
 ![Login](/img/login.png)
 *Formulario de inicio de sesión.*
@@ -25,7 +25,7 @@ Si es tu primera vez en la aplicación:
    - **Email**: Asegúrate de que tenga un formato válido.
    - **Contraseña**: Debe tener al menos 8 caracteres para tu seguridad.
    - **Confirmar contraseña**: Repite la misma clave.
-3. Pulsa **"Registrarse"**.
+3. Pulsa **"Registrarme"**.
 
 ![Registro](/img/register.png)
 *Pantalla de registro de nuevos usuarios.*
