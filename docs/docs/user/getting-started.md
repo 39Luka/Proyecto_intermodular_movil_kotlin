@@ -13,8 +13,8 @@ Cuando abras la aplicación por primera vez, te encontrarás con la pantalla de 
 ```text
 1. Abre la aplicación La Croassantina.
 2. Si no tienes cuenta, pulsa en "Crea una cuenta".
-3. Regístrate con tu email y una contraseña segura de al menos 8 caracteres.
-4. Si ya tienes cuenta, introduce tus credenciales y pulsa "Entrar".
+3. Pulsa en **"Registrarme"** con tu email y una contraseña segura de al menos 8 caracteres.
+4. Si ya tienes cuenta, introduce tus credenciales y pulsa **"Iniciar Sesión"**.
 ```
 
 ![Acceso a la App](/img/login.png)

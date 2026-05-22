@@ -28,9 +28,9 @@ El proceso de compra en la aplicación móvil es rápido e intuitivo, adaptado a
 ## Gestionar tu Carrito
 
 En la sección **Carrito** podrás:
-- **Actualizar cantidades**: Usa los botones `+` y `-`.
+- **Actualizar cantidades**: Usa los botones `+` y `-` debajo de cada producto.
+- **Eliminar productos**: Usa el icono de la **papelera** para quitar un artículo específico.
 - **Aplicar Promociones**: Si tienes ofertas disponibles para un producto, selecciónalas en el desplegable.
-- **Eliminar productos**: Usa el icono de papelera.
 
 ![Carrito](/img/cart.png)
 *Gestión de artículos y selección de promociones en el carrito.*

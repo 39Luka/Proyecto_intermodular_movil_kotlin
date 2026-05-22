@@ -8,7 +8,11 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.DeleteSweep
 import androidx.compose.material.icons.filled.ExpandMore
+import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -95,13 +99,72 @@ fun CartScreen(
                             description = cartItem.product.description ?: "",
                             imageUrl = displayImage,
                             categoryName = cartItem.product.getCategoryName(),
-                            leftLabel = "Cantidad",
-                            leftValue = cartItem.quantity.toString(),
-                            rightLabel = if (itemDiscount > 0) "Subtotal (con promo)" else "Subtotal",
-                            rightValue = "€${String.format(Locale.US, "%.2f", itemFinalPrice)}"
+                            leftLabel = "Subtotal",
+                            leftValue = "€${String.format(Locale.US, "%.2f", itemFinalPrice)}",
+                            rightLabel = if (itemDiscount > 0) "Ahorro aplicado" else null,
+                            rightValue = if (itemDiscount > 0) "€${String.format(Locale.US, "%.2f", itemDiscount)}" else null
                         ),
                         modifier = Modifier.fillMaxWidth()
                     )
+
+                    // 🔹 Controles de Carrito: Eliminar y +/- Cantidad
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 8.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        // Botón Papelera
+                        IconButton(
+                            onClick = { onRemoveItem(cartItem.product.id) },
+                            colors = IconButtonDefaults.iconButtonColors(contentColor = Error600)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Delete,
+                                contentDescription = "Eliminar producto"
+                            )
+                        }
+
+                        // Selector +/-
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(12.dp),
+                            modifier = Modifier
+                                .background(Neutral200.copy(alpha = 0.5f), RoundedCornerShape(12.dp))
+                                .padding(horizontal = 4.dp, vertical = 2.dp)
+                        ) {
+                            IconButton(
+                                onClick = { onQuantityChange(cartItem.product.id, cartItem.quantity - 1) },
+                                modifier = Modifier.size(32.dp)
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Remove,
+                                    contentDescription = "Restar",
+                                    tint = Primary500,
+                                    modifier = Modifier.size(18.dp)
+                                )
+                            }
+
+                            Text(
+                                text = cartItem.quantity.toString(),
+                                style = AppTypography.bodyMedium.copy(fontWeight = FontWeight.Bold),
+                                color = TextPrimary
+                            )
+
+                            IconButton(
+                                onClick = { onQuantityChange(cartItem.product.id, cartItem.quantity + 1) },
+                                modifier = Modifier.size(32.dp)
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Add,
+                                    contentDescription = "Sumar",
+                                    tint = Primary500,
+                                    modifier = Modifier.size(18.dp)
+                                )
+                            }
+                        }
+                    }
                     
                     if (cartItem.applicablePromotions.isNotEmpty()) {
                         ItemPromotionSelector(
