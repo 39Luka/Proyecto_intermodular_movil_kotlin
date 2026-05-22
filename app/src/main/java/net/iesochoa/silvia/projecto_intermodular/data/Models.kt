@@ -142,6 +142,8 @@ data class PurchaseItem(
     val id: Int? = null,
     val productId: Int,
     val productName: String? = null,
+    @SerializedName("productImage", alternate = ["image", "imageUrl"])
+    val productImage: String? = null,
     val quantity: Int? = 0,
     val subtotal: Double? = 0.0,
     val unitPrice: Double? = 0.0

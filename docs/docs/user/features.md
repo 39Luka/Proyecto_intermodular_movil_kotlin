@@ -2,38 +2,38 @@
 sidebar_position: 3
 ---
 
-# ✨ Características principales
+# Características principales
 
-## Módulos disponibles
+La aplicación móvil de **La Croassantina** ofrece una serie de funcionalidades diseñadas para hacer tu experiencia de compra lo más fluida posible.
 
-### 1️⃣ Autenticación
-- Registro e inicio de sesión seguro
-- Recuperación de contraseña
-- Autenticación de dos factores (2FA)
+## Gestión de Usuario y Perfil
 
-**Leer más:** [Manual de Login](./features/login.md)
+- **Perfil Personalizado**: Cambia tu imagen de perfil seleccionando cualquier foto de tu galería.
+- **Seguridad**: Actualización de contraseña directamente desde los ajustes de la cuenta.
 
-### 2️⃣ Dashboard
-- Panel de control personalizable
-- Estadísticas en tiempo real
-- Notificaciones push
+![Perfil](/img/profile.png)
+*Gestión de la cuenta del usuario.*
 
-**Leer más:** [Guía de Dashboard](./features/dashboard.md)
+## Catálogo Inteligente
 
-### 3️⃣ Configuración
-- Ajustes de privacidad
-- Gestión de dispositivos
-- Preferencias de notificación
+- **Filtrado por Categoría**: Organiza el mostrador digital según el tipo de producto que desees.
+- **Búsqueda en Tiempo Real**: Los resultados aparecen mientras escribes.
+- **Paginación Nativa**: Navegación fluida sin esperas de carga excesivas.
 
-**Leer más:** [Configuración](./features/settings.md)
+## Compras y Ofertas
 
-## Características adicionales
+- **Carrito Reactivo**: Observa cómo cambia tu total al instante al añadir productos o aplicar cupones.
+- **Promociones Exclusivas**: Visualiza y aplica ofertas especiales vinculadas a tu cuenta de usuario.
+- **Historial de Compras**: Controla el estado de todos tus pedidos pasados (Creado, Pagado o Cancelado).
 
-- 🌙 Modo oscuro
-- 🌐 Soporte multiidioma
-- 📴 Modo offline
-- 🔄 Sincronización automática
+![Pedidos](/img/purchases.png)
+*Historial de pedidos realizados.*
+
+## Interfaz Adaptada
+
+- **Navegación con una mano**: Gracias a la barra inferior, las secciones principales están siempre al alcance de tu pulgar.
+- **Carga de Imágenes Optimizada**: Las fotos de los productos se cargan de forma eficiente para ahorrar datos.
 
 ---
 
-Para más detalles, explora las guías específicas de cada módulo en el menú lateral.
+Para aprender a usar cada una de estas funciones, visita la [Guía de Uso](./mobile-intro.md).

@@ -1,178 +1,45 @@
 ---
 sidebar_position: 1
+title: Pruebas Unitarias
 ---
 
-# ✅ Tests unitarios
+# Testing en Android
 
-## Setup
+Para garantizar la estabilidad de **La Croassantina**, hemos implementado una suite de pruebas unitarias que validan la lógica de los ViewModels y Repositorios.
 
-```kotlin
-// build.gradle.kts
-testImplementation("junit:junit:4.13.2")
-testImplementation("org.mockito.kotlin:mockito-kotlin:5.1.0")
-testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.1")
-```
+## Herramientas utilizadas
 
----
+- **JUnit 4**: El motor principal para ejecutar las pruebas.
+- **MockK**: Librería nativa de Kotlin para simular el comportamiento de dependencias (Repositories, APIs).
+- **Turbine**: Utilizada para testear flujos reactivos (`StateFlow` y `Flow`) de forma sencilla.
+- **Coroutines Test**: Permite controlar el paso del tiempo en funciones suspendidas.
 
-## Estructura de tests
+## Cómo ejecutar los tests
 
-```
-src/
-├── test/java/com/proyecto/
-│   ├── viewmodel/
-│   │   ├── LoginViewModelTest
-│   │   └── DashboardViewModelTest
-│   ├── domain/
-│   │   ├── LoginUseCaseTest
-│   │   └── UserRepositoryTest
-│   └── data/
-│       ├── database/
-│       │   └── UserDaoTest
-│       └── remote/
-│           └── AuthApiTest
-```
+### Desde Android Studio (Recomendado)
+1. Abre la pestaña **Project** a la izquierda.
+2. Navega hasta `app/src/test/java/net/iesochoa/silvia/projecto_intermodular/`.
+3. Haz clic derecho sobre la carpeta `viewmodel` o `data` y selecciona **Run 'Tests in...'**.
 
----
-
-## Test de ViewModel
-
-```kotlin
-class LoginViewModelTest {
-    @get:Rule
-    val instantExecutorRule = InstantTaskExecutorRule()
-
-    private val loginUseCase = mock<LoginUseCase>()
-    private lateinit var viewModel: LoginViewModel
-
-    @Before
-    fun setup() {
-        viewModel = LoginViewModel(loginUseCase)
-    }
-
-    @Test
-    fun testLoginSuccess() = runTest {
-        // Arrange
-        val email = "test@test.com"
-        val password = "password123"
-        val expectedUser = User("1", "Test User", email)
-        
-        coEvery { 
-            loginUseCase(email, password) 
-        } returns Result.success(expectedUser)
-
-        // Act
-        viewModel.login(email, password)
-
-        // Assert
-        assertEquals(LoginState.Success(expectedUser), viewModel.state.value)
-    }
-
-    @Test
-    fun testLoginError() = runTest {
-        val email = "test@test.com"
-        val password = "wrong"
-        
-        coEvery { 
-            loginUseCase(email, password) 
-        } returns Result.failure(Exception("Invalid credentials"))
-
-        viewModel.login(email, password)
-
-        assert(viewModel.state.value is LoginState.Error)
-    }
-}
-```
-
----
-
-## Test de Repository
-
-```kotlin
-class UserRepositoryTest {
-    private val userApi = mock<UserApi>()
-    private val userDao = mock<UserDao>()
-    private val tokenManager = mock<TokenManager>()
-
-    private val repository = UserRepositoryImpl(userApi, userDao, tokenManager)
-
-    @Test
-    fun getUser_Success() = runTest {
-        // Arrange
-        val userId = "123"
-        val mockResponse = UserResponse("123", "Juan", "juan@test.com", null, "", "")
-        
-        coEvery { tokenManager.getToken() } returns "token"
-        coEvery { userApi.getUserById(userId, "token") } returns 
-            Response.success(mockResponse)
-
-        // Act
-        val result = repository.getUser(userId)
-
-        // Assert
-        assertTrue(result.isSuccess)
-        assertEquals(mockResponse.toDomain(), result.getOrNull())
-        coVerify { userDao.insertUser(any()) }
-    }
-}
-```
-
----
-
-## Test de UseCase
-
-```kotlin
-class LoginUseCaseTest {
-    private val userRepository = mock<UserRepository>()
-    private val tokenManager = mock<TokenManager>()
-    
-    private val loginUseCase = LoginUseCase(userRepository, tokenManager)
-
-    @Test
-    fun invoke_ValidCredentials() = runTest {
-        val email = "user@test.com"
-        val password = "pass123"
-
-        coEvery { 
-            userRepository.login(email, password) 
-        } returns Result.success(User("1", "User", email))
-
-        val result = loginUseCase(email, password)
-
-        assertTrue(result.isSuccess)
-        coVerify { tokenManager.saveToken(any()) }
-    }
-}
-```
-
----
-
-## Ejecutar tests
-
+### Desde la Terminal
+Ejecuta el siguiente comando en la raíz del proyecto:
 ```bash
-# Todos los tests unitarios
 ./gradlew test
-
-# Tests específicos
-./gradlew test --tests "*.LoginViewModelTest"
-
-# Con reporte
-./gradlew test --tests "*" --scan
 ```
 
----
+## Ejemplo de un Test Real
+Los tests se centran en verificar que el estado de la interfaz (`UiState`) reaccione correctamente a las acciones del usuario o errores de red.
 
-## Coverage de código
-
-```bash
-# Habilitar en build.gradle.kts
-plugins {
-    id("jacoco")
+```kotlin
+@Test
+fun login_failure_sets_error_message() = runTest {
+    // Simulamos un fallo en la API
+    coEvery { authRepository.login(any(), any()) } throws Exception("Credenciales incorrectas")
+    
+    // Ejecutamos la acción en el ViewModel
+    viewModel.login { }
+    
+    // Verificamos que el estado de la UI contiene el error
+    assertEquals("Credenciales incorrectas", viewModel.uiState.value.errorMessage)
 }
-
-./gradlew testDebugUnitTest jacocoTestDebugUnitTestReport
 ```
-
----
-
-**Siguiente:** [Integration Tests](./integration-tests.md)

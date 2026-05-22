@@ -18,7 +18,8 @@ import javax.inject.Inject
  */
 @HiltViewModel
 class PurchaseDetailViewModel @Inject constructor(
-    private val purchaseRepository: PurchaseRepository
+    private val purchaseRepository: PurchaseRepository,
+    private val productRepository: net.iesochoa.silvia.projecto_intermodular.data.ProductRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(PurchaseDetailUiState())
@@ -30,8 +31,19 @@ class PurchaseDetailViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val purchase = purchaseRepository.getPurchaseById(purchaseId)
+                
+                // Enriquecer items con imágenes si no las traen
+                val enrichedItems = purchase.items.map { item ->
+                    if (item.productImage.isNullOrBlank()) {
+                        try {
+                            val product = productRepository.getProductById(item.productId)
+                            item.copy(productImage = product.getDisplayImage())
+                        } catch (_: Exception) { item }
+                    } else item
+                }
+                
                 _uiState.update { it.copy(
-                    purchase = purchase,
+                    purchase = purchase.copy(items = enrichedItems),
                     isLoading = false
                 ) }
             } catch (e: Exception) {

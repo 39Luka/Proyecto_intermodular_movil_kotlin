@@ -2,28 +2,21 @@
 sidebar_position: 1
 ---
 
-# 👤 Manual de Usuario
+# Manual de Usuario
 
-Bienvenido al **Proyecto Intermodular Móvil**. Esta documentación te guiará a través de todas las funciones y características de la aplicación.
+Bienvenido al **Manual de Usuario de La Croassantina**. Esta documentación te guiará a través de todas las funciones y características de la aplicación móvil.
 
 ## ¿Qué es esta aplicación?
 
-La **Aplicación Intermodular Móvil** es una solución Android desarrollada en Kotlin que integra múltiples módulos para proporcionar una experiencia fluida y eficiente.
+La aplicación de **La Croassantina** es una solución Android nativa desarrollada en Kotlin que permite a los usuarios explorar nuestro catálogo de productos, gestionar su carrito y realizar pedidos de forma rápida y sencilla.
 
 ## Empezar rápido
 
-- ✨ **[Primeros pasos](./getting-started.md)** - Instala y configura la app
-- 🎯 **[Características](./features.md)** - Descubre todas las funciones disponibles
-- ❓ **[FAQ](./faq.md)** - Respuestas a preguntas comunes
-- 🆘 **[Solucionar problemas](./troubleshooting.md)** - Resuelve problemas comunes
+- **[Primeros pasos](./getting-started.md)** - Aprende a navegar por la app.
+- **[Características](./features.md)** - Descubre todas las funciones disponibles.
 
 ## Capítulos principales
 
-1. **Introducción** - Información general sobre la aplicación
-2. **Guía de inicio** - Cómo instalar y configurar
-3. **Funcionalidades** - Descripción detallada de cada módulo
-4. **Solución de problemas** - Ayuda con errores comunes
-
----
-
-**¿Preguntas?** Consulta la sección de [FAQ](./faq.md) o contacta al equipo de desarrollo.
+1. **Introducción** - Información general sobre la aplicación.
+2. **Guía de inicio** - Cómo empezar a usar la interfaz.
+3. **Funcionalidades** - Descripción detallada de cada módulo.

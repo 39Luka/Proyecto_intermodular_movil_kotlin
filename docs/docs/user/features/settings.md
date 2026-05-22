@@ -2,51 +2,30 @@
 sidebar_position: 3
 ---
 
-# ⚙️ Configuración
+# 👤 Gestión de Perfil
 
-## Acceder a configuración
+Desde la sección de perfil puedes personalizar tu experiencia en la aplicación.
 
-1. En la pantalla principal, toca el ícono **⚙️ engranaje**
-2. O ve a **Menú → Configuración**
+## Acceder a tu Perfil
 
-## Secciones principales
+Toca el **icono de usuario** o tu foto circular en la esquina superior de la pantalla principal.
 
-### 👤 Perfil
-- Editar nombre y foto
-- Cambiar email
-- Actualizar información personal
+## Funciones disponibles
 
-### 🔒 Seguridad
-- Cambiar contraseña
-- Gestionar autenticación biométrica
-- Activar 2FA (autenticación de dos factores)
-- Ver sesiones activas
+### 📸 Cambiar Foto de Perfil
+1. Toca el botón **"Cambiar imagen"**.
+2. Selecciona una foto directamente desde la **Galería** de tu dispositivo.
+3. La imagen se subirá automáticamente y se actualizará en todos tus dispositivos.
 
-### 🔔 Notificaciones
-- Habilitar/deshabilitar notificaciones
-- Seleccionar tipo de alertas
-- Configurar horarios tranquilo
+### 🔑 Actualizar Contraseña
+Para mantener tu cuenta segura:
+1. Toca en **"Cambiar contraseña"**.
+2. Introduce tu clave actual y la nueva clave (mínimo 8 caracteres).
+3. Tras confirmar, deberás iniciar sesión de nuevo con la nueva contraseña.
 
-### 🌍 Idioma y región
-- Cambiar idioma de la app
-- Seleccionar región
-- Formato de fecha y hora
-
-### 🌙 Apariencia
-- Modo oscuro/claro
-- Tamaño de fuente
-- Tema de color
-
-### 🗑️ Privacidad y almacenamiento
-- Borrar datos en caché
-- Liberar espacio
-- Gestionar permisos
-
-### ℹ️ Acerca de
-- Versión de la app
-- Créditos
-- Términos y privacidad
+### 🚪 Cerrar Sesión
+Si deseas salir de tu cuenta, usa el botón **"Cerrar Sesión"** en la parte inferior. Esto borrará tus credenciales de forma segura del teléfono.
 
 ---
 
-**Cambios guardados automáticamente** ✅
+**Nota:** Los cambios en tu perfil se sincronizan en tiempo real con el servidor de La Croassantina.

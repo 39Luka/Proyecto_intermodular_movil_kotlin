@@ -2,52 +2,30 @@
 sidebar_position: 1
 ---
 
-# 🔐 Login y Autenticación
+# 🔐 Acceso Seguro
+
+La seguridad de tus datos es nuestra prioridad. La Croassantina utiliza estándares modernos de autenticación.
 
 ## Iniciar sesión
 
-### Método 1: Credenciales
-1. Abre la aplicación
-2. Ingresa tu **email o usuario**
-3. Ingresa tu **contraseña**
-4. Toca **"Iniciar sesión"**
+Para entrar en tu cuenta:
+1. Abre la aplicación.
+2. Introduce tu **correo electrónico**.
+3. Escribe tu **contraseña**.
+4. Toca en **"Entrar"**.
 
-### Método 2: Biometría
-Si tienes habilitado:
-- 🔴 Huella dactilar
-- 👤 Reconocimiento facial
+## Registro de nueva cuenta
 
-Simplemente toca el ícono biométrico.
+Si aún no eres cliente:
+1. En la pantalla principal de acceso, toca en **"Crea una cuenta"**.
+2. Completa los datos solicitados (Email y Contraseña).
+3. Asegúrate de que la contraseña tenga al menos **8 caracteres**.
+4. ¡Listo! Tu sesión se iniciará automáticamente tras el registro.
 
-## Crear una cuenta
+## Sesión Persistente
 
-1. Toca **"Registrarse"** en la pantalla de login
-2. Completa el formulario:
-   - Nombre
-   - Email
-   - Contraseña (mínimo 8 caracteres)
-3. Acepta los términos y condiciones
-4. Verifica tu email
-5. ¡Listo! Ya estás registrado
-
-## ¿Olvidaste la contraseña?
-
-1. Toca **"¿Olvidaste tu contraseña?"**
-2. Ingresa tu email
-3. Recibirás un link de recuperación
-4. Sigue las instrucciones en tu email
-5. Crea una nueva contraseña
-
-## 2FA (Autenticación de dos factores)
-
-Para mayor seguridad:
-
-1. Ve a **Configuración → Seguridad**
-2. Activa **"2FA"**
-3. Escanea el código QR con tu aplicación autenticadora
-4. Ingresa el código de 6 dígitos
-5. ¡Protegido! Ahora necesitarás el código al iniciar sesión
+No necesitas introducir tus datos cada vez que abras la app. El sistema guarda de forma segura un **Token JWT** que te identifica automáticamente. Solo tendrás que volver a loguearte si decides cerrar sesión manualmente desde tu perfil.
 
 ---
 
-**Nota de seguridad:** Nunca compartas tu contraseña. El soporte nunca pedirá tu contraseña.
+**Nota de seguridad:** La Croassantina nunca te pedirá tu contraseña por teléfono o correo.

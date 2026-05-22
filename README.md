@@ -303,6 +303,20 @@ data class PagedResponse<T>(
    ./gradlew installDebug
    ```
 
+## 📚 Documentación (Docusaurus)
+
+Este proyecto cuenta con un sitio de documentación completo (Manual de Usuario y Desarrollador).
+
+Para acceder localmente:
+```bash
+cd docs
+npm install
+npm start
+```
+La web se abrirá automáticamente en [http://localhost:3000](http://localhost:3000).
+
+---
+
 ## 📝 API Endpoints
 
 Estos son los endpoints de La Croassantina. Pueden variar según la configuración del backend:

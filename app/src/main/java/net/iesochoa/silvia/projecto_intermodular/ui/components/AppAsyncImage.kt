@@ -36,6 +36,7 @@ fun AppAsyncImage(
     val processedModel = remember(model) {
         if (model is String) {
             when {
+                model.isBlank() -> null
                 // Caso 1: Es una imagen Base64 (con o sin prefijo)
                 model.startsWith("data:image") || model.length > 100 -> {
                     model.decodeBase64ToBitmap()
@@ -45,16 +46,14 @@ fun AppAsyncImage(
                     model
                 }
                 // Caso 3: Es una ruta relativa de la API (ej: uploads/imagen.jpg)
-                model.isNotEmpty() -> {
+                else -> {
                     val baseUrl = "https://proyectointermodularapi-production.up.railway.app/"
-                    // Evitamos duplicar barras si el modelo ya empieza por /
-                    if (model.startsWith("/")) {
-                        baseUrl.removeSuffix("/") + model
-                    } else {
-                        baseUrl + model
+                    when {
+                        model.startsWith("/") -> baseUrl.removeSuffix("/") + model
+                        model.contains("/") -> baseUrl + model
+                        else -> "${baseUrl}uploads/$model" // Fallback: asume carpeta uploads
                     }
                 }
-                else -> model
             }
         } else {
             model
