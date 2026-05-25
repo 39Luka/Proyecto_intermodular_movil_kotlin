@@ -101,9 +101,10 @@ object RepositoryModule {
     fun provideAuthRepository(
         @ApplicationContext context: Context,
         apiService: ApiService,
-        tokenManager: TokenManager
+        tokenManager: TokenManager,
+        cartRepository: CartRepository
     ): AuthRepository {
-        return AuthRepository(context, apiService, tokenManager)
+        return AuthRepository(context, apiService, tokenManager, cartRepository)
     }
 
     @Provides
