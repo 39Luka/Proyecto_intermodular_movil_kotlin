@@ -25,7 +25,8 @@ object PreferenceKeys {
 class AuthRepository(
     private val context: Context,
     private val apiService: ApiService,
-    private val tokenManager: TokenManager
+    private val tokenManager: TokenManager,
+    private val cartRepository: CartRepository
 ) {
     
     /** Realiza el login del usuario y guarda el token JWT. */
@@ -55,9 +56,16 @@ class AuthRepository(
     }
 
     suspend fun register(email: String, password: String): User {
+        logout()
+        
         val response = apiService.register(AuthRequest(email, password))
         val token = response.getAuthToken()
+        if (token.isEmpty()) throw Exception("El servidor no devolvió un token")
+        
         tokenManager.saveAuthToken(token)
+        response.refreshToken?.let { 
+            context.dataStore.edit { prefs -> prefs[PreferenceKeys.REFRESH_TOKEN] = it }
+        }
         
         val user = JwtUtils.decodeUser(token, email)
         saveUserLocal(user)
@@ -90,12 +98,13 @@ class AuthRepository(
             preferences[PreferenceKeys.USER_ID] = user.id.toString()
             preferences[PreferenceKeys.USER_ROLE] = user.role ?: "USER"
             
-            // Guardar imagen solo si el servidor la envía (evita borrar la local con nulos)
             if (!user.profileImageBase64.isNullOrEmpty()) {
                 val cleanImage = user.profileImageBase64.trim()
                     .replace("\n", "").replace("\r", "")
                 preferences[PreferenceKeys.USER_IMAGE] = cleanImage
                 android.util.Log.d("AuthRepo", "Imagen persistida en DataStore")
+            } else {
+                preferences.remove(PreferenceKeys.USER_IMAGE)
             }
         }
     }
@@ -112,6 +121,7 @@ class AuthRepository(
 
     suspend fun logout() {
         tokenManager.deleteAuthToken()
+        cartRepository.clearCart()
         context.dataStore.edit { preferences ->
             preferences.remove(PreferenceKeys.REFRESH_TOKEN)
             preferences.remove(PreferenceKeys.USER_EMAIL)
