@@ -67,11 +67,28 @@ fun PedidoCard(
                 StatusBadge(status = pedido.estado)
             }
 
-            Text(
-                text = pedido.total,
-                style = AppTypography.headlineSmall,
-                color = Secondary500
-            )
+            Column(horizontalAlignment = Alignment.End) {
+                Text(
+                    text = pedido.total,
+                    style = AppTypography.headlineSmall.copy(fontWeight = FontWeight.ExtraBold),
+                    color = Secondary500
+                )
+                
+                if (pedido.discount != null) {
+                    Surface(
+                        color = Success100,
+                        shape = RoundedCornerShape(4.dp),
+                        modifier = Modifier.padding(top = 4.dp)
+                    ) {
+                        Text(
+                            text = pedido.discount,
+                            modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
+                            style = AppTypography.labelSmall.copy(fontWeight = FontWeight.Bold),
+                            color = Success600
+                        )
+                    }
+                }
+            }
         }
     }
 }
