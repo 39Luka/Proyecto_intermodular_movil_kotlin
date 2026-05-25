@@ -7,10 +7,12 @@ package net.iesochoa.silvia.projecto_intermodular.model
  * @property fecha Fecha de creación formateada.
  * @property estado Estado actual del pedido (PAGADO, PENDIENTE, etc.).
  * @property total Importe total formateado en moneda.
+ * @property discount Ahorro total del pedido.
  */
 data class PedidoItem(
     val id: Int = 0,
     val fecha: String,
     val estado: String,
-    val total: String
+    val total: String,
+    val discount: String? = null
 )

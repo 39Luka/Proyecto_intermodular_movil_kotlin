@@ -76,7 +76,10 @@ class PurchasesViewModel @Inject constructor(
                             id = purchase.id,
                             fecha = purchase.createdAt?.take(10) ?: "N/A",
                             estado = purchase.status ?: "PENDIENTE",
-                            total = purchase.total.toCurrency()
+                            total = purchase.total.toCurrency(),
+                            discount = if ((purchase.discount ?: 0.0) > 0.0) {
+                                "-${purchase.discount.toCurrency()}"
+                            } else null
                         )
                     }
                     

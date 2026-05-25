@@ -101,8 +101,8 @@ fun CartScreen(
                             categoryName = cartItem.product.getCategoryName(),
                             leftLabel = "Subtotal",
                             leftValue = "€${String.format(Locale.US, "%.2f", itemFinalPrice)}",
-                            rightLabel = if (itemDiscount > 0) "Ahorro aplicado" else null,
-                            rightValue = if (itemDiscount > 0) "€${String.format(Locale.US, "%.2f", itemDiscount)}" else null
+                            rightLabel = if (itemDiscount > 0) "Ahorro" else null,
+                            rightValue = if (itemDiscount > 0) "-${itemDiscount.toCurrency()}" else null
                         ),
                         modifier = Modifier.fillMaxWidth()
                     )
