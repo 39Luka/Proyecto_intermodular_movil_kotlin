@@ -24,6 +24,7 @@ import net.iesochoa.silvia.projecto_intermodular.data.PurchaseItem
 import net.iesochoa.silvia.projecto_intermodular.ui.components.PageIntro
 import net.iesochoa.silvia.projecto_intermodular.ui.components.ScreenHeader
 import net.iesochoa.silvia.projecto_intermodular.ui.theme.*
+import net.iesochoa.silvia.projecto_intermodular.ui.utils.toCurrency
 import net.iesochoa.silvia.projecto_intermodular.viewmodel.PurchaseDetailViewModel
 import java.util.Locale
 
@@ -140,6 +141,11 @@ private fun PurchaseDetailContent(
 
                 Box(modifier = Modifier.fillMaxWidth().height(1.dp).background(Neutral200.copy(alpha = 0.5f)))
 
+                if ((purchase.discount ?: 0.0) > 0) {
+                    InfoRow("Subtotal", (purchase.subtotal ?: 0.0).toCurrency())
+                    InfoRow("Descuento total", "-${(purchase.discount ?: 0.0).toCurrency()}")
+                }
+
                 PriceRow("Total pagado", purchase.total ?: 0.0)
 
                 // Botones de acción dentro de la tarjeta para mejor contexto visual
@@ -206,7 +212,7 @@ private fun PriceRow(label: String, amount: Double) {
     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
         Text(text = label, style = AppTypography.bodyMedium, color = TextPrimary.copy(alpha = 0.6f))
         Text(
-            text = "€${String.format(Locale.US, "%.2f", amount)}",
+            text = amount.toCurrency(),
             style = AppTypography.titleMedium.copy(fontWeight = FontWeight.Bold),
             color = Secondary500
         )
@@ -246,10 +252,22 @@ private fun ItemCard(item: PurchaseItem) {
 
             Column(modifier = Modifier.weight(1f)) {
                 Text(text = item.productName ?: "Producto", style = AppTypography.bodyMedium.copy(fontWeight = FontWeight.Bold))
-                Text(text = "Cantidad: ${item.quantity}", style = AppTypography.labelLarge, color = TextPrimary.copy(alpha = 0.5f))
+                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Text(text = "Cant: ${item.quantity}", style = AppTypography.labelLarge, color = TextPrimary.copy(alpha = 0.5f))
+                    if ((item.discount ?: 0.0) > 0) {
+                        Surface(color = Success100, shape = RoundedCornerShape(4.dp)) {
+                            Text(
+                                text = "-${item.discount.toCurrency()}",
+                                modifier = Modifier.padding(horizontal = 4.dp, vertical = 2.dp),
+                                style = AppTypography.labelSmall.copy(fontWeight = FontWeight.Bold),
+                                color = Success600
+                            )
+                        }
+                    }
+                }
             }
             Text(
-                text = "€${String.format(Locale.US, "%.2f", (item.unitPrice ?: 0.0) * (item.quantity ?: 0))}",
+                text = (item.subtotal ?: 0.0).toCurrency(),
                 style = AppTypography.bodyLarge.copy(fontWeight = FontWeight.Bold),
                 color = Secondary500
             )
