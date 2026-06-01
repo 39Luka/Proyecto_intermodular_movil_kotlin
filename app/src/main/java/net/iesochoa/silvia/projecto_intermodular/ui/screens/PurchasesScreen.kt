@@ -19,10 +19,9 @@ import net.iesochoa.silvia.projecto_intermodular.ui.theme.Primary500
 import net.iesochoa.silvia.projecto_intermodular.ui.theme.AppTypography
 import net.iesochoa.silvia.projecto_intermodular.ui.theme.TextPrimary
 import java.time.Instant
-import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
-import java.util.*
 
 /**
  * Pantalla de Historial de Compras.
@@ -72,13 +71,11 @@ fun PurchasesScreen(
                             Text("Cerrar")
                         }
                         TextButton(onClick = {
-                            val startDate = dateRangePickerState.selectedStartDateMillis
-                            val endDate = dateRangePickerState.selectedEndDateMillis
-                            // Validar que ambas fechas estén seleccionadas
-                            if (startDate != null && endDate != null) {
-                                onDateRangeSelected(startDate, endDate)
-                                showDateRangePicker = false
-                            }
+                            onDateRangeSelected(
+                                dateRangePickerState.selectedStartDateMillis,
+                                dateRangePickerState.selectedEndDateMillis
+                            )
+                            showDateRangePicker = false
                         }) {
                             Text("Aplicar")
                         }
@@ -178,13 +175,14 @@ fun PurchasesScreen(
 
 private fun formatSelectedDates(start: Long?, end: Long?): String {
     if (start == null) return ""
+    val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
     return try {
-        val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
-        val startDate = Instant.ofEpochMilli(start).atZone(ZoneId.systemDefault()).toLocalDate()
-        val startStr = startDate.format(formatter)
-        val endStr = end?.let { 
-            val endDate = Instant.ofEpochMilli(it).atZone(ZoneId.systemDefault()).toLocalDate()
-            endDate.format(formatter) 
+        val startInstant = Instant.ofEpochMilli(start)
+        val startStr = LocalDateTime.ofInstant(startInstant, ZoneId.systemDefault())
+            .format(formatter)
+        val endStr = end?.let {
+            val endInstant = Instant.ofEpochMilli(it)
+            LocalDateTime.ofInstant(endInstant, ZoneId.systemDefault()).format(formatter)
         } ?: ""
         if (endStr.isNotEmpty()) "$startStr - $endStr" else startStr
     } catch (e: Exception) {
@@ -201,14 +199,21 @@ private fun ActiveFilterLabel(startDate: Long, endDate: Long?, onClear: () -> Un
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
+        val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
         val rangeText = try {
-            val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
-            val startLocalDate = Instant.ofEpochMilli(startDate).atZone(ZoneId.systemDefault()).toLocalDate()
             if (endDate != null) {
-                val endLocalDate = Instant.ofEpochMilli(endDate).atZone(ZoneId.systemDefault()).toLocalDate()
-                "Del ${startLocalDate.format(formatter)} al ${endLocalDate.format(formatter)}"
+                val startInstant = Instant.ofEpochMilli(startDate)
+                val endInstant = Instant.ofEpochMilli(endDate)
+                val startStr = LocalDateTime.ofInstant(startInstant, ZoneId.systemDefault())
+                    .format(formatter)
+                val endStr = LocalDateTime.ofInstant(endInstant, ZoneId.systemDefault())
+                    .format(formatter)
+                "Del $startStr al $endStr"
             } else {
-                "Día: ${startLocalDate.format(formatter)}"
+                val startInstant = Instant.ofEpochMilli(startDate)
+                val startStr = LocalDateTime.ofInstant(startInstant, ZoneId.systemDefault())
+                    .format(formatter)
+                "Día: $startStr"
             }
         } catch (e: Exception) {
             "Filtro activo"
