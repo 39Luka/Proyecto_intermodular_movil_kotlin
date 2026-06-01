@@ -16,7 +16,8 @@ import net.iesochoa.silvia.projecto_intermodular.model.PedidoItem
 import net.iesochoa.silvia.projecto_intermodular.model.PurchasesUiState
 import net.iesochoa.silvia.projecto_intermodular.ui.utils.ErrorMapper
 import net.iesochoa.silvia.projecto_intermodular.ui.utils.toCurrency
-import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import java.util.Locale
 import javax.inject.Inject
 
@@ -53,10 +54,27 @@ class PurchasesViewModel @Inject constructor(
         val startDate = _uiState.value.startDate
         val endDate = _uiState.value.endDate
         
-        // Formatear fechas para la API (yyyy-MM-dd)
-        val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-        val startStr = startDate?.let { sdf.format(java.util.Date(it)) }
-        val endStr = endDate?.let { sdf.format(java.util.Date(it)) }
+        // Formatear fechas para la API (ISO 8601: yyyy-MM-ddTHH:mm:ss)
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")
+        val startStr = startDate?.let { 
+            try {
+                val instant = java.time.Instant.ofEpochMilli(it)
+                val localDateTime = instant.atZone(java.time.ZoneId.systemDefault()).toLocalDateTime()
+                localDateTime.format(formatter)
+            } catch (e: Exception) {
+                null
+            }
+        }
+        val endStr = endDate?.let { 
+            try {
+                val instant = java.time.Instant.ofEpochMilli(it)
+                // Para la fecha de fin, agregar 23:59:59 para incluir todo el día
+                val localDateTime = instant.atZone(java.time.ZoneId.systemDefault()).toLocalDateTime().plusHours(23).plusMinutes(59).plusSeconds(59)
+                localDateTime.format(formatter)
+            } catch (e: Exception) {
+                null
+            }
+        }
 
         _uiState.update { it.copy(isLoading = true, error = null) }
         viewModelScope.launch {
@@ -111,8 +129,8 @@ class PurchasesViewModel @Inject constructor(
      * @param end Marca de tiempo final en milisegundos.
      */
     fun onDateRangeSelected(start: Long?, end: Long?) {
-        _uiState.update { it.copy(startDate = start, endDate = end, currentPage = 0) }
-        loadPurchases()
+       _uiState.update { it.copy(startDate = start, endDate = end, currentPage = 0, error = null) }
+       loadPurchases()
     }
 
     /** Restablece todos los filtros y recarga la lista. */
