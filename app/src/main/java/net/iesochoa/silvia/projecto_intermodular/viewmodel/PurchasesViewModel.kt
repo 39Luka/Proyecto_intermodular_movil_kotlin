@@ -16,7 +16,8 @@ import net.iesochoa.silvia.projecto_intermodular.model.PedidoItem
 import net.iesochoa.silvia.projecto_intermodular.model.PurchasesUiState
 import net.iesochoa.silvia.projecto_intermodular.ui.utils.ErrorMapper
 import net.iesochoa.silvia.projecto_intermodular.ui.utils.toCurrency
-import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import java.util.Locale
 import javax.inject.Inject
 
@@ -54,9 +55,25 @@ class PurchasesViewModel @Inject constructor(
         val endDate = _uiState.value.endDate
         
         // Formatear fechas para la API (yyyy-MM-dd)
-        val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-        val startStr = startDate?.let { sdf.format(java.util.Date(it)) }
-        val endStr = endDate?.let { sdf.format(java.util.Date(it)) }
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+        val startStr = startDate?.let { 
+            try {
+                val instant = java.time.Instant.ofEpochMilli(it)
+                val localDate = instant.atZone(java.time.ZoneId.systemDefault()).toLocalDate()
+                localDate.format(formatter)
+            } catch (e: Exception) {
+                null
+            }
+        }
+        val endStr = endDate?.let { 
+            try {
+                val instant = java.time.Instant.ofEpochMilli(it)
+                val localDate = instant.atZone(java.time.ZoneId.systemDefault()).toLocalDate()
+                localDate.format(formatter)
+            } catch (e: Exception) {
+                null
+            }
+        }
 
         _uiState.update { it.copy(isLoading = true, error = null) }
         viewModelScope.launch {

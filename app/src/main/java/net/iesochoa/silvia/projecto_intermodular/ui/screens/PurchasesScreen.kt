@@ -18,7 +18,10 @@ import net.iesochoa.silvia.projecto_intermodular.ui.components.*
 import net.iesochoa.silvia.projecto_intermodular.ui.theme.Primary500
 import net.iesochoa.silvia.projecto_intermodular.ui.theme.AppTypography
 import net.iesochoa.silvia.projecto_intermodular.ui.theme.TextPrimary
-import java.text.SimpleDateFormat
+import java.time.Instant
+import java.time.LocalDate
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 import java.util.*
 
 /**
@@ -173,10 +176,18 @@ fun PurchasesScreen(
 
 private fun formatSelectedDates(start: Long?, end: Long?): String {
     if (start == null) return ""
-    val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-    val startStr = sdf.format(Date(start))
-    val endStr = end?.let { sdf.format(Date(it)) } ?: ""
-    return if (endStr.isNotEmpty()) "$startStr - $endStr" else startStr
+    return try {
+        val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
+        val startDate = Instant.ofEpochMilli(start).atZone(ZoneId.systemDefault()).toLocalDate()
+        val startStr = startDate.format(formatter)
+        val endStr = end?.let { 
+            val endDate = Instant.ofEpochMilli(it).atZone(ZoneId.systemDefault()).toLocalDate()
+            endDate.format(formatter) 
+        } ?: ""
+        if (endStr.isNotEmpty()) "$startStr - $endStr" else startStr
+    } catch (e: Exception) {
+        ""
+    }
 }
 
 @Composable
@@ -188,11 +199,17 @@ private fun ActiveFilterLabel(startDate: Long, endDate: Long?, onClear: () -> Un
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-        val rangeText = if (endDate != null) {
-            "Del ${sdf.format(Date(startDate))} al ${sdf.format(Date(endDate))}"
-        } else {
-            "Día: ${sdf.format(Date(startDate))}"
+        val rangeText = try {
+            val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
+            val startLocalDate = Instant.ofEpochMilli(startDate).atZone(ZoneId.systemDefault()).toLocalDate()
+            if (endDate != null) {
+                val endLocalDate = Instant.ofEpochMilli(endDate).atZone(ZoneId.systemDefault()).toLocalDate()
+                "Del ${startLocalDate.format(formatter)} al ${endLocalDate.format(formatter)}"
+            } else {
+                "Día: ${startLocalDate.format(formatter)}"
+            }
+        } catch (e: Exception) {
+            "Filtro activo"
         }
         
         Text(
